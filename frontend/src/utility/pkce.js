@@ -1,4 +1,7 @@
+import Cookies from 'js-cookie';
+
 const STR_SIZE = 64;
+const SEC_IN_DAY = 3600;
 const clientId = 'aec032c67a054b5195e97348dea395e5'; // put in env variables later
 const redirectUri = 'http://localhost:3000'; // change to env variables later
 
@@ -27,7 +30,7 @@ export const getToken = async (code) => {
   try {
     const body = await fetch(url, payload);
     const response = await body.json();
-    localStorage.setItem('access_token', JSON.stringify(response));
+    Cookies.set('token', response.access_token, { expires: response.expires_in / SEC_IN_DAY, secure: true });
   } catch (error) {
     console.error('Error fetching access token:', error);
   }

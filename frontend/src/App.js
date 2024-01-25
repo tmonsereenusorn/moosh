@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
+import Cookies from 'js-cookie';
 import { authenticateUser, getToken } from "./utility/pkce";
 
 function App() {
   useEffect(() => {
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = Cookies.get('token');
+    
     if (!accessToken) {
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
