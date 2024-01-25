@@ -40,7 +40,7 @@ export const getToken = async (code) => {
    the authentication workload to Spotify's servers. Response is an access
    token.
 */
-export const authenticateUser = async () => {
+export const codeChallenge = async () => {
   // Complete code challenge
   const generateRandomString = (length) => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
