@@ -1,10 +1,19 @@
 import React, { useEffect } from "react";
 import Cookies from "js-cookie";
+import axios from "axios";
 import { codeChallenge, getToken } from "../utility/pkce";
 
 const NavBar = () => {
   // check for cookies on component mount
   useEffect(() => {
+    const fetchData = async () => {
+      const config = {
+        headers: { Authorization: `Bearer ${Cookies.get('token')}`}
+      }
+      const data = await axios.get("https://api.spotify.com/v1/me", config);
+      console.log(data);
+    }
+
     const accessToken = Cookies.get('token');
     const refreshToken = Cookies.get('refresh_token');
     if (!accessToken) {
@@ -17,6 +26,8 @@ const NavBar = () => {
       const code = urlParams.get('code');
 
       if (code) getToken(code);
+    } else {
+      fetchData().catch(console.error);
     }
   }, []);
 
