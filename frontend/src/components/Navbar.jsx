@@ -6,7 +6,13 @@ const NavBar = () => {
   // check for cookies on component mount
   useEffect(() => {
     const accessToken = Cookies.get('token');
+    const refreshToken = Cookies.get('refresh_token');
     if (!accessToken) {
+      if (refreshToken) {
+        getToken(undefined, true);
+        return;
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
 
@@ -16,10 +22,15 @@ const NavBar = () => {
 
   const onLogin = () => {
     const accessToken = Cookies.get('token');
+    const refreshToken = Cookies.get('refresh_token');
     if (!accessToken) {
+      if (refreshToken) {
+        getToken(undefined, true);
+        return;
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
-
       if (code) {
         getToken(code); // get token using code if it is already in URL
       } else {
