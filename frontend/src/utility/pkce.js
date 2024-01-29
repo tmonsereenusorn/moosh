@@ -1,14 +1,13 @@
 import Cookies from 'js-cookie';
 
 const STR_SIZE = 64;
-const SEC_IN_DAY = 3600;
 const clientId = process.env.REACT_APP_CLIENT_ID;
 const redirectUri = process.env.REACT_APP_REDIRECT_URI;
 
 /* Using the code verifier and code generated from the first part of the PKCE
    authentication process to request a temporary access token from Spotify.
 */
-export const getToken = async (code) => {
+export const getToken = async (code, fromRefresh = false) => {
   let codeVerifier = localStorage.getItem('code_verifier');
   if (!codeVerifier) return;
 
@@ -18,19 +17,26 @@ export const getToken = async (code) => {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: new URLSearchParams({
-      client_id: clientId,
-      grant_type: 'authorization_code',
-      code: code,
-      redirect_uri: redirectUri,
-      code_verifier: codeVerifier,
-    }),
+    body: !fromRefresh 
+          ? new URLSearchParams({
+              client_id: clientId,
+              grant_type: 'authorization_code',
+              code: code,
+              redirect_uri: redirectUri,
+              code_verifier: codeVerifier,
+            }) 
+          : new URLSearchParams({
+            client_id: clientId,
+            grant_type: 'refresh_token',
+            refresh_token: Cookies.get('refresh_token')
+          })
   }
 
   try {
     const body = await fetch(url, payload);
     const response = await body.json();
-    Cookies.set('token', response.access_token, { expires: response.expires_in / SEC_IN_DAY, secure: true });
+    Cookies.set('token', response.access_token, { expires: new Date(new Date().getTime() + response.expires_in * 1000), secure: true });
+    Cookies.set('refresh_token', response.refresh_token, { expires: 7, secure: true });
   } catch (error) {
     console.error('Error fetching access token:', error);
   }
