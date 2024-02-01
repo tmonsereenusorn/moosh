@@ -3,11 +3,12 @@ import Cookies from 'js-cookie';
 const STR_SIZE = 64;
 const clientId = process.env.REACT_APP_CLIENT_ID;
 const redirectUri = process.env.REACT_APP_REDIRECT_URI;
+const SCOPES = "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read user-read-recently-played user-library-read"
 
 /* Using the code verifier and code generated from the first part of the PKCE
    authentication process to request a temporary access token from Spotify.
 */
-export const getToken = async (code, fromRefresh = false) => {
+const getToken = async (code, fromRefresh = false) => {
   let codeVerifier = localStorage.getItem('code_verifier');
   if (!codeVerifier) return;
 
@@ -46,7 +47,7 @@ export const getToken = async (code, fromRefresh = false) => {
    the authentication workload to Spotify's servers. Response is an access
    token.
 */
-export const codeChallenge = async () => {
+const codeChallenge = async () => {
   // Complete code challenge
   const generateRandomString = (length) => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -72,7 +73,6 @@ export const codeChallenge = async () => {
   const codeChallenge = base64encode(hashed);
 
   // Send request with encoded challenge to get access token
-  const scope = 'user-read-private user-read-email';
   const authUrl = new URL("https://accounts.spotify.com/authorize")
 
   // generated in the previous step
@@ -81,7 +81,7 @@ export const codeChallenge = async () => {
   const params =  {
     response_type: 'code',
     client_id: clientId,
-    scope,
+    scope: SCOPES,
     code_challenge_method: 'S256',
     code_challenge: codeChallenge,
     redirect_uri: redirectUri,
@@ -89,4 +89,29 @@ export const codeChallenge = async () => {
 
   authUrl.search = new URLSearchParams(params).toString();
   window.location.href = authUrl.toString();
+}
+
+export const authorize = async (login) => {
+  const accessToken = Cookies.get('token');
+  const refreshToken = Cookies.get('refresh_token');
+  if (!accessToken) {
+    if (refreshToken) {
+      await getToken(undefined, true);
+      return true;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      await getToken(code);
+      return true;
+    } else if (login) {
+      await codeChallenge();
+      return false;
+    }
+
+    return false;
+  }
+
+  return true;
 }
