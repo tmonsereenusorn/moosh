@@ -7,7 +7,7 @@ const NavBar = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    authorize(false).then(() => setAuth(true));
+    authorize(false).then(res => setAuth(res));
   }, []);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const NavBar = () => {
   }, [auth]);
 
   const onLogin = () => {
-    authorize(true).then(() => setAuth(true));
+    authorize(true).then(res => setAuth(res));
   };
 
   return (
