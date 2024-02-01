@@ -1,67 +1,41 @@
-import React, { useEffect } from "react";
-import Cookies from "js-cookie";
-import axios from "axios";
-import { codeChallenge, getToken } from "../utility/pkce";
+import React, { useEffect, useState } from "react";
+import { authorize } from "../api/auth";
+import { fetch_personal_info } from "../api/personal";
 
 const NavBar = () => {
-  // check for cookies on component mount
+  const [auth, setAuth] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    const fetchData = async () => {
-      const config = {
-        headers: { Authorization: `Bearer ${Cookies.get('token')}`}
-      }
-      const data = await axios.get("https://api.spotify.com/v1/me", config);
-      console.log(data);
-    }
-
-    const accessToken = Cookies.get('token');
-    const refreshToken = Cookies.get('refresh_token');
-    if (!accessToken) {
-      if (refreshToken) {
-        getToken(undefined, true);
-        return;
-      }
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-
-      if (code) getToken(code);
-    } else {
-      fetchData().catch(console.error);
-    }
+    authorize(false).then(() => setAuth(true));
   }, []);
 
-  const onLogin = () => {
-    const accessToken = Cookies.get('token');
-    const refreshToken = Cookies.get('refresh_token');
-    if (!accessToken) {
-      if (refreshToken) {
-        getToken(undefined, true);
-        return;
-      }
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      if (code) {
-        getToken(code); // get token using code if it is already in URL
-      } else {
-        codeChallenge(); // otherwise, begin the PKCE process
-      }
+  useEffect(() => {
+    if (auth) {
+      setLoading(true);
+      fetch_personal_info().then(res => console.log(res.data));
+      setLoading(false);
     }
+  }, [auth]);
+
+  const onLogin = () => {
+    authorize(true).then(() => setAuth(true));
   };
 
   return (
-    <div className="w-full h-14 bg-red-400 flex px-6 py-2">
-      <p className="font-extrabold text-white text-3xl">moosh.</p>
-      <div className="w-full flex justify-end items-center">
-        <div
-          className="h-8 w-24 items-center justify-center bg-white rounded-md flex hover:cursor-pointer"
-          onClick={() => onLogin()}
-        >
-          <p className="font-bold text-lg text-red-400">login</p>
+    loading
+    ? <div>Loading</div>
+    : <div className="w-full h-14 bg-red-400 flex px-6 py-2">
+        <p className="font-extrabold text-white text-3xl">moosh.</p>
+        <div className="w-full flex justify-end items-center">
+          <div
+            className="h-8 w-24 items-center justify-center bg-white rounded-md flex hover:cursor-pointer"
+            onClick={() => onLogin()}
+          >
+            <p className="font-bold text-lg text-red-400">login</p>
+          </div>
         </div>
       </div>
-    </div>
   )
 };
 

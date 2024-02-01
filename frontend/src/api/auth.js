@@ -7,7 +7,7 @@ const redirectUri = process.env.REACT_APP_REDIRECT_URI;
 /* Using the code verifier and code generated from the first part of the PKCE
    authentication process to request a temporary access token from Spotify.
 */
-export const getToken = async (code, fromRefresh = false) => {
+const getToken = async (code, fromRefresh = false) => {
   let codeVerifier = localStorage.getItem('code_verifier');
   if (!codeVerifier) return;
 
@@ -46,7 +46,7 @@ export const getToken = async (code, fromRefresh = false) => {
    the authentication workload to Spotify's servers. Response is an access
    token.
 */
-export const codeChallenge = async () => {
+const codeChallenge = async () => {
   // Complete code challenge
   const generateRandomString = (length) => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -89,4 +89,22 @@ export const codeChallenge = async () => {
 
   authUrl.search = new URLSearchParams(params).toString();
   window.location.href = authUrl.toString();
+}
+
+export const authorize = async (login) => {
+  const accessToken = Cookies.get('token');
+  const refreshToken = Cookies.get('refresh_token');
+  if (!accessToken) {
+    if (refreshToken) {
+      await getToken(undefined, true);
+      return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) await getToken(code);
+    else if (login) await codeChallenge();
+  }
+
+  return true;
 }
