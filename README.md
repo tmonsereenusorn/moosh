@@ -21,6 +21,7 @@ To run the API, run the following in your command line:
 ```
 cd api
 source venv/bin/activate
+pip install -r requirements.txt (if you haven't installed dependencies)
 python server.py
 ```
 
