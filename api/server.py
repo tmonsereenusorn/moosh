@@ -13,7 +13,13 @@ def ping():
 
 @app.route("/prompt", methods=["POST"])
 def prompt_openai():
-  """Prompt OpenAI API for track seeds."""
+  """
+  Prompt OpenAI API for track seeds.
+  Headers:
+    Content-Type: application/json
+  Request Body:
+    prompt: str
+  """
   body = request.json
   prompt = body.get('prompt', '')
   try:
