@@ -2,9 +2,13 @@
 Moosh Flask Server.
 """
 from flask import Flask, request
-from model import query_openai
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+load_dotenv()
+
+from model import query_openai
+from db import connect
 
 @app.route("/ping", methods=["GET"])
 def ping():
