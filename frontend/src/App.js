@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -6,7 +7,9 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
+import { authorize } from "./api/auth";
 
+import NavBar from "./components/Navbar";
 import Landing from "./pages/Root/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
@@ -23,9 +26,17 @@ const router = createBrowserRouter(
 );
 
 function App() {
+  const [authorized, setAuthorized] = useState(!!Cookies.get("token"));
+
+  useEffect(() => {
+    authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
+  }, []);
+
   return (
     <ChakraProvider theme={theme}>
-      <RouterProvider router={router} />
+      <RouterProvider router={router} auth={authorized}>
+        <NavBar auth={authorized} />
+      </RouterProvider>
     </ChakraProvider>
   );
 }
