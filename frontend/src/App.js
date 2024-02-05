@@ -10,7 +10,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { authorize } from "./api/auth";
 
 import NavBar from "./components/Navbar";
-import Landing from "./pages/Root/Landing";
+import NavLayout from "./components/NavLayout";
+import Landing from "./pages/Landing/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
 import theme from "./theme";
@@ -18,9 +19,30 @@ import theme from "./theme";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<Landing />} />
-      <Route path="analysis" element={<Analysis />} />
-      <Route path="curator" element={<Curator />} />
+      <Route
+        path="/"
+        element={
+          <NavLayout>
+            <Landing />
+          </NavLayout>
+        }
+      />
+      <Route
+        path="analysis"
+        element={
+          <NavLayout>
+            <Analysis />
+          </NavLayout>
+        }
+      />
+      <Route
+        path="curator"
+        element={
+          <NavLayout>
+            <Curator />
+          </NavLayout>
+        }
+      />
     </>
   )
 );
@@ -34,9 +56,7 @@ function App() {
 
   return (
     <ChakraProvider theme={theme}>
-      <RouterProvider router={router}>
-        <NavBar auth={authorized} />
-      </RouterProvider>
+      <RouterProvider router={router}></RouterProvider>
     </ChakraProvider>
   );
 }
