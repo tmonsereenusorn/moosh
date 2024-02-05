@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import NavBar from "./components/Navbar";
-import { authorize } from "./api/auth";
+import React from "react";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+
+import Landing from "./pages/Root/Landing";
+import Analysis from "./pages/Analysis/Analysis";
+import Curator from "./pages/Curator/Curator";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<Landing />} />
+      <Route path="analysis" element={<Analysis />} />
+      <Route path="curator" element={<Curator />} />
+    </>
+  )
+);
 
 function App() {
-  const [authorized, setAuthorized] = useState(!!Cookies.get('token'));
-
-  useEffect(() => {
-    authorize(false).then(() => setAuthorized(!!Cookies.get('token')));
-  }, []);
-
-  return (
-    <NavBar auth={authorized} />
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
