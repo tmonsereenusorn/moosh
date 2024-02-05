@@ -25,7 +25,7 @@ const Landing = ({ auth }) => {
   };
 
   return (
-    <div className="w-screen h-screen bg-gradient-to-br from-gradientStart via-gradientMiddle/[.8] to-gradientEnd/[.56] overflow-hidden h-screen">
+    <div className="absolute top-0 left-0 w-screen h-screen bg-gradient-to-br from-gradientStart via-gradientMiddle/[.8] to-gradientEnd/[.56] overflow-hidden h-screen">
       <div className="w-screen flex items-center justify-center">
         <div className="w-2/3 h-screen flex items-center justify-center">
           <div className="h-1/2 w-full flex flex-row items-center justify-between">
