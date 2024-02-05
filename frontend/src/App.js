@@ -8,13 +8,11 @@ import {
 } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { authorize } from "./api/auth";
-import { ChakraProvider } from "@chakra-ui/react";
 
 import NavBar from "./components/Navbar";
 import Landing from "./pages/Root/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
-import theme from "./theme";
 import theme from "./theme";
 
 const router = createBrowserRouter(
