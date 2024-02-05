@@ -5,10 +5,12 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import { ChakraProvider } from "@chakra-ui/react";
 
 import Landing from "./pages/Root/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
+import theme from "./theme";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,7 +23,11 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ChakraProvider theme={theme}>
+      <RouterProvider router={router} />
+    </ChakraProvider>
+  );
 }
 
 export default App;
