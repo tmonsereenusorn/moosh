@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { redirect, useNavigate } from "react-router-dom";
-import NavBar from "../../components/Navbar";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
 import { authorize } from "../../api/auth";
 import Cookies from "js-cookie";

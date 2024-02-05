@@ -9,7 +9,6 @@ import {
 import { ChakraProvider } from "@chakra-ui/react";
 import { authorize } from "./api/auth";
 
-import NavBar from "./components/Navbar";
 import NavLayout from "./components/NavLayout";
 import Landing from "./pages/Landing/Landing";
 import Analysis from "./pages/Analysis/Analysis";
