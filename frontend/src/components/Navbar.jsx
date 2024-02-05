@@ -25,8 +25,8 @@ const NavBar = () => {
   return loading ? (
     <div>Loading</div>
   ) : (
-    <div className="w-full h-14 bg-[#FFFFFF]/[.2] flex px-6 py-2 border-b-1 border-[#C7C7C7]">
-      <p className="font-extrabold text-red-400 text-3xl">moosh.</p>
+    <div className="w-full h-14 bg-[#5b5b5b]/[.2] flex px-6 py-2 border-b-1 border-[#C7C7C7]">
+      <p className="font-black text-red-400 text-3xl">moosh.</p>
       <div className="w-full flex justify-end items-center">
         {!auth && (
           <div
