@@ -8,9 +8,13 @@ const SCOPES = "user-read-private user-read-email playlist-read-private playlist
 /* Using the code verifier and code generated from the first part of the PKCE
    authentication process to request a temporary access token from Spotify.
 */
-const getToken = async (code, fromRefresh = false) => {
+const getToken = async (fromRefresh = false) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  if (!code && !fromRefresh) return;
+
   let codeVerifier = localStorage.getItem('code_verifier');
-  if (!codeVerifier) return;
+  if (!codeVerifier && !fromRefresh) return;
 
   const url = new URL("https://accounts.spotify.com/api/token");
   const payload = {
@@ -36,8 +40,12 @@ const getToken = async (code, fromRefresh = false) => {
   try {
     const body = await fetch(url, payload);
     const response = await body.json();
+
     Cookies.set('token', response.access_token, { expires: new Date(new Date().getTime() + response.expires_in * 1000), secure: true });
     Cookies.set('refresh_token', response.refresh_token, { expires: 7, secure: true });
+
+    // clear code query in URL to avoid reuse
+    window.history.replaceState({}, document.title, "/");
   } catch (error) {
     console.error('Error fetching access token:', error);
   }
@@ -96,22 +104,15 @@ export const authorize = async (login) => {
   const refreshToken = Cookies.get('refresh_token');
   if (!accessToken) {
     if (refreshToken) {
-      await getToken(undefined, true);
-      return true;
+      await getToken(true);
     }
 
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     if (code) {
-      await getToken(code);
-      return true;
+      await getToken();
     } else if (login) {
       await codeChallenge();
-      return false;
     }
-
-    return false;
   }
-
-  return true;
 }
