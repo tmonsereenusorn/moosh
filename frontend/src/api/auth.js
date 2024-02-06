@@ -119,9 +119,3 @@ export const authorize = async (login) => {
     }
   }
 }
-
-/* Return authorization status.
-*/
-export const isAuthorized = () => {
-  return !!Cookies.get('token');
-};

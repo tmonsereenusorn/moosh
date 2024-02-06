@@ -1,13 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
-import { authorize, isAuthorized } from "../../api/auth";
+import { authorize } from "../../api/auth";
+import { useAuth } from "../../contexts/AuthProvider";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { authorized } = useAuth();
 
   const onStart = () => {
-    if (isAuthorized()) {
+    if (authorized) {
       navigate("/curator");
     } else {
       authorize(true);
@@ -35,7 +37,7 @@ const Landing = () => {
             </div>
             <div className="h-full flex flex-col flex-start justify-between">
               <div className="text-xl">Make me a playlist</div>
-              <ButtonPrimary text={isAuthorized() ? "Go To Curator" : "Get Started"} onClick={() => onStart()} />
+              <ButtonPrimary text={authorized ? "Go To Curator" : "Get Started"} onClick={() => onStart()} />
             </div>
           </div>
         </div>
