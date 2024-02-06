@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { ButtonPrimary } from "../../components/ButtonPrimary";
+import React from "react";
 
 const Analysis = () => {
   return (

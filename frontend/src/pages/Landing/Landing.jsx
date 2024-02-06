@@ -1,27 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
-import { authorize } from "../../api/auth";
-import Cookies from "js-cookie";
+import { authorize, isAuthorized } from "../../api/auth";
 
-const Landing = ({ auth }) => {
+const Landing = () => {
   const navigate = useNavigate();
 
-  const enter = () => {
-    const authorized = !!Cookies.get("token");
-    console.log("here " + authorized);
-    if (authorized) {
-      console.log("redirecting...");
+  const onStart = () => {
+    if (isAuthorized()) {
       navigate("/curator");
+    } else {
+      authorize(true);
     }
-  };
-
-  useEffect(() => {
-    enter();
-  });
-
-  const onLogin = () => {
-    authorize(true);
   };
 
   return (
@@ -45,7 +35,7 @@ const Landing = ({ auth }) => {
             </div>
             <div className="h-full flex flex-col flex-start justify-between">
               <div className="text-xl">Make me a playlist</div>
-              <ButtonPrimary text={"Get Started"} onClick={() => onLogin()} />
+              <ButtonPrimary text={isAuthorized() ? "Go To Curator" : "Get Started"} onClick={() => onStart()} />
             </div>
           </div>
         </div>
