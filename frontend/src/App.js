@@ -12,14 +12,20 @@ import Navbar from "./components/Navbar";
 import Landing from "./pages/Landing/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
+import LoadingOverlay from "./components/LoadingOverlay";
 import theme from "./theme";
 
 function App() {
-  const { setAuthorized } = useAuth();
+  const { setAuthorized, loading, setLoading } = useAuth();
 
   useEffect(() => {
-    authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
-  });
+    setLoading(true);
+    authorize(false).then(() => {
+      setLoading(false);
+      setAuthorized(!!Cookies.get("token"));
+    });
+  // eslint-disable-next-line
+  }, []);
 
   const router = createBrowserRouter([
     { path: "/", Component: Landing },
@@ -29,6 +35,7 @@ function App() {
 
   return (
     <ChakraProvider theme={theme}>
+      {loading && <LoadingOverlay />}
       <Navbar />
       <RouterProvider router={router} />
     </ChakraProvider>

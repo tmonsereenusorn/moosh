@@ -1,10 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { authorize } from "./auth";
 
 export const fetch_personal_info = async () => {
-  await authorize();
-  
   const token = Cookies.get('token');
   const config = {
     headers: { Authorization: `Bearer ${token}`}
