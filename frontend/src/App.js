@@ -15,43 +15,43 @@ import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
 import theme from "./theme";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <>
-      <Route
-        path="/"
-        element={
-          <NavLayout>
-            <Landing />
-          </NavLayout>
-        }
-      />
-      <Route
-        path="analysis"
-        element={
-          <NavLayout>
-            <Analysis />
-          </NavLayout>
-        }
-      />
-      <Route
-        path="curator"
-        element={
-          <NavLayout>
-            <Curator />
-          </NavLayout>
-        }
-      />
-    </>
-  )
-);
-
 function App() {
   const [authorized, setAuthorized] = useState(!!Cookies.get("token"));
 
   useEffect(() => {
     authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
   }, []);
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <>
+        <Route
+          path="/"
+          element={
+            <NavLayout auth={authorized}>
+              <Landing />
+            </NavLayout>
+          }
+        />
+        <Route
+          path="analysis"
+          element={
+            <NavLayout auth={authorized}>
+              <Analysis />
+            </NavLayout>
+          }
+        />
+        <Route
+          path="curator"
+          element={
+            <NavLayout auth={authorized}>
+              <Curator />
+            </NavLayout>
+          }
+        />
+      </>
+    )
+  );
 
   return (
     <ChakraProvider theme={theme}>

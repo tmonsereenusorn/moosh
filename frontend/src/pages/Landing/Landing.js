@@ -36,7 +36,7 @@ const Landing = ({ auth }) => {
                   playlist curator
                 </div>
                 <div className="text-[#4B4B4B] font-bold text-4xl py-1">
-                  music librarian
+                  music analyst
                 </div>
                 <div className="text-[#4B4B4B] font-bold text-4xl py-1">
                   spotify librarian

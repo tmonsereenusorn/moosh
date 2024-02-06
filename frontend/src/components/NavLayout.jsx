@@ -4,7 +4,7 @@ import NavBar from "./Navbar";
 const NavLayout = ({ children, auth }) => {
   return (
     <div>
-      <NavBar></NavBar>
+      <NavBar auth={auth}></NavBar>
       {children}
     </div>
   );
