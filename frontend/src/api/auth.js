@@ -44,7 +44,7 @@ const getToken = async (fromRefresh = false) => {
     Cookies.set('token', response.access_token, { expires: new Date(new Date().getTime() + response.expires_in * 1000), secure: true });
     Cookies.set('refresh_token', response.refresh_token, { expires: 7, secure: true });
 
-    // clear code query in URL to avoid reuse
+    // clear code query in URL to avoid reuse and send to curator after login
     window.history.replaceState({}, document.title, "/");
   } catch (error) {
     console.error('Error fetching access token:', error);
@@ -99,6 +99,9 @@ const codeChallenge = async () => {
   window.location.href = authUrl.toString();
 }
 
+/* Authorize a session by checking for necessary cookies. If they don't exist,
+   go through necessary PKCE steps.
+*/
 export const authorize = async (login) => {
   const accessToken = Cookies.get('token');
   const refreshToken = Cookies.get('refresh_token');
