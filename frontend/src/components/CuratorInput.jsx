@@ -12,6 +12,9 @@ const CuratorInput = ({ value, onSubmit, onChangeText, disabled }) => {
         placeholder={"Ask me to give you music for anything"}
         onChange={onChangeText}
         value={value}
+        onKeyDown={e => {
+          if (e.key === "Enter") onSubmit()
+        }}
       ></Input>
       <InputRightElement margin={"32px"}>
         <Button variant="ghost" size={"sm"} onClick={onSubmit}>
