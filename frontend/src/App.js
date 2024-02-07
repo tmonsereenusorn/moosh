@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { authorize } from "./api/auth";
 import { fetch_personal_info } from "./api/personal";
@@ -13,7 +10,7 @@ import Navbar from "./components/Navbar";
 import Landing from "./pages/Landing/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
-import theme from "./theme";
+import chakraTheme from "./chakraTheme";
 
 function App() {
   const [domLoading, setDomLoading] = useState(true);
@@ -33,27 +30,25 @@ function App() {
     }
 
     authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if (authorized) {
-      fetch_personal_info().then(res => setUser(res?.data));
+      fetch_personal_info().then((res) => setUser(res?.data));
     }
   }, [authorized, setUser]);
 
-  const router = createBrowserRouter([
-    { path: "/", Component: Landing },
-    { path: "/analysis", Component: Analysis },
-    { path: "/curator", Component: Curator }
-  ])
-
-  if(domLoading) return null;
+  if (domLoading) return null;
 
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider theme={chakraTheme}>
       <Navbar />
-      <RouterProvider router={router} />
+      <Routes>
+        <Route path="" element={<Landing />} />
+        <Route path="analysis" element={<Analysis />} />
+        <Route path="curator" element={<Curator />} />
+      </Routes>
     </ChakraProvider>
   );
 }

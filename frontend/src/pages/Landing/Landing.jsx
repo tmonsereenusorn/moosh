@@ -22,22 +22,25 @@ const Landing = () => {
         <div className="w-2/3 h-screen flex items-center justify-center">
           <div className="h-1/2 w-full flex flex-row items-center justify-between">
             <div className="h-full flex flex-col flex-start justify-center">
-              <div className="text-red-400 font-bold text-8xl mb-8">moosh</div>
+              <div className="text-primary font-bold text-8xl mb-8">moosh</div>
               <div>
-                <div className="text-[#4B4B4B] font-bold text-4xl py-1">
+                <div className="text-surface font-bold text-4xl py-1">
                   playlist curator
                 </div>
-                <div className="text-[#4B4B4B] font-bold text-4xl py-1">
+                <div className="text-surface font-bold text-4xl py-1">
                   music analyst
                 </div>
-                <div className="text-[#4B4B4B] font-bold text-4xl py-1">
+                <div className="text-surface font-bold text-4xl py-1">
                   spotify librarian
                 </div>
               </div>
             </div>
             <div className="h-full flex flex-col flex-start justify-between">
-              <div className="text-xl">Make me a playlist</div>
-              <ButtonPrimary text={authorized ? "Go To Curator" : "Get Started"} onClick={() => onStart()} />
+              <div className="text-xl"></div>
+              <ButtonPrimary
+                text={authorized ? "Go To Curator" : "Get Started"}
+                onClick={() => onStart()}
+              />
             </div>
           </div>
         </div>
