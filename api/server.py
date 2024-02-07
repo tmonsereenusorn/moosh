@@ -1,15 +1,16 @@
 """
 Moosh Flask Server.
 """
+import re
+import json
 from flask import Flask, request
 from dotenv import load_dotenv
-from model import query_openai
-from spotify_api import spotipy_search, get_user
 
 app = Flask(__name__)
 load_dotenv()
 
 from model import query_openai
+from spotify_api import get_user, make_recommendations, mass_search
 from db import connect
 
 @app.route("/ping", methods=["GET"])
@@ -29,9 +30,16 @@ def prompt_openai():
   body = request.json
   prompt = body.get('prompt', '')
   try:
-    return query_openai(prompt)
-  except:
-    return "Error prompting OpenAI", 500
+    seed = json.loads(query_openai(prompt))
+  
+    spotify_ids = mass_search(artists=re.split(",|, ", seed["seed_artists"]), track=seed["seed_tracks"])
+    seed["seed_artists"] = spotify_ids.get("artist_ids")
+    seed["seed_tracks"] = [spotify_ids.get("track_id")]
+    seed["seed_genres"] = re.split(",|, ", seed["seed_genres"])
+
+    return make_recommendations(**seed)
+  except Exception as e:
+    return f"Exception: {e}", 500
   
 @app.route("/user", methods=["GET"])
 def get_spotify_user():
@@ -48,26 +56,6 @@ def get_spotify_user():
     return get_user(user)
   except:
     return "Error querying Spotify", 500
-  
-@app.route("/search", methods=["GET"])
-def search_spotify():
-  """
-  Search spotify for item ids.
-  Headers:
-    Content-Type: application/json
-  Request Body:
-    q: str
-    type: List[str]
-  """  
-  body = request.json
-  # expecting a well-formed query
-  q = body.get('q','')
-  search_type = body.get('type','')
-
-  try:
-    return spotipy_search(q, search_type)
-  except:
-    return "Error searching Spotify", 500
 
 
 
