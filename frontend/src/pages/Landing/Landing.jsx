@@ -36,7 +36,7 @@ const Landing = () => {
               </div>
             </div>
             <div className="h-full flex flex-col flex-start justify-between">
-              <div className="text-xl">Make me a playlist</div>
+              <div className="text-xl"></div>
               <ButtonPrimary
                 text={authorized ? "Go To Curator" : "Get Started"}
                 onClick={() => onStart()}
