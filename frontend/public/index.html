@@ -9,9 +9,44 @@
       content="Say hello to your Spotify librarian."
     />
     <title>moosh.</title>
+
+    <style>
+      .loader-container {
+        width: 100vw;
+        height: 100vh;
+        background-color: #FFF;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        z-index: 100;
+        position: absolute;
+        -webkit-animation-duration: 1s;animation-duration: 1s;
+        -webkit-animation-fill-mode: both;animation-fill-mode: both;
+      }
+
+      @-webkit-keyframes fadeOut {
+        0% {opacity: 1;}
+        100% {opacity: 0;}
+      }
+      
+      @keyframes fadeOut {
+        0% {opacity: 1;}
+        100% {opacity: 0;}
+      }
+      
+      .fadeOut {
+        -webkit-animation-name: fadeOut;
+        animation-name: fadeOut;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- Loader on DOM render -->
+    <div class="loader-container">
+      <img src="moosh_logo.svg" alt="" width="5%" height="5%" />
+    </div>
+    
     <div id="root"></div>
   </body>
 </html>
