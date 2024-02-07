@@ -54,7 +54,11 @@ def make_recommendations(seed_artists, seed_genres, seed_tracks, target_acoustic
             country,
             **kwargs
         )
-        return data
+        resp = [
+            { "uri": track.get("uri"), "artist": track.get('artists')[0].get("name"), "title": track.get("name"), "url": track.get("external_urls").get("spotify") }
+            for track in data.get("tracks")
+        ]
+        return resp
     except spotipy.SpotifyException as e:
         print(f"Exception: {e}")
         return {}
