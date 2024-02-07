@@ -20,11 +20,11 @@ To run the API, run the following in your command line:
 
 ```
 cd api
-source venv/bin/activate
+source env/bin/activate
 pip install -r requirements.txt (if you haven't installed dependencies)
 python server.py
 ```
 
-Ensure that you have a virtual environment (i.e. `python -m venv`).
+Ensure that you have a virtual environment (i.e. `python3 -m venv env`).
 
 The backend will be running on `http://127.0.0.1:5000`.
