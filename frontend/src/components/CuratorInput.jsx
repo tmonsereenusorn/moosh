@@ -2,7 +2,7 @@ import React from "react";
 import { Input, InputGroup, InputRightElement, Button } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 
-const CuratorInput = ({ input, onSubmit, onChangeText, disabled }) => {
+const CuratorInput = ({ value, onSubmit, onChangeText, disabled }) => {
   return (
     <InputGroup>
       <Input
@@ -11,6 +11,7 @@ const CuratorInput = ({ input, onSubmit, onChangeText, disabled }) => {
         borderColor={"surface"}
         placeholder={"Ask me to give you music for anything"}
         onChange={onChangeText}
+        value={value}
       ></Input>
       <InputRightElement margin={"32px"}>
         <Button variant="ghost" size={"sm"} onClick={onSubmit}>
