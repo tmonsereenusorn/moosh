@@ -4,9 +4,11 @@ Moosh Flask Server.
 import re
 import json
 from flask import Flask, request
+from flask_cors import CORS
 from dotenv import load_dotenv
 
 app = Flask(__name__)
+cors = CORS(app)
 load_dotenv()
 
 from model import query_openai
