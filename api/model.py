@@ -83,7 +83,7 @@ tools = [
                     },
                     "seed_genres": {
                         "type": "string",
-                        "description": "A comma separated list of exactly two genres (i.e. Alternative, Classical). You MUST return two seed genres. SUPER IMPORTANT.",
+                        "description": "A comma separated list of EXACTLY two genres (i.e. acoustic, black-metal). You MUST return two seed genres. SUPER IMPORTANT.",
                     },
                     "seed_tracks": {
                         "type": "string",
