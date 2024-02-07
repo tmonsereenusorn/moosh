@@ -55,8 +55,14 @@ def make_recommendations(seed_artists, seed_genres, seed_tracks, target_acoustic
             **kwargs
         )
         resp = [
-            { "uri": track.get("uri"), "artist": track.get('artists')[0].get("name"), "title": track.get("name"), "url": track.get("external_urls").get("spotify") }
-            for track in data.get("tracks")
+            {
+                "uri": track.get("uri"),
+                "artist": track.get('artists')[0].get("name"),
+                "title": track.get("name"),
+                "url": track.get("external_urls").get("spotify"),
+                "preview": track.get("preview_url"),
+                "duration": track.get("duration_ms"),
+            } for track in data.get("tracks")
         ]
         return resp
     except spotipy.SpotifyException as e:
