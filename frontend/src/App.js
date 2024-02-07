@@ -15,7 +15,7 @@ import Navbar from "./components/Navbar";
 import Landing from "./pages/Landing/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
-import theme from "./theme";
+import chakraTheme from "./chakraTheme";
 
 function App() {
   const [domLoading, setDomLoading] = useState(true);
@@ -44,16 +44,10 @@ function App() {
     }
   }, [authorized, setUser]);
 
-  // const router = createBrowserRouter([
-  //   { path: "/", Component: Landing },
-  //   { path: "/analysis", Component: Analysis },
-  //   { path: "/curator", Component: Curator },
-  // ]);
-
   if (domLoading) return null;
 
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider theme={chakraTheme}>
       <Navbar />
       <Routes>
         <Route path="" element={<Landing />} />
