@@ -1,14 +1,12 @@
 import React from "react";
-import { Logo } from "./Logo";
+import { ScaleLoader } from "react-spinners";
 
-const LoadingOverlay = () => {
+const Loader = () => {
   return (
-    <div className="absolute z-30 top-0 left-0 h-screen w-screen bg-white">
-      <div className="flex items-center justify-center w-full h-full">
-        <Logo width="5%" height="5%" />
-      </div>
+    <div className="flex justify-center items-center w-full h-full">
+      <ScaleLoader color="#F87171" />
     </div>
   );
 };
 
-export default LoadingOverlay;
+export default Loader;
