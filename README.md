@@ -28,3 +28,6 @@ python server.py
 Ensure that you have a virtual environment (i.e. `python3 -m venv env`).
 
 The backend will be running on `http://127.0.0.1:5000`.
+
+# GitHub Milestone
+Tommy
