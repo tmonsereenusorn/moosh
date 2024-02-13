@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getRecommendations } from "../../api/recommendation";
 import { AudioProvider } from "../../contexts/AudioProvider";
 
@@ -6,20 +6,26 @@ import CuratorInput from "../../components/CuratorInput";
 import TrackCard from "../../components/TrackCard";
 import Loader from "../../components/Loader";
 import { useAuth } from "../../contexts/AuthProvider";
-import { Button } from "@chakra-ui/react";
+import { Button, Input, Stack } from "@chakra-ui/react";
 import { generatePlaylist } from "../../api/generatePlaylist";
+import { ButtonPrimary } from "../../components/ButtonPrimary";
 
 const Curator = () => {
   const { user } = useAuth();
 
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
+  const [exported, setExported] = useState(false); // For rendering a final view after sending playlist to Spotify.
   const [recs, setRecs] = useState([]);
   const [description, setDescription] = useState("");
-  const [playlistName, setPlaylistName] = useState("");
+  const [title, setTitle] = useState("");
 
-  const onChangeText = (event) => {
+  const onChangePrompt = (event) => {
     setPrompt(event.target.value);
+  };
+
+  const onChangeTitle = (event) => {
+    setTitle(event.target.value);
   };
 
   const onSubmit = async () => {
@@ -32,10 +38,24 @@ const Curator = () => {
   };
 
   const onGenerate = async () => {
-    console.log("USER -- " + user.id);
-    console.log("RECS -- " + JSON.stringify(recs));
-    generatePlaylist({ name: "test", userId: user.id });
+    setLoading(true);
+    const snapshot = await generatePlaylist({
+      name: title,
+      userId: user.id,
+      songs: recs,
+    });
+    setExported(true);
+    setLoading(false);
   };
+
+  const onCancel = async () => {
+    setRecs([]);
+  };
+
+  useEffect(() => {
+    console.log("exported: " + exported);
+    console.log("loading: " + loading);
+  });
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -43,32 +63,56 @@ const Curator = () => {
         <div className="pt-20 mb-32">
           {loading ? (
             <Loader />
+          ) : exported ? (
+            <div>
+              <ButtonPrimary
+                text={"Do it again!"}
+                onClick={setExported(false)}
+              />
+            </div>
           ) : (
-            <AudioProvider>
-              {recs.map((recommendation) => {
-                return (
-                  <TrackCard
-                    key={recommendation.uri}
-                    artist={recommendation.artist}
-                    title={recommendation.title}
-                    duration={recommendation.duration}
-                    preview={recommendation.preview}
-                    uri={recommendation.uri}
-                    url={recommendation.url}
-                  />
-                );
-              })}
-            </AudioProvider>
+            <>
+              <AudioProvider>
+                {recs.map((recommendation) => {
+                  return (
+                    <TrackCard
+                      key={recommendation.uri}
+                      artist={recommendation.artist}
+                      title={recommendation.title}
+                      duration={recommendation.duration}
+                      preview={recommendation.preview}
+                      uri={recommendation.uri}
+                      url={recommendation.url}
+                    />
+                  );
+                })}
+              </AudioProvider>
+            </>
           )}
         </div>
-        <div className="fixed bottom-0 w-2/3 bg-white">
-          <CuratorInput
-            onSubmit={onSubmit}
-            value={prompt}
-            onChangeText={(event) => onChangeText(event)}
-            disabled={prompt.length === 0}
-          />
-          <Button onClick={() => onGenerate()}>Generate Test</Button>
+        <div className="fixed flex bottom-0 h-20 w-2/3 bg-white border-2 items-center justify-center">
+          {recs.length > 0 ? (
+            <div className="flex flex-row space-between">
+              <Input
+                placeholder={"Name your playlist"}
+                value={title}
+                onChange={(event) => onChangeTitle(event)}
+              />
+              <ButtonPrimary
+                text={"Send to Spotify"}
+                onClick={() => onGenerate()}
+                size={"md"}
+              />
+              <ButtonPrimary text={"Cancel"} onClick={() => onCancel()} />
+            </div>
+          ) : (
+            <CuratorInput
+              onSubmit={onSubmit}
+              value={prompt}
+              onChangeText={(event) => onChangePrompt(event)}
+              disabled={prompt.length === 0}
+            />
+          )}
         </div>
       </div>
     </div>

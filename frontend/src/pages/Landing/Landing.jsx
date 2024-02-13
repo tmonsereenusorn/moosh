@@ -40,6 +40,7 @@ const Landing = () => {
               <ButtonPrimary
                 text={authorized ? "Go To Curator" : "Get Started"}
                 onClick={() => onStart()}
+                size={"xl"}
               />
             </div>
           </div>
