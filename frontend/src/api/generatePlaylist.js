@@ -35,11 +35,11 @@ const createPlaylist = async ({ name, userId }) => {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-      },
-      data,
+      }
     };
     const playlistId = await axios.post(
       `${SPOTIFY_V1_URL}/users/${userId}/playlists`,
+      data,
       config
     );
     return playlistId;
