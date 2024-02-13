@@ -5,8 +5,13 @@ import { AudioProvider } from "../../contexts/AudioProvider";
 import CuratorInput from "../../components/CuratorInput";
 import TrackCard from "../../components/TrackCard";
 import Loader from "../../components/Loader";
+import { useAuth } from "../../contexts/AuthProvider";
+import { Button } from "@chakra-ui/react";
+import { generatePlaylist } from "../../api/generatePlaylist";
 
 const Curator = () => {
+  const { user } = useAuth();
+
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
   const [recs, setRecs] = useState([]);
@@ -26,6 +31,12 @@ const Curator = () => {
     setLoading(false);
   };
 
+  const onGenerate = async () => {
+    console.log("USER -- " + user.id);
+    console.log("RECS -- " + JSON.stringify(recs));
+    generatePlaylist({ name: "test", userId: user.id });
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-2/3 items-end justify-center">
@@ -34,16 +45,18 @@ const Curator = () => {
             <Loader />
           ) : (
             <AudioProvider>
-              {recs.map(recommendation => {
-                return <TrackCard
-                          key={recommendation.uri}
-                          artist={recommendation.artist}
-                          title={recommendation.title}
-                          duration={recommendation.duration}
-                          preview={recommendation.preview}
-                          uri={recommendation.uri}
-                          url={recommendation.url}
-                        />
+              {recs.map((recommendation) => {
+                return (
+                  <TrackCard
+                    key={recommendation.uri}
+                    artist={recommendation.artist}
+                    title={recommendation.title}
+                    duration={recommendation.duration}
+                    preview={recommendation.preview}
+                    uri={recommendation.uri}
+                    url={recommendation.url}
+                  />
+                );
               })}
             </AudioProvider>
           )}
@@ -55,6 +68,7 @@ const Curator = () => {
             onChangeText={(event) => onChangeText(event)}
             disabled={prompt.length === 0}
           />
+          <Button onClick={() => onGenerate()}>Generate Test</Button>
         </div>
       </div>
     </div>
