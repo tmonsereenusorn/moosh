@@ -4,7 +4,7 @@ import { AudioProvider } from "../../contexts/AudioProvider";
 
 import CuratorInput from "../../components/CuratorInput";
 import TrackCard from "../../components/TrackCard";
-import Loader from "../../components/Loader";
+import Loader from "../../components/LoadingOverlay";
 import { useAuth } from "../../contexts/AuthProvider";
 import { Button, Input, Stack } from "@chakra-ui/react";
 import { generatePlaylist } from "../../api/generatePlaylist";
@@ -77,23 +77,21 @@ const Curator = () => {
               <ButtonPrimary text={"Do it again!"} onClick={() => onReset()} />
             </div>
           ) : (
-            <>
-              <AudioProvider>
-                {recs.map((recommendation) => {
-                  return (
-                    <TrackCard
-                      key={recommendation.uri}
-                      artist={recommendation.artist}
-                      title={recommendation.title}
-                      duration={recommendation.duration}
-                      preview={recommendation.preview}
-                      uri={recommendation.uri}
-                      url={recommendation.url}
-                    />
-                  );
-                })}
-              </AudioProvider>
-            </>
+            <AudioProvider>
+              {recs.map((recommendation) => {
+                return (
+                  <TrackCard
+                    key={recommendation.uri}
+                    artist={recommendation.artist}
+                    title={recommendation.title}
+                    duration={recommendation.duration}
+                    preview={recommendation.preview}
+                    uri={recommendation.uri}
+                    url={recommendation.url}
+                  />
+                );
+              })}
+            </AudioProvider>
           )}
         </div>
         <div className="fixed flex bottom-0 h-20 w-2/3 bg-white border-2 items-center justify-center">
