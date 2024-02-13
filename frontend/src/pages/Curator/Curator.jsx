@@ -39,17 +39,25 @@ const Curator = () => {
 
   const onGenerate = async () => {
     setLoading(true);
+    console.log("title: " + title);
     const snapshot = await generatePlaylist({
       name: title,
       userId: user.id,
       songs: recs,
     });
-    setExported(true);
     setLoading(false);
+    setExported(true);
   };
 
   const onCancel = async () => {
     setRecs([]);
+  };
+
+  const onReset = async () => {
+    setRecs([]);
+    setTitle("");
+    setExported(false);
+    setPrompt("");
   };
 
   useEffect(() => {
@@ -65,10 +73,7 @@ const Curator = () => {
             <Loader />
           ) : exported ? (
             <div>
-              <ButtonPrimary
-                text={"Do it again!"}
-                onClick={setExported(false)}
-              />
+              <ButtonPrimary text={"Do it again!"} onClick={() => onReset()} />
             </div>
           ) : (
             <>
