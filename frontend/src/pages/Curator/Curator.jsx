@@ -4,7 +4,7 @@ import { AudioProvider } from "../../contexts/AudioProvider";
 
 import CuratorInput from "../../components/CuratorInput";
 import TrackCard from "../../components/TrackCard";
-import Loader from "../../components/LoadingOverlay";
+import Loader from "../../components/Loader";
 import { useAuth } from "../../contexts/AuthProvider";
 import { Button, Input, Stack } from "@chakra-ui/react";
 import { generatePlaylist } from "../../api/generatePlaylist";
@@ -19,7 +19,6 @@ const Curator = () => {
   const [recs, setRecs] = useState([]);
   const [description, setDescription] = useState("");
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
