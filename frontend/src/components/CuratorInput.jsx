@@ -13,11 +13,11 @@ const CuratorInput = ({ value, onSubmit, onChangeText, disabled }) => {
         onChange={onChangeText}
         value={value}
         onKeyDown={e => {
-          if (e.key === "Enter") onSubmit()
+          if (e.key === "Enter" && !disabled) onSubmit()
         }}
       ></Input>
       <InputRightElement margin={"32px"}>
-        <Button variant="ghost" size={"sm"} onClick={onSubmit}>
+        <Button variant="ghost" size={"sm"} onClick={onSubmit} isDisabled={disabled}>
           <ArrowUpIcon />
         </Button>
       </InputRightElement>
