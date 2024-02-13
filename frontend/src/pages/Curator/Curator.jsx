@@ -19,6 +19,7 @@ const Curator = () => {
   const [recs, setRecs] = useState([]);
   const [description, setDescription] = useState("");
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
