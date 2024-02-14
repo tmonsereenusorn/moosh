@@ -9,7 +9,7 @@ export const fetch_personal_info = async () => {
   };
 
   try {
-    const data = await axios.get(`${SPOTIFY_V1_URL}/me`, config);
+    const data = await axios.get(`${process.env.REACT_APP_API_URL}/profile`, config);
     return data;
   } catch (err) {
     console.error(err);

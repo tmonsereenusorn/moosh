@@ -1,15 +1,20 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 /* Get recommendations from the Moosh API which uses GPT and Spotify's recommendation
    API to generate the response.
 */
 export const getRecommendations = async (prompt) => {
-  try {
-    const headers = {
+  const token = Cookies.get('token');
+  const config = {
+    headers: { 
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"
-    };
+    }
+  };
 
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/prompt`, {"prompt": prompt}, headers);
+  try {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/prompt`, {"prompt": prompt}, config);
     const data = res.data;
 
     const recs = data.map(track => {
