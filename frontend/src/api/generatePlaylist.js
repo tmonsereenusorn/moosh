@@ -16,13 +16,16 @@ export const generatePlaylist = async ({ name, userId, songs }) => {
     }
     const { data } = await createPlaylist({ name, userId, token: token });
 
-    // Returns snapshot of playlist after update.
+    // Get url from response object to return to frontend.
+    const url = data.external_urls.spotify;
+
+    // Returns snapshot of playlist after update. May be useful later for history.
     const snapshot = await populatePlaylist({
       playlistId: `${data.id}`,
       uris: uris,
       token: token,
     });
-    return snapshot;
+    return url;
   } catch (err) {
     console.error(err);
   }
