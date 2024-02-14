@@ -8,6 +8,9 @@ import json
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 from termcolor import colored  
+from dotenv import load_dotenv
+
+load_dotenv()
 
 GPT_MODEL_NEW = "gpt-3.5-turbo-0125"
 client = OpenAI()
@@ -58,6 +61,7 @@ def extract_function_call(assistant_message):
                     # The arguments are expected to be a JSON string, parse them
                     arguments_json = json.loads(tool_call.function.arguments)
                     # Print the parsed JSON in a nicely formatted way
+                    # print(json.dumps(arguments_json, indent=4))
                     return json.dumps(arguments_json, indent=4)
                 except json.JSONDecodeError as e:
                     print(f"Error decoding JSON: {e}")
@@ -152,14 +156,33 @@ tools = [
     }
 ]
 
-def query_openai(prompt):
-  """External access to querying the OpenAI API with a given prompt."""
-  messages = []
-  messages.append({"role": "system", "content": "You are a smart music recommendation system that generates a JSON for use with spotify's recommendation API. You must include all required properties in the JSON, especially seed_artists."})
-  messages.append({"role": "user", "content": prompt})
-  chat_response = chat_completion_request(
-      messages, tools=tools, tool_choice={"type": "function", "function": {"name": "get_recommendation_seeds"}}
-  )
-  assistant_message = chat_response.choices[0].message
-  messages.append(assistant_message)
-  return extract_function_call(assistant_message)
+def query_openai(prompt, top_artists=None, top_tracks=None, top_genres=None):
+    """External access to querying the OpenAI API with a given prompt, primed with user's top tracks, artists, and genres."""
+    # print("Top tracks: " + ', '.join(top_tracks))
+    # print("Top artists: " + ', '.join(top_artists))
+    # print("Top genres: " + ', '.join(top_genres))
+    
+    # Initialize the messages list with a system message containing user preferences
+    messages = [{
+        "role": "system",
+        "content": "You are a smart music recommendation system that generates a JSON for use with Spotify's recommendation API. "
+                   "You must include all required properties in the JSON, especially seed_artists. "
+                   "Some general information about the user's music taste is given below:"
+                   f"User's top tracks: {', '.join(top_tracks) if top_tracks else 'No top tracks provided'}. "
+                   f"User's top artists: {', '.join(top_artists) if top_artists else 'No top artists provided'}. "
+                   f"User's top genres: {', '.join(top_genres) if top_genres else 'No top genres provided'}."
+                   "The user's prompt is given below:"
+                   f"Prompt: {prompt}"
+                   "Give more precedence to the prompt than their general music taste"
+    }]
+    
+    # Make the chat completion request with the updated messages list
+    chat_response = chat_completion_request(
+        messages, tools=tools, tool_choice={"type": "function", "function": {"name": "get_recommendation_seeds"}}
+    )
+    
+    # Extract the assistant message from the response
+    assistant_message = chat_response.choices[0].message
+    messages.append(assistant_message)
+    
+    return extract_function_call(assistant_message)
