@@ -27,7 +27,7 @@ class SpotifyAPI:
         return self.sp.current_user()
     
     # Returns user's top tracks
-    def get_user_top_tracks(self, time_range='medium_term', limit=60):
+    def get_user_top_tracks(self, time_range='medium_term', limit=50):
         self._ensure_access_token()
 
         try:
@@ -37,7 +37,7 @@ class SpotifyAPI:
             return None
     
     # Returns user's top artists
-    def get_user_top_artists(self, time_range='medium_term', limit=60):
+    def get_user_top_artists(self, time_range='medium_term', limit=50):
         self._ensure_access_token()
 
         try:
