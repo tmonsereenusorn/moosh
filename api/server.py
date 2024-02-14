@@ -3,20 +3,16 @@ Moosh Flask Server.
 """
 import re
 import json
-import requests
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from spotify_api import SpotifyAPI
 
 app = Flask(__name__)
 cors = CORS(app)
 load_dotenv()
 
 from model import query_openai
-from spotify_api import get_user, make_recommendations, mass_search
-from db import connect
 from decorators import retry
 
 @app.route("/ping", methods=["GET"])
@@ -28,36 +24,93 @@ def ping():
 @app.route("/prompt", methods=["POST"])
 def prompt_openai():
   """
-  Prompt OpenAI API for track seeds.
-  Headers:
-    Content-Type: application/json
-  Request Body:
-    prompt: str
+  Endpoint: /prompt
+  Method: POST
+  Returns: Spotify recommendations.
+  Requires: Prompt string in body
+  Optional: If authorization token provided in header, user's top songs will be factored in
   """
+  access_token = request.headers.get('Authorization')
+  if access_token:
+    access_token = access_token.replace('Bearer ', '')
+  
   body = request.json
   prompt = body.get('prompt', '')
-  seed = json.loads(query_openai(prompt))
 
-  spotify_ids = mass_search(artists=re.split(",|, ", seed["seed_artists"]), track=seed["seed_tracks"])
-  seed["seed_artists"] = spotify_ids.get("artist_ids")
-  seed["seed_tracks"] = [spotify_ids.get("track_id")]
-  seed["seed_genres"] = re.split(",|, ", seed["seed_genres"])
+  spotify_api = SpotifyAPI(access_token=access_token)
 
-  return make_recommendations(**seed)
-    
-@app.route("/user", methods=["GET"])
-def get_spotify_user():
-  """
-  Get basic info about a spotify account
-  Headers:
-    Content-Type: application/json
-  Request Body:
-    user_id: str
-  """
-  body = request.json
-  user = body.get('user_id','')
+  seeds = None
+
+  # If access token is provided, obtain user data to prime seed generation algorithm
+  if access_token:
+
+    artist_names = []
+    track_names = []
+    genres = set()
+
+    top_artists_response = spotify_api.get_user_top_artists()
+    top_tracks_response = spotify_api.get_user_top_tracks()
+
+    if top_artists_response and 'items' in top_artists_response:
+      for item in top_artists_response['items']:
+         artist_names.append(item['name'])
+         genres.update(item['genres'])
+
+    if top_tracks_response and 'items' in top_tracks_response:
+      for item in top_tracks_response['items']:
+         track_names.append(item['name'])
+
+    seeds = json.loads(query_openai(prompt, artist_names, track_names, list(genres)))
+  # If access token not provided, get generic seeds to use
+  else:
+    seeds = json.loads(query_openai(prompt))
   
-  return get_user(user)
+  
+  try:
+    spotify_ids = spotify_api.mass_search(artists=re.split(",|, ", seeds["seed_artists"]), track=seeds["seed_tracks"])
+    seeds["seed_artists"] = spotify_ids.get("artist_ids")
+    seeds["seed_tracks"] = [spotify_ids.get("track_id")]
+    seeds["seed_genres"] = re.split(",|, ", seeds["seed_genres"])
+
+    return spotify_api.make_recommendations(**seeds)
+  except Exception as e:
+    return f"Exception: {e}", 500
+  
+"""
+Endpoint: /profile
+Method: GET
+Returns: Spotify user profile information.
+Requires: User authorization token to Spotify
+Error: If no authorization token given, return 401 Unauthorized
+"""
+@app.route('/profile')
+def get_user_profile():
+  access_token = request.headers.get('Authorization')
+  if access_token:
+      access_token = access_token.replace('Bearer ', '')  # Assuming the token is sent as a Bearer token
+      spotify_api = SpotifyAPI(access_token=access_token)
+      user_profile = spotify_api.get_user_profile()
+      return jsonify(user_profile)
+  else:
+      return jsonify({"error": "Authorization token is missing"}), 401
+
+"""
+Endpoint: /top-tracks
+Method: GET
+Returns: The Spotify user's top tracks based on the provided access token.
+Requires: User authorization token to Spotify passed as a Bearer token in the Authorization header.
+Error: If no authorization token is provided, returns 401 Unauthorized.
+"""
+@app.route('/top-tracks', methods=['GET'])
+def get_top_tracks():
+  access_token = request.headers.get('Authorization')
+  if access_token:
+      access_token = access_token.replace('Bearer ', '')
+      spotify_api = SpotifyAPI(access_token=access_token)
+      top_tracks = spotify_api.get_user_top_tracks()
+      return jsonify(top_tracks)
+  else:
+      return jsonify({"error": "Authorization token is missing"}), 401
 
 
 
