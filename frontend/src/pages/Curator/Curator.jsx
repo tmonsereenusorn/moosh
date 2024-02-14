@@ -48,6 +48,7 @@ const Curator = () => {
       name: title,
       userId: user.id,
       songs: recs,
+      description: description,
     });
     setUrl(url);
     setLoading(false);

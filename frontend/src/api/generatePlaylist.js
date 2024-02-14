@@ -3,7 +3,12 @@ import Cookies from "js-cookie";
 import { SPOTIFY_V1_URL } from "../constants";
 
 // Generate playlist by creating empty playlist then populating with recs.
-export const generatePlaylist = async ({ name, userId, songs }) => {
+export const generatePlaylist = async ({
+  name,
+  userId,
+  songs,
+  description,
+}) => {
   const token = Cookies.get("token");
   if (!token) {
     console.error("Unauthorized playlist generation");
@@ -14,7 +19,13 @@ export const generatePlaylist = async ({ name, userId, songs }) => {
     for (var i = 0; i < songs.length; i++) {
       uris.push(songs[i].uri);
     }
-    const { data } = await createPlaylist({ name, userId, token: token });
+    description = `Mooshed: "${description}"`;
+    const { data } = await createPlaylist({
+      name,
+      userId,
+      token: token,
+      description: description,
+    });
 
     // Get url from response object to return to frontend.
     const url = data.external_urls.spotify;
@@ -55,11 +66,11 @@ const populatePlaylist = async ({ playlistId, uris, token }) => {
 };
 
 // Create empty playlist
-const createPlaylist = async ({ name, userId, token }) => {
+const createPlaylist = async ({ name, userId, token, description }) => {
   try {
     const data = {
       name: `${name}`,
-      description: "yer",
+      description: `${description}`,
     };
     const config = {
       headers: {
