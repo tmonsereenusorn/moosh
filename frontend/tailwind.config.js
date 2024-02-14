@@ -9,11 +9,12 @@ module.exports = {
         gradientEnd: "rgba(248, 113, 113)",
         primary: "#F87171", // For buttons, branded accents
         secondary: "#06bCC1", // For secondary actions, color design accents
+        disabled: "#e5e7eb",
         white: "#FFFFFF", // Oh? You know this hold
         dark_accent: "#474056", // I haven't used this yet but
         surface: "#5B5B5B", // Most normal text, adjust with opacities
       },
-    }
+    },
   },
   plugins: [],
 };

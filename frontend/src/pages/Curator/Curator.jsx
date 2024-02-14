@@ -4,12 +4,14 @@ import { AudioProvider } from "../../contexts/AudioProvider";
 
 import CuratorInput from "../../components/CuratorInput";
 import TrackCard from "../../components/TrackCard";
-import LoadingOverlay from "../../components/LoadingOverlay";
+import Loader from "../../components/Loader";
 
 const Curator = () => {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
   const [recs, setRecs] = useState([]);
+  const [description, setDescription] = useState("");
+  const [playlistName, setPlaylistName] = useState("");
 
   const onChangeText = (event) => {
     setPrompt(event.target.value);
@@ -19,6 +21,8 @@ const Curator = () => {
     setLoading(true);
     const recs = await getRecommendations(prompt);
     setRecs(recs);
+    setDescription(prompt);
+    setPrompt("");
     setLoading(false);
   };
 
@@ -27,7 +31,7 @@ const Curator = () => {
       <div className="w-2/3 items-end justify-center">
         <div className="pt-20 mb-32">
           {loading ? (
-            <LoadingOverlay />
+            <Loader />
           ) : (
             <AudioProvider>
               {recs.map(recommendation => {
@@ -49,6 +53,7 @@ const Curator = () => {
             onSubmit={onSubmit}
             value={prompt}
             onChangeText={(event) => onChangeText(event)}
+            disabled={prompt.length === 0}
           />
         </div>
       </div>
