@@ -10,13 +10,19 @@ const TrackCard = ({ artist, title, duration, preview, uri, url }) => {
       <div className="flex justify-center items-center w-12">
         {!!preview ? (
           <div
-            className="rounded-full h-8 w-8 bg-[#F87171] flex justify-center items-center hover:cursor-pointer"
-            onClick={() => previewId !== uri ? setSong(preview, uri) : stopSong()}
+            className="rounded-full h-8 w-8 bg-primary flex justify-center items-center hover:cursor-pointer"
+            onClick={() =>
+              previewId !== uri ? setSong(preview, uri) : stopSong()
+            }
           >
-            {previewId !== uri ? <FaPlay className="text-white" /> : <FaStop className="text-white" />}
+            {previewId !== uri ? (
+              <FaPlay className="text-white" />
+            ) : (
+              <FaStop className="text-white" />
+            )}
           </div>
         ) : (
-          <div className="rounded-full h-8 w-8 bg-gray-200 flex justify-center items-center">
+          <div className="rounded-full h-8 w-8 bg-disabled flex justify-center items-center">
             <FaPlay className="text-white" />
           </div>
         )}
@@ -28,7 +34,7 @@ const TrackCard = ({ artist, title, duration, preview, uri, url }) => {
         >
           {title}
         </p>
-        <p className="text-xs text-grey-500">{artist}</p>
+        <p className="text-xs text-dark_accent">{artist}</p>
       </div>
       <div className="w-2/3 flex justify-end items-center">
         <p className="text-xs text-surface">{duration}</p>
