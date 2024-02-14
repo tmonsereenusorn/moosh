@@ -7,17 +7,21 @@ const CuratorInput = ({ value, onSubmit, onChangeText, disabled }) => {
     <InputGroup>
       <Input
         w={"full"}
-        margin={"32px"}
         borderColor={"surface"}
         placeholder={"Ask me to give you music for anything"}
         onChange={onChangeText}
         value={value}
-        onKeyDown={e => {
-          if (e.key === "Enter" && !disabled) onSubmit()
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !disabled) onSubmit();
         }}
       ></Input>
-      <InputRightElement margin={"32px"}>
-        <Button variant="ghost" size={"sm"} onClick={onSubmit} isDisabled={disabled}>
+      <InputRightElement>
+        <Button
+          variant="ghost"
+          size={"sm"}
+          onClick={onSubmit}
+          isDisabled={disabled}
+        >
           <ArrowUpIcon />
         </Button>
       </InputRightElement>
