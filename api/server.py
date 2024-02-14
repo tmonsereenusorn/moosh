@@ -76,15 +76,15 @@ def prompt_openai():
   except Exception as e:
     return f"Exception: {e}", 500
   
-"""
-Endpoint: /profile
-Method: GET
-Returns: Spotify user profile information.
-Requires: User authorization token to Spotify
-Error: If no authorization token given, return 401 Unauthorized
-"""
 @app.route('/profile')
 def get_user_profile():
+  """
+  Endpoint: /profile
+  Method: GET
+  Returns: Spotify user profile information.
+  Requires: User authorization token to Spotify
+  Error: If no authorization token given, return 401 Unauthorized
+  """
   access_token = request.headers.get('Authorization')
   if access_token:
       access_token = access_token.replace('Bearer ', '')  # Assuming the token is sent as a Bearer token
@@ -94,15 +94,16 @@ def get_user_profile():
   else:
       return jsonify({"error": "Authorization token is missing"}), 401
 
-"""
-Endpoint: /top-tracks
-Method: GET
-Returns: The Spotify user's top tracks based on the provided access token.
-Requires: User authorization token to Spotify passed as a Bearer token in the Authorization header.
-Error: If no authorization token is provided, returns 401 Unauthorized.
-"""
+
 @app.route('/top-tracks', methods=['GET'])
 def get_top_tracks():
+  """
+  Endpoint: /top-tracks
+  Method: GET
+  Returns: The Spotify user's top tracks based on the provided access token.
+  Requires: User authorization token to Spotify passed as a Bearer token in the Authorization header.
+  Error: If no authorization token is provided, returns 401 Unauthorized.
+  """
   access_token = request.headers.get('Authorization')
   if access_token:
       access_token = access_token.replace('Bearer ', '')

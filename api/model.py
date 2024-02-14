@@ -7,10 +7,7 @@ from the Flask server.
 import json
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from termcolor import colored  
-from dotenv import load_dotenv
-
-load_dotenv()
+from termcolor import colored
 
 GPT_MODEL_NEW = "gpt-3.5-turbo-0125"
 client = OpenAI()
@@ -60,8 +57,6 @@ def extract_function_call(assistant_message):
                 try:
                     # The arguments are expected to be a JSON string, parse them
                     arguments_json = json.loads(tool_call.function.arguments)
-                    # Print the parsed JSON in a nicely formatted way
-                    # print(json.dumps(arguments_json, indent=4))
                     return json.dumps(arguments_json, indent=4)
                 except json.JSONDecodeError as e:
                     print(f"Error decoding JSON: {e}")
@@ -158,9 +153,6 @@ tools = [
 
 def query_openai(prompt, top_artists=None, top_tracks=None, top_genres=None):
     """External access to querying the OpenAI API with a given prompt, primed with user's top tracks, artists, and genres."""
-    # print("Top tracks: " + ', '.join(top_tracks))
-    # print("Top artists: " + ', '.join(top_artists))
-    # print("Top genres: " + ', '.join(top_genres))
     
     # Initialize the messages list with a system message containing user preferences
     messages = [{
