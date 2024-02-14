@@ -6,7 +6,6 @@ import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
-from spotify_api import SpotifyAPI
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -14,6 +13,7 @@ load_dotenv()
 
 from model import query_openai
 from decorators import retry
+from spotify_api import SpotifyAPI
 
 @app.route("/ping", methods=["GET"])
 def ping():
