@@ -47,11 +47,13 @@ const Landing = () => {
                 <ButtonPrimary
                   text="Sign Out"
                   onClick={SignOut}
+                  size={"xl"}
                 />
               )}
               <ButtonPrimary
                 text={authorized ? "Go To Curator" : "Get Started"}
                 onClick={onStart}
+                size={"xl"}
               />
             </div>
           </div>
