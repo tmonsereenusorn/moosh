@@ -1,12 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
-import { authorize } from "../../api/auth";
+import { authorize, clearAllCookies } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthProvider";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { authorized } = useAuth();
+  const { authorized, setAuthorized } = useAuth();
 
   const onStart = () => {
     if (authorized) {
@@ -14,6 +14,12 @@ const Landing = () => {
     } else {
       authorize(true);
     }
+  };
+
+  const SignOut = () => {
+    clearAllCookies(); // Clear all cookies
+    setAuthorized(false);
+    navigate("/"); 
   };
 
   return (
@@ -37,9 +43,15 @@ const Landing = () => {
             </div>
             <div className="h-full flex flex-col flex-start justify-between">
               <div className="text-xl"></div>
+              {authorized && (
+                <ButtonPrimary
+                  text="Sign Out"
+                  onClick={SignOut}
+                />
+              )}
               <ButtonPrimary
                 text={authorized ? "Go To Curator" : "Get Started"}
-                onClick={() => onStart()}
+                onClick={onStart}
               />
             </div>
           </div>

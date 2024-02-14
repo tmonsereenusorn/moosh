@@ -119,3 +119,9 @@ export const authorize = async (login) => {
     }
   }
 }
+
+// Function to clear all cookies
+export const clearAllCookies = () => {
+  const allCookies = Cookies.get(); // Gets an object with all cookies
+  Object.keys(allCookies).forEach(cookie => Cookies.remove(cookie));
+};
