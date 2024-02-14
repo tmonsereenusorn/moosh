@@ -8,7 +8,8 @@ export const fetch_personal_info = async () => {
   };
 
   try {
-    const data = await axios.get("https://api.spotify.com/v1/me", config);
+    const data = await axios.get(`${process.env.REACT_APP_API_URL}/profile`, config);
+    console.log(data);
     return data;
   } catch (err) {
     console.error(err);
