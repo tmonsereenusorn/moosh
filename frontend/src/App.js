@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { authorize } from "./api/auth";
 import { fetch_personal_info } from "./api/personal";
@@ -15,6 +15,7 @@ import chakraTheme from "./chakraTheme";
 function App() {
   const [domLoading, setDomLoading] = useState(true);
   const { authorized, setAuthorized, setUser } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // remove loader once DOM has rendered
@@ -30,6 +31,7 @@ function App() {
     }
 
     authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
+    if (!authorized) navigate("/");
     // eslint-disable-next-line
   }, []);
 
