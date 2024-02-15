@@ -1,16 +1,15 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect } from "react-router-dom";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
 import { authorize } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthProvider";
 
 const Landing = () => {
-  const navigate = useNavigate();
   const { authorized } = useAuth();
 
   const onStart = () => {
     if (authorized) {
-      navigate("/curator");
+      redirect("/curator");
     } else {
       authorize(true);
     }
