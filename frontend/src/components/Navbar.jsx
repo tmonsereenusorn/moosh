@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Logo } from "./Logo";
 import { useAuth } from "../contexts/AuthProvider";
-import { NavLink } from "./NavLink";
+import ProfileMenu from "./ProfileMenu";
 import { Link, useLocation } from "react-router-dom";
 
 const NavBar = () => {
@@ -22,11 +22,7 @@ const NavBar = () => {
       <div className="w-full flex justify-end items-center">
         {authorized && (
           <>
-            <NavLink text={"Analysis"} to="analysis" />
-            <NavLink text={"Curator"} to="curator" />
-            <p className="text-lg font-bold text-surface">
-              hi, {user.display_name}
-            </p>
+            <ProfileMenu name={user?.display_name || ""} />
           </>
         )}
       </div>

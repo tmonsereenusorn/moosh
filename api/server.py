@@ -8,7 +8,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-cors = CORS(app)
+CORS(app)
 load_dotenv()
 
 from model import query_openai

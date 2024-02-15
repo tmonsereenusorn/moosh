@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, redirect } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { authorize } from "./api/auth";
 import { fetch_personal_info } from "./api/personal";
@@ -30,6 +30,7 @@ function App() {
     }
 
     authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
+    if (!authorized) redirect("/");
     // eslint-disable-next-line
   }, []);
 
@@ -47,7 +48,7 @@ function App() {
       <Routes>
         <Route path="" element={<Landing />} />
         <Route path="analysis" element={<Analysis />} />
-        <Route path="curator" element={<Curator />} />
+        <Route path="curator" element={<Curator />} loader={async () => { authorize(false) }} />
       </Routes>
     </ChakraProvider>
   );
