@@ -125,3 +125,14 @@ export const clearAllCookies = () => {
   const allCookies = Cookies.get(); // Gets an object with all cookies
   Object.keys(allCookies).forEach(cookie => Cookies.remove(cookie));
 };
+
+/* To be used before every API request to ensure token is not expired. */
+export const authenticate = async () => {
+  if (!!Cookies.get("token")) return;
+  if (!!Cookies.get("refresh_token")) {
+    await authorize(false);
+    return;
+  }
+  clearAllCookies();
+  window.location.pathname = "/";
+};

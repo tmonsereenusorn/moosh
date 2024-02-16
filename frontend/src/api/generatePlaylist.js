@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { authenticate } from "./auth";
 import { SPOTIFY_V1_URL } from "../constants";
 
 // Generate playlist by creating empty playlist then populating with recs.
@@ -9,6 +10,8 @@ export const generatePlaylist = async ({
   songs,
   description,
 }) => {
+  await authenticate();
+
   const token = Cookies.get("token");
   if (!token) {
     console.error("Unauthorized playlist generation");
