@@ -15,11 +15,12 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { clearAllCookies } from "../api/auth";
-import { redirect, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthProvider";
 
 const ProfileMenu = ({ name }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { setAuthorized } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
@@ -28,7 +29,7 @@ const ProfileMenu = ({ name }) => {
     clearAllCookies();
     setAuthorized(false);
     onClose();
-    redirect("/");
+    navigate("/");
   };
 
   return (
@@ -38,7 +39,7 @@ const ProfileMenu = ({ name }) => {
           hi, {name}.
         </MenuButton>
         <MenuList>
-          {location.pathname !== "/curator" && <MenuItem onClick={() => redirect("/curator")}>go to curator.</MenuItem>}
+          {location.pathname !== "/curator" && <MenuItem onClick={() => navigate("/curator")}>go to curator.</MenuItem>}
           <MenuItem onClick={onOpen} color="red">sign out.</MenuItem>
         </MenuList>
       </Menu>

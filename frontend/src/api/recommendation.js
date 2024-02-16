@@ -1,10 +1,13 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { authenticate } from "./auth";
 
 /* Get recommendations from the Moosh API which uses GPT and Spotify's recommendation
    API to generate the response.
 */
 export const getRecommendations = async (prompt) => {
+  await authenticate();
+
   const token = Cookies.get('token');
   const config = {
     headers: { 
