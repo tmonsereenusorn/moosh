@@ -9,8 +9,8 @@ import TrackCard from "../../components/TrackCard";
 import Loader from "../../components/Loader";
 import { FaCircleCheck } from "react-icons/fa6";
 import { useAuth } from "../../contexts/AuthProvider";
-import { Button, Input } from "@chakra-ui/react";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
+import ChoiceLayer from "../../components/ChoiceLayer";
 
 const Curator = () => {
   const { user } = useAuth();
@@ -105,32 +105,7 @@ const Curator = () => {
         </div>
         <div className="fixed flex bottom-0 h-20 w-2/3 bg-white items-center justify-center p-[32px] space-x-4">
           {recs.length && !exported > 0 ? (
-            <>
-              <Input
-                placeholder={"Name your playlist"}
-                borderColor={"surface"}
-                value={title}
-                onChange={(event) => onChangeTitle(event)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") onGenerate();
-                }}
-              />
-              <ButtonPrimary
-                text={"Send to Spotify"}
-                onClick={() => onGenerate()}
-                size={"md"}
-                width={"220px"}
-              />
-              <Button
-                variant={"outline"}
-                borderColor={"secondary"}
-                color={"secondary"}
-                onClick={() => onCancel()}
-                width={"100px"}
-              >
-                Cancel
-              </Button>
-            </>
+            <ChoiceLayer onGenerate={onGenerate} onCancel={onCancel} onChangeTitle={onChangeTitle} />
           ) : !exported ? (
             <CuratorInput
               onSubmit={onSubmit}
