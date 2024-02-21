@@ -35,10 +35,8 @@ const Curator = () => {
   const onSubmit = async () => {
     setLoading(true);
     const recs = await getRecommendations(prompt);
-    // Don't finish the recs if user cancels during generation.
-    loading ? setRecs(recs) : setRecs([]);
+    setRecs(recs);
     setDescription(prompt);
-    setPrompt("");
     setLoading(false);
   };
 
@@ -52,6 +50,7 @@ const Curator = () => {
       description: description,
     });
     setUrl(url);
+    setPrompt("");
     setLoading(false);
     setExported(true);
   };
@@ -61,6 +60,7 @@ const Curator = () => {
     setRecs([]);
     setTitle("");
     setDescription("");
+    setPrompt("");
     setLoading(false);
     setExported(false);
   };
@@ -103,7 +103,7 @@ const Curator = () => {
           )}
         </div>
         <div className="fixed flex bottom-0 h-20 w-2/3 bg-white items-center justify-center p-[32px] space-x-4">
-          {recs.length && !exported > 0 ? (
+          {recs.length && !exported > 0 && !loading ? (
             <ChoiceLayer
               onGenerate={onGenerate}
               onRegenerate={onSubmit}
@@ -111,7 +111,7 @@ const Curator = () => {
               onChangeTitle={onChangeTitle}
               disabled={title.length === 0}
             />
-          ) : !exported ? (
+          ) : !exported && !loading ? (
             <CuratorInput
               onSubmit={onSubmit}
               value={prompt}
