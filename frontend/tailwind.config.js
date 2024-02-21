@@ -13,6 +13,7 @@ module.exports = {
         white: "#FFFFFF", // Oh? You know this hold
         dark_accent: "#474056", // I haven't used this yet but
         surface: "#5B5B5B", // Most normal text, adjust with opacities
+        spotify: "#1DB954"
       },
     },
   },
