@@ -1,19 +1,25 @@
 import React, { useEffect } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
+import { Checkbox } from "@chakra-ui/react";
 import { useAudio } from "../contexts/AudioProvider";
-
 
 const TrackCard = ({ artist, title, duration, preview, uri, url }) => {
   const { setSong, stopSong, previewId } = useAudio();
 
   useEffect(() => {
-    return () => { 
+    return () => {
       stopSong();
-    }
+    };
   }, []);
 
   return (
     <div className="border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md">
+      <div
+        className="flex justify-center items-center w-12"
+        onClick={() => console.log("Song checked: " + title)}
+      >
+        <Checkbox></Checkbox>
+      </div>
       <div className="flex justify-center items-center w-12">
         {!!preview ? (
           <div
