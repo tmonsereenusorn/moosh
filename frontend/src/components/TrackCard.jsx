@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 import { useAudio } from "../contexts/AudioProvider";
 
+
 const TrackCard = ({ artist, title, duration, preview, uri, url }) => {
-  const { setSong, stopSong, previewId, audio } = useAudio();
+  const { setSong, stopSong, previewId } = useAudio();
+
+  useEffect(() => {
+    return () => { 
+      stopSong();
+    }
+  }, []);
 
   return (
     <div className="border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md">
