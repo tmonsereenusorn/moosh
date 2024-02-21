@@ -4,7 +4,7 @@ import { GrCycle } from "react-icons/gr";
 import { MdOutlineCancel } from "react-icons/md";
 import { Popover, PopoverContent, PopoverTrigger, useDisclosure, Input, FormLabel, FormControl, HStack } from "@chakra-ui/react";
 
-const ChoiceLayer = ({ onGenerate, onCancel, onChangeTitle }) => {
+const ChoiceLayer = ({ onGenerate, onCancel, onChangeTitle, disabled }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = useRef(null);
 
@@ -29,10 +29,12 @@ const ChoiceLayer = ({ onGenerate, onCancel, onChangeTitle }) => {
             <HStack>
               <Input variant="outline" placeholder="e.g. good playlist" isRequired onChange={onChangeTitle} />
               <div 
-                className="rounded-md w-12 h-10 bg-spotify flex justify-center items-center text-white hover:cursor-pointer"
+                className={`rounded-md w-12 h-10 ${disabled ? "bg-gray-100" : "bg-spotify hover:cursor-pointer"} flex justify-center items-center text-white`}
                 onClick={() => {
-                  onGenerate();
-                  onClose();
+                  if (!disabled) {
+                    onGenerate();
+                    onClose();
+                  }
                 }}
               >
                 <FaCheck className="text-xl" />

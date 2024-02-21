@@ -105,7 +105,12 @@ const Curator = () => {
         </div>
         <div className="fixed flex bottom-0 h-20 w-2/3 bg-white items-center justify-center p-[32px] space-x-4">
           {recs.length && !exported > 0 ? (
-            <ChoiceLayer onGenerate={onGenerate} onCancel={onCancel} onChangeTitle={onChangeTitle} />
+            <ChoiceLayer
+              onGenerate={onGenerate}
+              onCancel={onCancel}
+              onChangeTitle={onChangeTitle}
+              disabled={title.length === 0}
+            />
           ) : !exported ? (
             <CuratorInput
               onSubmit={onSubmit}
