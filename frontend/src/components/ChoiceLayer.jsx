@@ -2,9 +2,25 @@ import React, { useRef } from "react";
 import { FaShareFromSquare, FaCheck } from "react-icons/fa6";
 import { GrCycle } from "react-icons/gr";
 import { MdOutlineCancel } from "react-icons/md";
-import { Popover, PopoverContent, PopoverTrigger, useDisclosure, Input, FormLabel, FormControl, HStack } from "@chakra-ui/react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  useDisclosure,
+  Input,
+  FormLabel,
+  FormControl,
+  HStack,
+} from "@chakra-ui/react";
+import { SpotifyLogo } from "./SpotifyLogo";
 
-const ChoiceLayer = ({ onGenerate, onCancel, onChangeTitle, disabled }) => {
+const ChoiceLayer = ({
+  onGenerate,
+  onRegenerate,
+  onCancel,
+  onChangeTitle,
+  disabled,
+}) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = useRef(null);
 
@@ -18,8 +34,8 @@ const ChoiceLayer = ({ onGenerate, onCancel, onChangeTitle, disabled }) => {
         placement="top"
       >
         <PopoverTrigger>
-          <div className="w-full bg-spotify py-2 px-6 rounded-md hover:cursor-pointer border border-black font-semibold text-white flex justify-center items-center">
-            <FaShareFromSquare />
+          <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
+            <SpotifyLogo className="my-4" />
             <p className="w-full text-center">Export to Spotify</p>
           </div>
         </PopoverTrigger>
@@ -27,9 +43,16 @@ const ChoiceLayer = ({ onGenerate, onCancel, onChangeTitle, disabled }) => {
           <FormControl isRequired>
             <FormLabel>playlist name.</FormLabel>
             <HStack>
-              <Input variant="outline" placeholder="e.g. good playlist" isRequired onChange={onChangeTitle} />
-              <div 
-                className={`rounded-md w-12 h-10 ${disabled ? "bg-gray-100" : "bg-spotify hover:cursor-pointer"} flex justify-center items-center text-white`}
+              <Input
+                variant="outline"
+                placeholder="e.g. good playlist"
+                isRequired
+                onChange={onChangeTitle}
+              />
+              <div
+                className={`rounded-md w-12 h-10 ${
+                  disabled ? "bg-gray-100" : "bg-secondary hover:cursor-pointer"
+                } flex justify-center items-center text-white`}
                 onClick={() => {
                   if (!disabled) {
                     onGenerate();
@@ -43,12 +66,15 @@ const ChoiceLayer = ({ onGenerate, onCancel, onChangeTitle, disabled }) => {
           </FormControl>
         </PopoverContent>
       </Popover>
-      <div className="w-full bg-primary py-2 px-6 rounded-md hover:cursor-pointer border border-black font-semibold text-white flex justify-center items-center">
+      <div
+        className="w-full bg-primary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center"
+        onClick={async () => await onRegenerate()}
+      >
         <GrCycle />
         <p className="w-full text-center">Regenerate</p>
       </div>
       <div
-        className="w-full bg-gray-200 py-2 px-6 rounded-md hover:cursor-pointer border border-black font-semibold flex justify-center items-center"
+        className="w-full bg-gray-200 py-2 px-6 rounded-md hover:cursor-pointer text-surface font-semibold flex justify-center items-center"
         onClick={() => onCancel()}
       >
         <MdOutlineCancel />

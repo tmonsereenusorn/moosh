@@ -22,7 +22,7 @@ export const generatePlaylist = async ({
     for (var i = 0; i < songs.length; i++) {
       uris.push(songs[i].uri);
     }
-    description = `Mooshed: "${description}"`;
+    description = `"${description}" by moosh`;
     const { data } = await createPlaylist({
       name,
       userId,

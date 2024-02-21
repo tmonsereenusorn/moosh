@@ -43,6 +43,7 @@ const Curator = () => {
 
   // Generate the playlist to Spotify, change view to signal playlist creation.
   const onGenerate = async () => {
+    console.log("called");
     setLoading(true);
     const url = await generatePlaylist({
       name: title,
@@ -107,6 +108,7 @@ const Curator = () => {
           {recs.length && !exported > 0 ? (
             <ChoiceLayer
               onGenerate={onGenerate}
+              onRegenerate={onSubmit}
               onCancel={onCancel}
               onChangeTitle={onChangeTitle}
               disabled={title.length === 0}
