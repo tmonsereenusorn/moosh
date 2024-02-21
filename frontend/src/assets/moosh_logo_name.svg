@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 338.4 420.94">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: #231f20;
+      }
+
+      .cls-2 {
+        font-family: BalooBhaijaan-Regular, 'Baloo Bhaijaan';
+        font-size: 109.34px;
+      }
+    </style>
+  </defs>
+  <rect class="cls-1" x="33.03" y="0" width="75.86" height="278.35" rx="37.93" ry="37.93"/>
+  <rect class="cls-1" x="122.03" y="62.74" width="75.86" height="152.87" rx="37.93" ry="37.93"/>
+  <rect class="cls-1" x="211.02" y="0" width="75.86" height="278.35" rx="37.93" ry="37.93"/>
+  <text class="cls-2" transform="translate(0 370.98)"><tspan x="0" y="0">moosh</tspan></text>
+</svg>
