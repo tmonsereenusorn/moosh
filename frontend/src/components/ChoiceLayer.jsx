@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { FaShareFromSquare, FaCheck } from "react-icons/fa6";
+import { FaCheck } from "react-icons/fa6";
 import { GrCycle } from "react-icons/gr";
 import { MdOutlineCancel } from "react-icons/md";
 import {
