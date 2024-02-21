@@ -35,7 +35,8 @@ const Curator = () => {
   const onSubmit = async () => {
     setLoading(true);
     const recs = await getRecommendations(prompt);
-    setRecs(recs);
+    // Don't finish the recs if user cancels during generation.
+    loading ? setRecs(recs) : setRecs([]);
     setDescription(prompt);
     setPrompt("");
     setLoading(false);
@@ -43,7 +44,6 @@ const Curator = () => {
 
   // Generate the playlist to Spotify, change view to signal playlist creation.
   const onGenerate = async () => {
-    console.log("called");
     setLoading(true);
     const url = await generatePlaylist({
       name: title,
@@ -56,14 +56,12 @@ const Curator = () => {
     setExported(true);
   };
 
-  const onCancel = async () => {
-    setRecs([]);
-  };
-
   // Clear states and return to prompting view.
   const onReset = async () => {
     setRecs([]);
     setTitle("");
+    setDescription("");
+    setLoading(false);
     setExported(false);
   };
 
@@ -109,7 +107,7 @@ const Curator = () => {
             <ChoiceLayer
               onGenerate={onGenerate}
               onRegenerate={onSubmit}
-              onCancel={onCancel}
+              onCancel={onReset}
               onChangeTitle={onChangeTitle}
               disabled={title.length === 0}
             />
