@@ -5,7 +5,7 @@ import { authenticate } from "./auth";
 /* Get recommendations from the Moosh API which uses GPT and Spotify's recommendation
    API to generate the response.
 */
-export const getRecommendations = async (prompt) => {
+export const getRecommendations = async (prompt, numRecs, blacklistedSongs = []) => {
   await authenticate();
 
   const token = Cookies.get('token');
@@ -16,8 +16,14 @@ export const getRecommendations = async (prompt) => {
     }
   };
 
+  const requestBody = {
+    prompt: prompt,
+    num_recs: numRecs,
+    blacklisted_songs: blacklistedSongs
+  };
+
   try {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/prompt`, {"prompt": prompt}, config);
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/prompt`, requestBody, config);
     const data = res.data;
 
     const recs = data.map(track => {
