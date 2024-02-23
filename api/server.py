@@ -36,6 +36,8 @@ def prompt_openai():
   
   body = request.json
   prompt = body.get('prompt', '')
+  num_recs = int(body.get('num_recs', 20))
+  blacklisted_songs = set(body.get('blacklisted_songs', []))
 
   spotify_api = SpotifyAPI(access_token=access_token)
 
@@ -72,7 +74,10 @@ def prompt_openai():
     seeds["seed_tracks"] = [spotify_ids.get("track_id")]
     seeds["seed_genres"] = re.split(",|, ", seeds["seed_genres"])
 
-    return spotify_api.make_recommendations(**seeds)
+    recommendations = spotify_api.make_recommendations(len(blacklisted_songs) + num_recs, **seeds)
+    filtered_recommendations = [rec for rec in recommendations if rec['id'] not in blacklisted_songs]
+
+    return filtered_recommendations[:num_recs]
   except Exception as e:
     return f"Exception: {e}", 500
   
