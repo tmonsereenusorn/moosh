@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { 
+import {
   Menu,
   MenuButton,
   MenuList,
@@ -11,7 +11,7 @@ import {
   AlertDialogContent,
   AlertDialogBody,
   AlertDialogHeader,
-  AlertDialogFooter
+  AlertDialogFooter,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { clearAllCookies } from "../api/auth";
@@ -35,12 +35,24 @@ const ProfileMenu = ({ name }) => {
   return (
     <>
       <Menu>
-        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} variant="ghost" opacity={0.7} colorScheme="">
+        <MenuButton
+          as={Button}
+          rightIcon={<ChevronDownIcon />}
+          variant="ghost"
+          opacity={0.7}
+          colorScheme=""
+        >
           hi, {name}.
         </MenuButton>
         <MenuList>
-          {location.pathname !== "/curator" && <MenuItem onClick={() => navigate("/curator")}>go to curator.</MenuItem>}
-          <MenuItem onClick={onOpen} color="red">sign out.</MenuItem>
+          {location.pathname !== "/curator" && (
+            <MenuItem onClick={() => navigate("/curator")}>
+              go to curator.
+            </MenuItem>
+          )}
+          <MenuItem onClick={onOpen} color="primary.900">
+            sign out.
+          </MenuItem>
         </MenuList>
       </Menu>
 
@@ -51,19 +63,17 @@ const ProfileMenu = ({ name }) => {
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
               sign out.
             </AlertDialogHeader>
 
-            <AlertDialogBody>
-              are you sure?
-            </AlertDialogBody>
+            <AlertDialogBody>are you sure?</AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
                 no
               </Button>
-              <Button colorScheme='red' onClick={() => signOut()} ml={3}>
+              <Button colorScheme="primary" onClick={() => signOut()} ml={3}>
                 absolutely
               </Button>
             </AlertDialogFooter>

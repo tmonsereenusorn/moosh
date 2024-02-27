@@ -22,6 +22,7 @@ const Curator = () => {
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedTracks, setSelectedTracks] = useState({});
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -34,10 +35,47 @@ const Curator = () => {
   // Get recommendations, reset prompt.
   const onSubmit = async () => {
     setLoading(true);
-    const recs = await getRecommendations(prompt);
-    setRecs(recs);
+    
+    const unselectedCount = Object.values(selectedTracks).filter(isSelected => !isSelected).length;
+    // If there are unselected tracks, fetch new recommendations for those tracks only
+    if (unselectedCount > 0) {
+      const blacklistedSongs = recs.map(track => track.id);
+      const newRecs = await getRecommendations(prompt, unselectedCount, blacklistedSongs);
+      
+      // Filter out unselected tracks from the current recs
+      const filteredRecs = recs.filter(rec => selectedTracks[rec.id]);
+
+      // Combine the remaining selected tracks with the new recommendations
+      setRecs([...filteredRecs, ...newRecs]);
+
+      const updatedSelections = newRecs.reduce((acc, track) => {
+        acc[track.id] = true;
+        return acc;
+      }, {...selectedTracks});
+
+      setSelectedTracks(updatedSelections);
+    } else { // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
+      const newRecs = await getRecommendations(prompt, 20);
+
+      setRecs(newRecs);
+
+      // Initialize all new tracks as selected
+      const initialSelections = newRecs.reduce((acc, track) => {
+        acc[track.id] = true;
+        return acc;
+      }, {});
+      setSelectedTracks(initialSelections);
+    }
+
     setDescription(prompt);
     setLoading(false);
+  };
+
+  const toggleTrackSelection = (id) => {
+    setSelectedTracks((prevSelectedTracks) => ({
+      ...prevSelectedTracks,
+      [id]: !prevSelectedTracks[id],
+    }));
   };
 
   // Generate the playlist to Spotify, change view to signal playlist creation.
@@ -58,6 +96,7 @@ const Curator = () => {
   // Clear states and return to prompting view.
   const onReset = async () => {
     setRecs([]);
+    setSelectedTracks({});
     setTitle("");
     setDescription("");
     setPrompt("");
@@ -89,13 +128,15 @@ const Curator = () => {
               {recs.map((recommendation) => {
                 return (
                   <TrackCard
-                    key={recommendation.uri}
+                    key={recommendation.id}
                     artist={recommendation.artist}
                     title={recommendation.title}
                     duration={recommendation.duration}
                     preview={recommendation.preview}
                     uri={recommendation.uri}
                     url={recommendation.url}
+                    isSelected={selectedTracks[recommendation.id]}
+                    onToggleSelection={() => toggleTrackSelection(recommendation.id)}
                   />
                 );
               })}
