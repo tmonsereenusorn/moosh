@@ -3,7 +3,16 @@ import { FaPlay, FaStop } from "react-icons/fa";
 import { Checkbox } from "@chakra-ui/react";
 import { useAudio } from "../contexts/AudioProvider";
 
-const TrackCard = ({ artist, title, duration, preview, uri, url, isSelected, onToggleSelection }) => {
+const TrackCard = ({
+  artist,
+  title,
+  duration,
+  preview,
+  uri,
+  url,
+  isSelected,
+  onToggleSelection,
+}) => {
   const { setSong, stopSong, previewId } = useAudio();
 
   useEffect(() => {
@@ -18,7 +27,11 @@ const TrackCard = ({ artist, title, duration, preview, uri, url, isSelected, onT
         className="flex justify-center items-center w-12"
         onClick={() => console.log("Song checked: " + title)}
       >
-        <Checkbox isChecked={isSelected} onChange={onToggleSelection}></Checkbox>
+        <Checkbox
+          colorScheme="dark_accent"
+          isChecked={isSelected}
+          onChange={onToggleSelection}
+        ></Checkbox>
       </div>
       <div className="flex justify-center items-center w-12">
         {!!preview ? (

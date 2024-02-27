@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { ChakraProvider } from "@chakra-ui/react";
 import { authorize } from "./api/auth";
 import { fetch_personal_info } from "./api/personal";
 import { useAuth } from "./contexts/AuthProvider";
@@ -10,7 +9,6 @@ import Navbar from "./components/Navbar";
 import Landing from "./pages/Landing/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
-import chakraTheme from "./chakraTheme";
 
 function App() {
   const [domLoading, setDomLoading] = useState(true);
@@ -44,14 +42,20 @@ function App() {
   if (domLoading) return null;
 
   return (
-    <ChakraProvider theme={chakraTheme}>
+    <>
       <Navbar />
       <Routes>
         <Route path="" element={<Landing />} />
         <Route path="analysis" element={<Analysis />} />
-        <Route path="curator" element={<Curator />} loader={async () => { authorize(false) }} />
+        <Route
+          path="curator"
+          element={<Curator />}
+          loader={async () => {
+            authorize(false);
+          }}
+        />
       </Routes>
-    </ChakraProvider>
+    </>
   );
 }
 
