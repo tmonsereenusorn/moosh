@@ -78,7 +78,7 @@ tools = [
                     },
                     "seed_artists": {
                         "type": "string",
-                        "description": "A comma separated list of EXACTLY three seed artist names. You MUST return three artists.",
+                        "description": "A comma separated list of EXACTLY three seed artist names. Give priority to artist names that are relevant to the prompt over a user's top artist.",
                     },
                     "seed_genres": {
                         "type": "string",
