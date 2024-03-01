@@ -46,17 +46,21 @@ class SpotifyAPI:
             print(f"Could not retrieve user's top artists with error: {e}")
             return None
     
-    # Search for multiple artists and tracks, returning their Spotify ids.
-    def mass_search(self, artists, track):
+    # Search for multiple artists, returning their Spotify ids.
+    def artist_search(self, artists):
         artist_ids = []
-        track_id = ""
-
         for artist in artists:
             artist_ids.append(self.spotify_search(item=artist, type="artist"))
 
-        track_id = self.spotify_search(item=track, type="track")
+        return artist_ids
+    
+    # Search for multiple tracks, returning their Spotify ids
+    def track_search(self, tracks):
+        track_ids = []
+        for track in tracks:
+            track_ids.append(self.spotify_search(item=track, type="track"))
 
-        return { "artist_ids": artist_ids, "track_id": track_id }
+        return track_ids
     
     #Use Spotify API search with given query and type. Return item id.
     def spotify_search(self, item, type):
@@ -82,11 +86,11 @@ class SpotifyAPI:
         }
         try:
             data = self.sp.recommendations(
-                seed_artists,
-                seed_genres,
-                seed_tracks, # only gives one track
-                limit,
-                country,
+                seed_artists=seed_artists,
+                seed_genres=seed_genres,
+                seed_tracks=seed_tracks, # only gives one track
+                limit=limit,
+                country=country,
                 **kwargs
             )
             resp = [

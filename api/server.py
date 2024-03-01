@@ -69,12 +69,34 @@ def prompt_openai():
   
   
   try:
-    spotify_ids = spotify_api.mass_search(artists=re.split(",|, ", seeds["seed_artists"]), track=seeds["seed_tracks"])
-    seeds["seed_artists"] = spotify_ids.get("artist_ids")
-    seeds["seed_tracks"] = [spotify_ids.get("track_id")]
-    seeds["seed_genres"] = re.split(",|, ", seeds["seed_genres"])
+    # Replace artist and track names with their respective spotify IDs
+    if "seed_artists" in seeds:
+      artist_ids = spotify_api.artist_search(artists=re.split(",|, ", seeds["seed_artists"]))
+      seeds["seed_artists"] = artist_ids
+    else:
+      seeds["seed_artists"] = None
 
-    recommendations = spotify_api.make_recommendations(len(blacklisted_songs) + num_recs, **seeds)
+    if "seed_tracks" in seeds:
+      track_ids = spotify_api.track_search(tracks=re.split(",|, ", seeds["seed_tracks"]))
+      seeds["seed_tracks"] = track_ids
+    else:
+      seeds["seed_tracks"] = None
+
+    if "seed_genres" in seeds:
+      seeds["seed_genres"] = re.split(",|, ", seeds["seed_genres"])
+    else:
+      seeds["seed_genres"] = None
+
+    recommendations = spotify_api.make_recommendations(len(blacklisted_songs) + num_recs, 
+                                                       seed_artists=seeds["seed_artists"],
+                                                       seed_genres=seeds["seed_genres"],
+                                                       seed_tracks=seeds["seed_tracks"],
+                                                       target_acousticness=seeds["target_acousticness"],
+                                                       target_danceability=seeds["target_danceability"],
+                                                       target_energy=seeds["target_energy"],
+                                                       target_instrumentalness=seeds["target_instrumentalness"],
+                                                       target_valence=seeds["target_valence"])
+    
     filtered_recommendations = [rec for rec in recommendations if rec['id'] not in blacklisted_songs]
 
     return filtered_recommendations[:num_recs]
