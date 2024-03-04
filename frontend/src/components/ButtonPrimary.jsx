@@ -11,8 +11,7 @@ export const ButtonPrimary = ({
 }) => {
   return (
     <Button
-      bg={"primary"}
-      color={"white"}
+      colorScheme="primary"
       size={`${size}`}
       radii={`${size}`}
       onClick={onClick}
