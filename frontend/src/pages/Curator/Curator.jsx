@@ -74,7 +74,7 @@ const Curator = () => {
 
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
-        isNew: true,
+        isNew: false,
         displayOrder: index
       }));
 
