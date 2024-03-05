@@ -78,15 +78,17 @@ tools = [
                     },
                     "seed_artists": {
                         "type": "string",
-                        "description": "A comma separated list of exactly two seed artist names (i.e. Playboi Carti, Rihanna). You MUST return two seed artists. SUPER IMPORTANT.",
+                        "description": "A comma separated list of EXACTLY three seed artist names. Give priority to artist names that are relevant to the prompt over a user's top artist.",
                     },
                     "seed_genres": {
                         "type": "string",
-                        "description": "A comma separated list of EXACTLY two genres (i.e. acoustic, black-metal). You MUST return two seed genres. SUPER IMPORTANT.",
+                        "description": "A comma separated list of EXACTLY two genres. You MUST return two different genres.",
+                        "enum": ["acoustic", "afrobeat", "alt-rock", "alternative", "ambient", "anime", "black-metal", "bluegrass", "blues", "bossanova", "brazil", "breakbeat", "british", "cantopop", "chicago-house", "children", "chill", "classical", "club", "comedy", "country", "dance", "dancehall", "death-metal", "deep-house", "detroit-techno", "disco", "disney", "drum-and-bass", "dub", "dubstep", "edm", "electro", "electronic", "emo", "folk", "forro", "french", "funk", "garage", "german", "gospel", "goth", "grindcore", "groove", "grunge", "guitar", "happy", "hard-rock", "hardcore", "hardstyle", "heavy-metal", "hip-hop", "holidays", "honky-tonk", "house", "idm", "indian", "indie", "indie-pop", "industrial", "iranian", "j-dance", "j-idol", "j-pop", "j-rock", "jazz", "k-pop", "kids", "latin", "latino", "malay", "mandopop", "metal", "metal-misc", "metalcore", "minimal-techno", "movies", "mpb", "new-age", "new-release", "opera", "pagode", "party", "philippines-opm", "piano", "pop", "pop-film", "post-dubstep", "power-pop", "progressive-house", "psych-rock", "punk", "punk-rock", "r-n-b", "rainy-day", "reggae", "reggaeton", "road-trip", "rock", "rock-n-roll", "rockabilly", "romance", "sad", "salsa", "samba", "sertanejo", "show-tunes", "singer-songwriter", "ska", "sleep", "songwriter", "soul", "soundtracks", "spanish", "study", "summer", "swedish", "synth-pop", "tango", "techno", "trance", "trip-hop", "turkish", "work-out", "world-music"]
                     },
                     "seed_tracks": {
                         "type": "string",
-                        "description": "One seed track title, such as Bohemian Rhapsody. You must return one seed track.",
+                        "description": "Return an empty string here.",
+                        # "description": "One song track title. You MUST return exactly one title."
                     },
                     "target_acousticness": {
                         "type": "number",
@@ -158,14 +160,14 @@ def query_openai(prompt, top_artists=None, top_tracks=None, top_genres=None):
     messages = [{
         "role": "system",
         "content": "You are a smart music recommendation system that generates a JSON for use with Spotify's recommendation API. "
-                   "You must include all required properties in the JSON, especially seed_artists. "
+                   "You must include all required properties in the JSON. "
                    "Some general information about the user's music taste is given below:"
                    f"User's top tracks: {', '.join(top_tracks) if top_tracks else 'No top tracks provided'}. "
                    f"User's top artists: {', '.join(top_artists) if top_artists else 'No top artists provided'}. "
                    f"User's top genres: {', '.join(top_genres) if top_genres else 'No top genres provided'}."
                    "The user's prompt is given below:"
                    f"Prompt: {prompt}"
-                   "Give more precedence to the prompt than their general music taste"
+                   "Give much more precedence to the prompt than their general music taste"
     }]
     
     # Make the chat completion request with the updated messages list
