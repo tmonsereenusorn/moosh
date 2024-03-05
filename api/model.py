@@ -57,7 +57,6 @@ def extract_function_call(assistant_message):
                 try:
                     # The arguments are expected to be a JSON string, parse them
                     arguments_json = json.loads(tool_call.function.arguments)
-                    print(json.dumps(arguments_json, indent=4))
                     return json.dumps(arguments_json, indent=4)
                 except json.JSONDecodeError as e:
                     print(f"Error decoding JSON: {e}")
