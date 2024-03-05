@@ -46,11 +46,12 @@ const Curator = () => {
         isNew: true,
         displayOrder: index // Assign a new order to make these appear at the top
       }));
-
+      
+      // Filter out unselected tracks, change their state to Old and display them under new Recs
       const filteredRecs = recs
         .filter(rec => selectedTracks[rec.id])
         .map(track => ({ ...track, isNew: false, displayOrder: newRecs.length + track.displayOrder }));
-
+      
       setRecs([...updatedNewRecs, ...filteredRecs]);
 
       // Filter out unselected tracks from selectedTracks and add new tracks.
@@ -156,7 +157,7 @@ const Curator = () => {
                     uri={recommendation.uri}
                     url={recommendation.url}
                     isSelected={selectedTracks[recommendation.id]}
-                    isNew={recommendation.isNew} // Utilize this to highlight new tracks
+                    isNew={recommendation.isNew}
                     onToggleSelection={() => toggleTrackSelection(recommendation.id)}
                   />
                 );
