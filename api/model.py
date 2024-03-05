@@ -57,6 +57,7 @@ def extract_function_call(assistant_message):
                 try:
                     # The arguments are expected to be a JSON string, parse them
                     arguments_json = json.loads(tool_call.function.arguments)
+                    print(json.dumps(arguments_json, indent=4))
                     return json.dumps(arguments_json, indent=4)
                 except json.JSONDecodeError as e:
                     print(f"Error decoding JSON: {e}")
@@ -160,7 +161,7 @@ def query_openai(prompt, top_artists=None, top_tracks=None, top_genres=None):
     messages = [{
         "role": "system",
         "content": "You are a smart music recommendation system that generates a JSON for use with Spotify's recommendation API. "
-                   "You must include all required properties in the JSON, especially seed_artists. "
+                   "You must include all required properties in the JSON. "
                    "Some general information about the user's music taste is given below:"
                    f"User's top tracks: {', '.join(top_tracks) if top_tracks else 'No top tracks provided'}. "
                    f"User's top artists: {', '.join(top_artists) if top_artists else 'No top artists provided'}. "
