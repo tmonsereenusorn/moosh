@@ -22,13 +22,8 @@ const TrackCard = ({
     };
   }, []);
 
-  const cardStyle = {
-    backgroundColor: isNew ? '#fdffe6' : 'transparent', // #fef9c3 is a light yellow
-    border: '2px solid rgba(236, 236, 236, 0.1)',
-  };
-
   return (
-    <div className="border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md" style={cardStyle}>
+    <div className={`border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md ${isNew ? 'bg-newTrack' : ''}`}>
       <div
         className="flex justify-center items-center w-12"
         onClick={() => console.log("Song checked: " + title)}
