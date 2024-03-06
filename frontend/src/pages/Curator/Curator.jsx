@@ -41,29 +41,50 @@ const Curator = () => {
     if (unselectedCount > 0) {
       const blacklistedSongs = recs.map(track => track.id);
       const newRecs = await getRecommendations(prompt, unselectedCount, blacklistedSongs);
+      const updatedNewRecs = newRecs.map((track, index) => ({
+        ...track,
+        isNew: true,
+        displayOrder: index // Assign a new order to make these appear at the top
+      }));
       
-      // Filter out unselected tracks from the current recs
-      const filteredRecs = recs.filter(rec => selectedTracks[rec.id]);
+      // Filter out unselected tracks, change their state to Old and display them under new Recs
+      const filteredRecs = recs
+        .filter(rec => selectedTracks[rec.id])
+        .map(track => ({ ...track, isNew: false, displayOrder: newRecs.length + track.displayOrder }));
+      
+      setRecs([...updatedNewRecs, ...filteredRecs]);
 
-      // Combine the remaining selected tracks with the new recommendations
-      setRecs([...filteredRecs, ...newRecs]);
-
-      const updatedSelections = newRecs.reduce((acc, track) => {
-        acc[track.id] = true;
+      // Filter out unselected tracks from selectedTracks and add new tracks.
+      const updatedSelections = recs
+      .filter(rec => selectedTracks[rec.id]) // Start with currently selected tracks
+      .reduce((acc, track) => {
+        acc[track.id] = true; // Retain selection status
         return acc;
-      }, {...selectedTracks});
+      }, {});
 
+      // Mark new tracks as selected in updatedSelections.
+      updatedNewRecs.forEach(track => {
+      updatedSelections[track.id] = true;
+      });
+
+      // Apply the updated selection status.
       setSelectedTracks(updatedSelections);
     } else { // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
       const newRecs = await getRecommendations(prompt, 20);
 
-      setRecs(newRecs);
+      const updatedNewRecs = newRecs.map((track, index) => ({
+        ...track,
+        isNew: false,
+        displayOrder: index
+      }));
 
-      // Initialize all new tracks as selected
-      const initialSelections = newRecs.reduce((acc, track) => {
+      setRecs(updatedNewRecs);
+
+      const initialSelections = updatedNewRecs.reduce((acc, track) => {
         acc[track.id] = true;
         return acc;
       }, {});
+
       setSelectedTracks(initialSelections);
     }
 
@@ -136,6 +157,7 @@ const Curator = () => {
                     uri={recommendation.uri}
                     url={recommendation.url}
                     isSelected={selectedTracks[recommendation.id]}
+                    isNew={recommendation.isNew}
                     onToggleSelection={() => toggleTrackSelection(recommendation.id)}
                   />
                 );
