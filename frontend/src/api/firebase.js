@@ -45,19 +45,22 @@ export const firebaseSignout = async () => {
 
 export const updateSpotifyURI = async (uri) => {
   try {
-    const snapshot = await getDocs(query(collection(db, "users"), where("spotifyUri", "==", uri)));
-    const docs = snapshot.docs;
-    if (docs.length === 0) {
+    const uidSnapshot = await getDocs(query(collection(db, "users"), where("uid", "==", firebaseAuth.currentUser.uid)));
+    const uriSnapshot = await getDocs(query(collection(db, "users"), where("spotifyUri", "==", uri)));
+    const uidDocs = uidSnapshot.docs;
+    const uriDocs = uriSnapshot.docs;
+    
+    if (uidDocs.length === 0 && uriDocs.length === 0) {
       await addDoc(collection(db, "users"), {
         spotifyUri: uri,
         uid: firebaseAuth.currentUser.uid
       });
+      return 0;
+    } else if (uidDocs[0]?.id === uriDocs[0]?.id) {
+      return 0;
     } else {
-      const data = docs[0].data();
-      if (data.uid !== firebaseAuth.currentUser.uid) {
-        console.error("Spotify user already associated with moosh account.");
-        return -1;
-      }
+      console.error("moosh account already linked to Spotify user.");
+      return -1;
     }
   } catch (e) {
     console.error(e);
