@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import { authorize } from "./api/auth";
+import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import { authorize, clearAllCookies } from "./api/auth";
 import { fetch_personal_info } from "./api/personal";
 import { useAuth } from "./contexts/AuthProvider";
+import { updateSpotifyURI } from "./api/firebase";
 
 import Navbar from "./components/Navbar";
 import Landing from "./pages/Landing/Landing";
 import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
+import Login from "./pages/Auth/Login";
+import Signup from "./pages/Auth/Signup";
 
 function App() {
   const [domLoading, setDomLoading] = useState(true);
   const { authorized, setAuthorized, setUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // remove loader once DOM has rendered
@@ -29,13 +33,21 @@ function App() {
     }
 
     authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
-    if (!authorized) navigate("/");
+    if (!authorized && location.pathname === "/curator") navigate("/login");
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if (authorized) {
-      fetch_personal_info().then((res) => setUser(res?.data));
+      fetch_personal_info().then((res) => {
+        setUser(res?.data);
+        updateSpotifyURI(res?.data.uri).then(valid => {
+          if (valid === -1) {
+            clearAllCookies();
+            authorize(true);
+          }
+        });
+      });
     }
   }, [authorized, setUser]);
 
@@ -54,6 +66,8 @@ function App() {
             authorize(false);
           }}
         />
+        <Route path="login" element={<Login />} />
+        <Route path="signup" element={<Signup />} />
       </Routes>
     </>
   );

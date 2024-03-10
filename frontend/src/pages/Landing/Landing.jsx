@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
-import { authorize } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthProvider";
 
 const Landing = () => {
@@ -12,7 +11,7 @@ const Landing = () => {
     if (authorized) {
       navigate("/curator");
     } else {
-      authorize(true);
+      navigate("/login");
     }
   };
 

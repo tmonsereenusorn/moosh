@@ -17,6 +17,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { clearAllCookies } from "../api/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthProvider";
+import { firebaseSignout } from "../api/firebase";
 
 const ProfileMenu = ({ name }) => {
   const location = useLocation();
@@ -26,10 +27,12 @@ const ProfileMenu = ({ name }) => {
   const cancelRef = useRef();
 
   const signOut = () => {
-    clearAllCookies();
-    setAuthorized(false);
-    onClose();
-    navigate("/");
+    firebaseSignout().then(() => {
+      clearAllCookies();
+      setAuthorized(false);
+      onClose();
+      navigate("/");
+    });
   };
 
   return (
