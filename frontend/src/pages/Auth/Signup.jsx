@@ -4,6 +4,7 @@ import { Input } from "@chakra-ui/react";
 import { ButtonPrimary} from "../../components/ButtonPrimary";
 import { firebaseSignup } from "../../api/firebase";
 import { authorize } from "../../api/auth";
+import { useAuth } from "../../contexts/AuthProvider";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +12,13 @@ const Signup = () => {
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [error, setError] = useState(false);
   const [disabled, setDisabled] = useState(true);
+  const { authorized } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authorized) navigate("/curator");
+  // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     setDisabled(email.includes("@") && email.includes(".") && password.length >= 8 && password === confirmedPassword);
