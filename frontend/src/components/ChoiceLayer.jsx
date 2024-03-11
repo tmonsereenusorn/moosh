@@ -48,6 +48,12 @@ const ChoiceLayer = ({
                 placeholder="e.g. good playlist"
                 isRequired
                 onChange={onChangeTitle}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !disabled) {
+                    onGenerate();
+                    onClose();
+                  }
+                }}
               />
               <div
                 className={`rounded-md w-12 h-10 ${

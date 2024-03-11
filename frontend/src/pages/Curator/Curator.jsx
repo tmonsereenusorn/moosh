@@ -35,47 +35,58 @@ const Curator = () => {
   // Get recommendations, reset prompt.
   const onSubmit = async () => {
     setLoading(true);
-    
-    const unselectedCount = Object.values(selectedTracks).filter(isSelected => !isSelected).length;
+
+    const unselectedCount = Object.values(selectedTracks).filter(
+      (isSelected) => !isSelected
+    ).length;
     // If there are unselected tracks, fetch new recommendations for those tracks only
     if (unselectedCount > 0) {
-      const blacklistedSongs = recs.map(track => track.id);
-      const newRecs = await getRecommendations(prompt, unselectedCount, blacklistedSongs);
+      const blacklistedSongs = recs.map((track) => track.id);
+      const newRecs = await getRecommendations(
+        prompt,
+        unselectedCount,
+        blacklistedSongs
+      );
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
         isNew: true,
-        displayOrder: index // Assign a new order to make these appear at the top
+        displayOrder: index, // Assign a new order to make these appear at the top
       }));
-      
+
       // Filter out unselected tracks, change their state to Old and display them under new Recs
       const filteredRecs = recs
-        .filter(rec => selectedTracks[rec.id])
-        .map(track => ({ ...track, isNew: false, displayOrder: newRecs.length + track.displayOrder }));
-      
+        .filter((rec) => selectedTracks[rec.id])
+        .map((track) => ({
+          ...track,
+          isNew: false,
+          displayOrder: newRecs.length + track.displayOrder,
+        }));
+
       setRecs([...updatedNewRecs, ...filteredRecs]);
 
       // Filter out unselected tracks from selectedTracks and add new tracks.
       const updatedSelections = recs
-      .filter(rec => selectedTracks[rec.id]) // Start with currently selected tracks
-      .reduce((acc, track) => {
-        acc[track.id] = true; // Retain selection status
-        return acc;
-      }, {});
+        .filter((rec) => selectedTracks[rec.id]) // Start with currently selected tracks
+        .reduce((acc, track) => {
+          acc[track.id] = true; // Retain selection status
+          return acc;
+        }, {});
 
       // Mark new tracks as selected in updatedSelections.
-      updatedNewRecs.forEach(track => {
-      updatedSelections[track.id] = true;
+      updatedNewRecs.forEach((track) => {
+        updatedSelections[track.id] = true;
       });
 
       // Apply the updated selection status.
       setSelectedTracks(updatedSelections);
-    } else { // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
+    } else {
+      // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
       const newRecs = await getRecommendations(prompt, 20);
 
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
         isNew: false,
-        displayOrder: index
+        displayOrder: index,
       }));
 
       setRecs(updatedNewRecs);
@@ -127,24 +138,24 @@ const Curator = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-2/3 items-end justify-center">
-        <div className="pt-20 mb-32">
-          {loading ? (
-            <Loader />
-          ) : exported ? (
-            <div className="flex flex-col items-center justify-center space-y-2">
-              <FaCircleCheck className="text-secondary text-6xl" />
+      <div className="flex w-2/3 items-center justify-center">
+        {loading ? (
+          <Loader />
+        ) : exported ? (
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <FaCircleCheck className="text-secondary text-6xl" />
 
-              <p className="font-bold text-xl text-surface">Listen to</p>
-              <p
-                className="font-bold text-2xl text-black hover:cursor-pointer hover:underline"
-                onClick={() => window.open(url, "_blank")}
-              >
-                {title}
-              </p>
-              <ButtonPrimary text={"Do it again!"} onClick={() => onReset()} />
-            </div>
-          ) : (
+            <p className="font-bold text-xl text-surface">Listen to</p>
+            <p
+              className="font-bold text-2xl text-black hover:cursor-pointer hover:underline"
+              onClick={() => window.open(url, "_blank")}
+            >
+              {title}
+            </p>
+            <ButtonPrimary text={"Do it again!"} onClick={() => onReset()} />
+          </div>
+        ) : (
+          <div className="w-3/4 pt-16 pb-24">
             <AudioProvider>
               {recs.map((recommendation) => {
                 return (
@@ -158,15 +169,19 @@ const Curator = () => {
                     url={recommendation.url}
                     isSelected={selectedTracks[recommendation.id]}
                     isNew={recommendation.isNew}
-                    onToggleSelection={() => toggleTrackSelection(recommendation.id)}
+                    onToggleSelection={() =>
+                      toggleTrackSelection(recommendation.id)
+                    }
                   />
                 );
               })}
             </AudioProvider>
-          )}
-        </div>
-        <div className="fixed flex bottom-0 h-20 w-2/3 bg-white items-center justify-center p-[32px] space-x-4">
-          {recs.length && !exported > 0 && !loading ? (
+          </div>
+        )}
+        {recs.length && !exported > 0 && !loading ? (
+          <div
+            className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
+          >
             <ChoiceLayer
               onGenerate={onGenerate}
               onRegenerate={onSubmit}
@@ -174,15 +189,17 @@ const Curator = () => {
               onChangeTitle={onChangeTitle}
               disabled={title.length === 0}
             />
-          ) : !exported && !loading ? (
+          </div>
+        ) : !exported && !loading ? (
+          <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
             <CuratorInput
               onSubmit={onSubmit}
               value={prompt}
               onChangeText={(event) => onChangePrompt(event)}
               disabled={prompt.length === 0}
             />
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
