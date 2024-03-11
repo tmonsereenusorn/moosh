@@ -7,6 +7,7 @@ const CuratorInput = ({ value, onSubmit, onChangeText, disabled }) => {
     <InputGroup>
       <Input
         w={"full"}
+        borderRadius={"full"}
         borderColor={"surface"}
         placeholder={"Ask me to give you music for anything"}
         onChange={onChangeText}
