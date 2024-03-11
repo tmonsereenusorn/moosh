@@ -21,7 +21,7 @@ const Signup = () => {
   }, []);
 
   useEffect(() => {
-    setDisabled(email.includes("@") && email.includes(".") && password.length >= 8 && password === confirmedPassword);
+    setDisabled(!email.includes("@") || !email.includes(".") || password.length < 8 || password !== confirmedPassword);
   }, [email, password, confirmedPassword]);
 
   const signup = () => {
@@ -34,6 +34,12 @@ const Signup = () => {
     });
   };
 
+  const handleEnter = e => {
+    if (e.key === "Enter" && !disabled) {
+      signup();
+    }
+  };
+
   return (
     <div className="absolute top-0 left-0 w-screen h-screen bg-gradient-to-br from-gradientStart via-gradientMiddle/[.8] to-gradientEnd/[.56] overflow-hidden h-screen">
       <div className="flex justify-center items-center h-screen">
@@ -44,7 +50,7 @@ const Signup = () => {
             <Input placeholder="password" type="password" textColor="white" onChange={e => setPassword(e.target.value)} />
             <p className="text-white text-xs">must be at least 8 characters.</p>
           </div>
-          <Input placeholder="confirm password" type="password" textColor="white" onChange={e => setConfirmedPassword(e.target.value)} />
+          <Input placeholder="confirm password" type="password" textColor="white" onChange={e => setConfirmedPassword(e.target.value)} onKeyDown={handleEnter} />
           <div className="flex w-full items-center justify-end">
             <ButtonPrimary text="continue" onClick={() => signup()} disabled={disabled} />
           </div>

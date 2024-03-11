@@ -20,7 +20,7 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    setDisabled(email.includes("@") && email.includes(".") && password.length >= 8);
+    setDisabled(!email.includes("@") || !email.includes(".") || password.length < 8);
   }, [email, password]);
 
   const login = () => {
@@ -33,13 +33,19 @@ const Login = () => {
     });
   };
 
+  const handleEnter = e => {
+    if (e.key === "Enter" && !disabled) {
+      login();
+    }
+  };
+
   return (
     <div className="absolute top-0 left-0 w-screen h-screen bg-gradient-to-br from-gradientStart via-gradientMiddle/[.8] to-gradientEnd/[.56] overflow-hidden h-screen">
       <div className="flex justify-center items-center h-screen">
         <div className="w-1/4 space-y-4">
           <p className="text-5xl font-bold text-white">login.</p>
           <Input placeholder="email" textColor="white" onChange={e => setEmail(e.target.value)} />
-          <Input placeholder="password" type="password" textColor="white" onChange={e => setPassword(e.target.value)} />
+          <Input placeholder="password" type="password" textColor="white" onChange={e => setPassword(e.target.value)} onKeyDown={handleEnter} />
           <div className="flex w-full items-center justify-end">
             <ButtonPrimary text="continue" onClick={() => login()} disabled={disabled} />
           </div>

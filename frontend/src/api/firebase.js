@@ -53,7 +53,7 @@ export const updateSpotifyURI = async (uri) => {
     if (uidDocs.length === 0 && uriDocs.length === 0) {
       await addDoc(collection(db, "users"), {
         spotifyUri: uri,
-        uid: firebaseAuth.currentUser.uid
+        uid: firebaseAuth.currentUser?.uid
       });
       return 0;
     } else if (uidDocs[0]?.id === uriDocs[0]?.id) {
