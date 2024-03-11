@@ -7,6 +7,7 @@ export const ButtonPrimary = ({
   size = "md",
   width,
   height,
+  disabled = false
 }) => {
   return (
     <Button
@@ -17,6 +18,7 @@ export const ButtonPrimary = ({
       onClick={onClick}
       width={width ? width : size.width}
       height={height ? height : size.height}
+      disabled={disabled}
     >
       {text}
     </Button>

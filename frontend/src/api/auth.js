@@ -46,6 +46,7 @@ const getToken = async (fromRefresh = false) => {
 
     // clear code query in URL to avoid reuse and send to curator after login
     window.history.replaceState({}, document.title, "/");
+    window.location.pathname = "/curator";
   } catch (error) {
     console.error('Error fetching access token:', error);
   }
