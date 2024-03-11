@@ -138,7 +138,7 @@ const Curator = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="flex w-2/3 items-center justify-center border-2">
+      <div className="flex w-2/3 items-center justify-center">
         {loading ? (
           <Loader />
         ) : exported ? (
@@ -180,7 +180,7 @@ const Curator = () => {
         )}
         {recs.length && !exported > 0 && !loading ? (
           <div
-            className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4 border-2`}
+            className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
           >
             <ChoiceLayer
               onGenerate={onGenerate}
@@ -191,7 +191,7 @@ const Curator = () => {
             />
           </div>
         ) : !exported && !loading ? (
-          <div className="flex w-1/2 justify-center items-center">
+          <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
             <CuratorInput
               onSubmit={onSubmit}
               value={prompt}

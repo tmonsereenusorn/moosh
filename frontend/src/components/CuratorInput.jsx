@@ -4,22 +4,23 @@ import { ArrowUpIcon } from "@chakra-ui/icons";
 
 const CuratorInput = ({ value, onSubmit, onChangeText, disabled }) => {
   return (
-    <InputGroup>
+    <InputGroup flex={"1"} width={"auto"}>
       <Input
-        w={"full"}
+        width={"full"}
         borderRadius={"full"}
+        size={"lg"}
         borderColor={"surface"}
-        placeholder={"Ask me to give you music for anything"}
+        placeholder={"Make me a playlist..."}
         onChange={onChangeText}
         value={value}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !disabled) onSubmit();
         }}
       ></Input>
-      <InputRightElement>
+      <InputRightElement m={1}>
         <Button
           variant="ghost"
-          size={"sm"}
+          size={"lg"}
           onClick={onSubmit}
           isDisabled={disabled}
         >
