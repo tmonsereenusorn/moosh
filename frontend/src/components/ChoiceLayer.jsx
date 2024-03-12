@@ -15,11 +15,11 @@ import {
 import { SpotifyLogo } from "./SpotifyLogo";
 
 const ChoiceLayer = ({
-  onGenerate,
-  onRegenerate,
-  onCancel,
-  onChangeTitle,
-  disabled,
+  onGenerate = () => {},
+  onRegenerate = () => {},
+  onCancel = () => {},
+  onChangeTitle = () => {},
+  disabled = false,
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = useRef(null);

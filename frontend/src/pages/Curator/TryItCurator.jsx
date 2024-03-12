@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { getRecommendations } from "../../api/recommendation";
+import { getRecommendationsFromExistingTracks, getRecommendationsFromPrompt } from "../../api/recommendation";
 import { AudioProvider } from "../../contexts/AudioProvider";
 
 import CuratorInput from "../../components/CuratorInput";
@@ -21,17 +21,20 @@ const TryItCurator = () => {
   // Get recommendations, reset prompt.
   const onSubmit = async () => {
     setLoading(true);
-
+    
     const unselectedCount = Object.values(selectedTracks).filter(
       (isSelected) => !isSelected
     ).length;
-    // If there are unselected tracks, fetch new recommendations for those tracks only
+
+    // If there are unselected tracks, fetch new recommendations directly from spotify using kept tracks
     if (unselectedCount > 0) {
+      const keptSongs = recs.filter(rec => selectedTracks[rec.id]).map(rec => rec.id);
       const blacklistedSongs = recs.map((track) => track.id);
-      const newRecs = await getRecommendations(
-        prompt,
+      const newRecs = await getRecommendationsFromExistingTracks(
+        keptSongs,
         unselectedCount,
-        blacklistedSongs
+        blacklistedSongs,
+        false
       );
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
@@ -67,7 +70,7 @@ const TryItCurator = () => {
       setSelectedTracks(updatedSelections);
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const newRecs = await getRecommendations(prompt, 20);
+      const newRecs = await getRecommendationsFromPrompt(prompt, 20, false);
 
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
