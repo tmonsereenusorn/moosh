@@ -78,7 +78,7 @@ tools = [
                     },
                     "seed_artists": {
                         "type": "string",
-                        "description": "A comma separated list of EXACTLY three seed artist names. Give priority to artist names that are relevant to the prompt over a user's top artist.",
+                        "description": "A comma-separated list of EXACTLY three seed artist names. While selecting these artists, prioritize their relevance to the specific user's prompt over their general music listening history. Ensure that the artists chosen as seeds are likely to produce recommendations that align with the theme or mood described in the prompt, even if they are not among the user's most frequently listened to artists.",
                     },
                     "seed_genres": {
                         "type": "string",
@@ -159,17 +159,17 @@ def query_openai(prompt, top_artists=None, top_tracks=None, top_genres=None):
     # Initialize the messages list with a system message containing user preferences
     messages = [{
         "role": "system",
-        "content": "You are a smart music recommendation system that generates a JSON for use with Spotify's recommendation API. "
-                   "You must include all required properties in the JSON. "
-                   "Some general information about the user's music taste is given below:"
-                   f"User's top tracks: {', '.join(top_tracks) if top_tracks else 'No top tracks provided'}. "
-                   f"User's top artists: {', '.join(top_artists) if top_artists else 'No top artists provided'}. "
-                   f"User's top genres: {', '.join(top_genres) if top_genres else 'No top genres provided'}."
-                   "The user's prompt is given below:"
-                   f"Prompt: {prompt}"
+        "content": "You are a smart music recommendation system that generates a JSON for use with Spotify's recommendation API."
+                    "Your task is to first extract the mood and vibe of the prompt, then output seed values for song recommendations that will supplement the mood.\n"
+                   "You must include all required properties in the JSON.\n"
+                   "Some general information about the user's music taste is given below:\n"
+                   f"User's top tracks: {', '.join(top_tracks) if top_tracks else 'No top tracks provided'}.\n"
+                   f"User's top artists: {', '.join(top_artists) if top_artists else 'No top artists provided'}.\n"
+                   f"User's top genres: {', '.join(top_genres) if top_genres else 'No top genres provided'}.\n"
+                   "The user's prompt is given below:\n"
+                   f"Prompt: {prompt}\n"
                    "Give much more precedence to the prompt than their general music taste"
     }]
-    
     # Make the chat completion request with the updated messages list
     chat_response = chat_completion_request(
         messages, tools=tools, tool_choice={"type": "function", "function": {"name": "get_recommendation_seeds"}}
