@@ -15,6 +15,10 @@ const Landing = () => {
     }
   };
 
+  const handleTryItClick = () => {
+    navigate('/try-it');
+  };
+
   return (
     <div className="absolute top-0 left-0 w-screen h-screen bg-gradient-to-br from-gradientStart via-gradientMiddle/[.8] to-gradientEnd/[.56] overflow-hidden h-screen">
       <div className="w-screen flex items-center justify-center">
@@ -35,12 +39,19 @@ const Landing = () => {
               </div>
             </div>
             <div className="h-full flex flex-col flex-start justify-between">
-              <div className="text-xl"></div>
-              <ButtonPrimary
-                text={authorized ? "Go To Curator" : "Get Started"}
-                onClick={onStart}
-                size={"xl"}
-              />
+              <div className="flex-grow"></div>
+              <div>
+                <ButtonPrimary
+                  text={authorized ? "Go To Curator" : "Login"}
+                  onClick={onStart}
+                  size={"xl"}
+                />
+                {!authorized && (
+                  <p className="text-sm underline cursor-pointer mt-2" onClick={handleTryItClick}>
+                  ...or try it without an account!
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
