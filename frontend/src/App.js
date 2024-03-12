@@ -4,7 +4,7 @@ import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { authorize, clearAllCookies } from "./api/auth";
 import { fetch_personal_info } from "./api/personal";
 import { useAuth } from "./contexts/AuthProvider";
-import { updateSpotifyURI } from "./api/firebase";
+import { updateSpotifyURI, firebaseAuth } from "./api/firebase";
 
 import Navbar from "./components/Navbar";
 import Landing from "./pages/Landing/Landing";
@@ -41,11 +41,13 @@ function App() {
     if (authorized) {
       fetch_personal_info().then((res) => {
         setUser(res?.data);
-        updateSpotifyURI(res?.data.uri).then(valid => {
-          if (valid === -1) {
-            clearAllCookies();
-            authorize(true);
-          }
+        firebaseAuth.onAuthStateChanged(() => {
+          updateSpotifyURI(res?.data.uri).then(valid => {
+            if (valid === -1) {
+              clearAllCookies();
+              authorize(true);
+            }
+          });
         });
       });
     }
