@@ -158,6 +158,11 @@ const Curator = () => {
           </div>
         ) : (
           <div className="w-3/4 pt-16 pb-24">
+            {recs.length > 0 && (
+              <div className="mb-4">
+                <h2 className="text-2xl font-semibold text-center">{prompt}</h2>
+              </div>
+            )}
             <AudioProvider>
               {recs.map((recommendation) => {
                 return (
