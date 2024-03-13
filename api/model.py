@@ -72,10 +72,6 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "market": {
-                        "type": "string",
-                        "description": "An ISO 3166-1 alpha-2 country code, e.g. US, ES etc. Only return this value if explicitly requested for.",
-                    },
                     "seed_artists": {
                         "type": "string",
                         "description": "A comma-separated list of EXACTLY three seed artist names. While selecting these artists, prioritize their relevance to the specific user's prompt over their general music listening history. Ensure that the artists chosen as seeds are likely to produce recommendations that align with the theme or mood described in the prompt, even if they are not among the user's most frequently listened to artists.",
