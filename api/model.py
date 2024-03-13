@@ -74,7 +74,7 @@ tools = [
                 "properties": {
                     "seed_artists": {
                         "type": "string",
-                        "description": "A comma-separated list of EXACTLY three seed artist names. While selecting these artists, prioritize their relevance to the specific user's prompt over their general music listening history. Ensure that the artists chosen as seeds are likely to produce recommendations that align with the theme or mood described in the prompt, even if they are not among the user's most frequently listened to artists.",
+                        "description": "A comma-separated list of EXACTLY three seed artist names. If an artist name has a comma in it, remove the comma. While selecting these artists, prioritize their relevance to the specific user's prompt over their general music listening history. Ensure that the artists chosen as seeds are likely to produce recommendations that align with the theme or mood described in the prompt, even if they are not among the user's most frequently listened to artists.",
                     },
                     "seed_genres": {
                         "type": "string",
