@@ -75,8 +75,6 @@ class SpotifyAPI:
     # Make recommendations using Spotify's Recommendation API based on GPT's seeds.
     def make_recommendations(self, num_recs, seed_artists, seed_genres, seed_tracks, target_acousticness, 
                          target_danceability, target_energy, target_instrumentalness, target_valence):
-        limit = num_recs
-        country = "US"
         kwargs = {
             "target_acousticness": target_acousticness,
             "target_danceability": target_danceability,
@@ -86,11 +84,10 @@ class SpotifyAPI:
         }
         try:
             data = self.sp.recommendations(
+                limit=num_recs,
                 seed_artists=seed_artists,
                 seed_genres=seed_genres,
                 seed_tracks=seed_tracks, # only gives one track
-                limit=limit,
-                country=country,
                 **kwargs
             )
             resp = [
@@ -110,13 +107,12 @@ class SpotifyAPI:
             return {}
         
     def make_recommendations_from_seed_tracks(self, num_recs, seed_tracks):
-        limit = num_recs
         try:
             data = self.sp.recommendations(
                 seed_artists=[],
                 seed_genres=[],
                 seed_tracks=seed_tracks, # only gives one track
-                limit=limit,
+                limit=num_recs,
             )
             resp = [
                 {

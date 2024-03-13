@@ -88,32 +88,32 @@ def prompt_openai():
     seeds = json.loads(query_openai(prompt))
   
   # Replace artist and track names with their respective spotify IDs
-  if "seed_artists" in seeds:
+  if "seed_artists" in seeds and len(seeds["seed_artists"]) > 0:
     artist_ids = spotify_api.artist_search(artists=re.split(",|, ", seeds["seed_artists"]))
     seeds["seed_artists"] = artist_ids
   else:
     seeds["seed_artists"] = None
 
-  if "seed_tracks" in seeds:
+  if "seed_tracks" in seeds and len(seeds["seed_tracks"]) > 0:
     track_ids = spotify_api.track_search(tracks=re.split(",|, ", seeds["seed_tracks"]))
     seeds["seed_tracks"] = track_ids
   else:
     seeds["seed_tracks"] = None
 
-  if "seed_genres" in seeds:
+  if "seed_genres" in seeds and len(seeds["seed_genres"]) > 0:
     seeds["seed_genres"] = re.split(",|, ", seeds["seed_genres"])
   else:
     seeds["seed_genres"] = None
 
   recommendations = spotify_api.make_recommendations(num_recs, 
-                                                      seed_artists=seeds["seed_artists"],
-                                                      seed_genres=seeds["seed_genres"],
-                                                      seed_tracks=seeds["seed_tracks"],
-                                                      target_acousticness=seeds["target_acousticness"],
-                                                      target_danceability=seeds["target_danceability"],
-                                                      target_energy=seeds["target_energy"],
-                                                      target_instrumentalness=seeds["target_instrumentalness"],
-                                                      target_valence=seeds["target_valence"])
+                                                     seed_artists=seeds["seed_artists"],
+                                                     seed_genres=seeds["seed_genres"],
+                                                     seed_tracks=seeds["seed_tracks"],
+                                                     target_acousticness=seeds["target_acousticness"],
+                                                     target_danceability=seeds["target_danceability"],
+                                                     target_energy=seeds["target_energy"],
+                                                     target_instrumentalness=seeds["target_instrumentalness"],
+                                                     target_valence=seeds["target_valence"])
   
   return recommendations
   
