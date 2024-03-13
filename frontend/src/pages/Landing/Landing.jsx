@@ -16,7 +16,7 @@ const Landing = () => {
   };
 
   const handleTryItClick = () => {
-    navigate('/try-it');
+    navigate("/try-it");
   };
 
   return (
@@ -30,25 +30,23 @@ const Landing = () => {
                 <div className="text-surface font-bold text-4xl py-1">
                   playlist curator
                 </div>
-                <div className="text-surface font-bold text-4xl py-1">
-                  music analyst
-                </div>
-                <div className="text-surface font-bold text-4xl py-1">
-                  spotify librarian
-                </div>
               </div>
             </div>
             <div className="h-full flex flex-col flex-start justify-between">
               <div className="flex-grow"></div>
-              <div>
+              <div className="flex flex-col items-end justify-center">
                 <ButtonPrimary
                   text={authorized ? "Go To Curator" : "Login"}
                   onClick={onStart}
                   size={"xl"}
+                  width={250}
                 />
                 {!authorized && (
-                  <p className="text-sm underline cursor-pointer mt-2" onClick={handleTryItClick}>
-                  ...or try it without an account!
+                  <p
+                    className="text-sm underline cursor-pointer mt-2 mr-1"
+                    onClick={handleTryItClick}
+                  >
+                    ...or try it without an account!
                   </p>
                 )}
               </div>
