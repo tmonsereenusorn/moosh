@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 
-import { getRecommendationsFromPrompt, getRecommendationsFromExistingTracks } from "../../api/recommendation";
+import {
+  getRecommendationsFromPrompt,
+  getRecommendationsFromExistingTracks,
+} from "../../api/recommendation";
 import { generatePlaylist } from "../../api/generatePlaylist";
 import { AudioProvider } from "../../contexts/AudioProvider";
 
@@ -35,14 +38,16 @@ const Curator = () => {
   // Get recommendations, reset prompt.
   const onSubmit = async () => {
     setLoading(true);
-    
+
     const unselectedCount = Object.values(selectedTracks).filter(
       (isSelected) => !isSelected
     ).length;
 
     // If there are unselected tracks, fetch new recommendations directly from spotify using kept tracks
     if (unselectedCount > 0) {
-      const keptSongs = recs.filter(rec => selectedTracks[rec.id]).map(rec => rec.id);
+      const keptSongs = recs
+        .filter((rec) => selectedTracks[rec.id])
+        .map((rec) => rec.id);
       const blacklistedSongs = recs.map((track) => track.id);
       const newRecs = await getRecommendationsFromExistingTracks(
         keptSongs,
@@ -157,27 +162,36 @@ const Curator = () => {
             <ButtonPrimary text={"Do it again!"} onClick={() => onReset()} />
           </div>
         ) : (
-          <div className="w-3/4 pt-16 pb-24">
-            <AudioProvider>
-              {recs.map((recommendation) => {
-                return (
-                  <TrackCard
-                    key={recommendation.id}
-                    artist={recommendation.artist}
-                    title={recommendation.title}
-                    duration={recommendation.duration}
-                    preview={recommendation.preview}
-                    uri={recommendation.uri}
-                    url={recommendation.url}
-                    isSelected={selectedTracks[recommendation.id]}
-                    isNew={recommendation.isNew}
-                    onToggleSelection={() =>
-                      toggleTrackSelection(recommendation.id)
-                    }
-                  />
-                );
-              })}
-            </AudioProvider>
+          <div className="flex flex-col w-3/4 h-[100vh] pt-14 pb-24">
+            {recs.length > 0 && (
+              <div className="w-full items-center justify-center p-2">
+                <div className="text-2xl font-bold text-surface text-center">
+                  {prompt}
+                </div>
+              </div>
+            )}
+            <div className="flex-grow overflow-y-auto">
+              <AudioProvider>
+                {recs.map((recommendation) => {
+                  return (
+                    <TrackCard
+                      key={recommendation.id}
+                      artist={recommendation.artist}
+                      title={recommendation.title}
+                      duration={recommendation.duration}
+                      preview={recommendation.preview}
+                      uri={recommendation.uri}
+                      url={recommendation.url}
+                      isSelected={selectedTracks[recommendation.id]}
+                      isNew={recommendation.isNew}
+                      onToggleSelection={() =>
+                        toggleTrackSelection(recommendation.id)
+                      }
+                    />
+                  );
+                })}
+              </AudioProvider>
+            </div>
           </div>
         )}
         {recs.length && !exported > 0 && !loading ? (

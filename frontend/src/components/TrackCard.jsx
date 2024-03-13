@@ -28,10 +28,7 @@ const TrackCard = ({
         isNew ? "bg-primary bg-opacity-10" : ""
       }`}
     >
-      <div
-        className="flex justify-center items-center w-12"
-        onClick={() => console.log("Song checked: " + title)}
-      >
+      <div className="flex justify-center items-center w-12 z-0">
         <Checkbox
           colorScheme="dark_accent"
           isChecked={isSelected}
