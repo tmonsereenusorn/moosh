@@ -14,7 +14,6 @@ module.exports = {
         dark_accent: "#474056", // I haven't used this yet but
         surface: "#5B5B5B", // Most normal text, adjust with opacities
         spotify: "#1DB954",
-        newTrack: '#a1fcff', // Custom color for new tracks
       },
     },
   },

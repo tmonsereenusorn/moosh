@@ -12,6 +12,7 @@ import Analysis from "./pages/Analysis/Analysis";
 import Curator from "./pages/Curator/Curator";
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
+import TryItCurator from "./pages/Curator/TryItCurator";
 
 function App() {
   const [domLoading, setDomLoading] = useState(true);
@@ -70,6 +71,7 @@ function App() {
         />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
+        <Route path="try-it" element={<TryItCurator />} />
       </Routes>
     </>
   );

@@ -12,7 +12,7 @@ const TrackCard = ({
   url,
   isSelected,
   isNew,
-  onToggleSelection
+  onToggleSelection,
 }) => {
   const { setSong, stopSong, previewId } = useAudio();
 
@@ -23,7 +23,11 @@ const TrackCard = ({
   }, []);
 
   return (
-    <div className={`border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md ${isNew ? 'bg-newTrack' : ''}`}>
+    <div
+      className={`border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md ${
+        isNew ? "bg-primary bg-opacity-10" : ""
+      }`}
+    >
       <div
         className="flex justify-center items-center w-12"
         onClick={() => console.log("Song checked: " + title)}

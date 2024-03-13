@@ -21,6 +21,26 @@ def ping():
   """Ping for liveness tests."""
   return "all good"
 
+@app.route("/recommendations", methods=["POST"])
+@retry()
+def get_recommendations_with_seeds():
+  access_token = request.headers.get('Authorization')
+  if access_token:
+    access_token = access_token.replace('Bearer ', '')
+
+  body = request.json
+  seed_tracks = body.get('seedTracks', '')
+  num_recs = int(body.get('numRecs', 20))
+  blacklisted_songs = body.get('blacklistedSongs', [])
+
+  spotify_api = SpotifyAPI(access_token=access_token)
+
+  recommendations = spotify_api.make_recommendations_from_seed_tracks(len(blacklisted_songs) + num_recs, seed_tracks)
+  
+  filtered_recommendations = [rec for rec in recommendations if rec['id'] not in blacklisted_songs]
+
+  return filtered_recommendations[:num_recs]
+
 @app.route("/prompt", methods=["POST"])
 @retry()
 def prompt_openai():
@@ -38,7 +58,6 @@ def prompt_openai():
   body = request.json
   prompt = body.get('prompt', '')
   num_recs = int(body.get('num_recs', 20))
-  blacklisted_songs = set(body.get('blacklisted_songs', []))
 
   spotify_api = SpotifyAPI(access_token=access_token)
 
@@ -86,7 +105,7 @@ def prompt_openai():
   else:
     seeds["seed_genres"] = None
 
-  recommendations = spotify_api.make_recommendations(len(blacklisted_songs) + num_recs, 
+  recommendations = spotify_api.make_recommendations(num_recs, 
                                                       seed_artists=seeds["seed_artists"],
                                                       seed_genres=seeds["seed_genres"],
                                                       seed_tracks=seeds["seed_tracks"],
@@ -96,9 +115,7 @@ def prompt_openai():
                                                       target_instrumentalness=seeds["target_instrumentalness"],
                                                       target_valence=seeds["target_valence"])
   
-  filtered_recommendations = [rec for rec in recommendations if rec['id'] not in blacklisted_songs]
-
-  return filtered_recommendations[:num_recs]
+  return recommendations
   
 @app.route('/profile')
 def get_user_profile():

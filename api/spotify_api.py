@@ -108,6 +108,31 @@ class SpotifyAPI:
         except spotipy.SpotifyException as e:
             print(f"Exception: {e}")
             return {}
+        
+    def make_recommendations_from_seed_tracks(self, num_recs, seed_tracks):
+        limit = num_recs
+        try:
+            data = self.sp.recommendations(
+                seed_artists=[],
+                seed_genres=[],
+                seed_tracks=seed_tracks, # only gives one track
+                limit=limit,
+            )
+            resp = [
+                {
+                    "id": track.get("id"),
+                    "uri": track.get("uri"),
+                    "artist": track.get('artists')[0].get("name"),
+                    "title": track.get("name"),
+                    "url": track.get("external_urls").get("spotify"),
+                    "preview": track.get("preview_url"),
+                    "duration": track.get("duration_ms"),
+                } for track in data.get("tracks")
+            ]
+            return resp
+        except spotipy.SpotifyException as e:
+            print(f"Exception: {e}")
+            return {}
 
     
 

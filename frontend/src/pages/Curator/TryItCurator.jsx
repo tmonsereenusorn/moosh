@@ -1,35 +1,21 @@
 import React, { useState } from "react";
 
-import { getRecommendationsFromPrompt, getRecommendationsFromExistingTracks } from "../../api/recommendation";
-import { generatePlaylist } from "../../api/generatePlaylist";
+import { getRecommendationsFromExistingTracks, getRecommendationsFromPrompt } from "../../api/recommendation";
 import { AudioProvider } from "../../contexts/AudioProvider";
 
 import CuratorInput from "../../components/CuratorInput";
 import TrackCard from "../../components/TrackCard";
 import Loader from "../../components/Loader";
-import { FaCircleCheck } from "react-icons/fa6";
-import { useAuth } from "../../contexts/AuthProvider";
-import { ButtonPrimary } from "../../components/ButtonPrimary";
 import ChoiceLayer from "../../components/ChoiceLayer";
 
-const Curator = () => {
-  const { user } = useAuth();
-
+const TryItCurator = () => {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
-  const [exported, setExported] = useState(false); // For rendering a final view after sending playlist to Spotify.
   const [recs, setRecs] = useState([]);
-  const [url, setUrl] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
-  };
-
-  const onChangeTitle = (event) => {
-    setTitle(event.target.value);
   };
 
   // Get recommendations, reset prompt.
@@ -47,7 +33,8 @@ const Curator = () => {
       const newRecs = await getRecommendationsFromExistingTracks(
         keptSongs,
         unselectedCount,
-        blacklistedSongs
+        blacklistedSongs,
+        false
       );
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
@@ -83,7 +70,7 @@ const Curator = () => {
       setSelectedTracks(updatedSelections);
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const newRecs = await getRecommendationsFromPrompt(prompt, 20);
+      const newRecs = await getRecommendationsFromPrompt(prompt, 20, false);
 
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
@@ -101,7 +88,6 @@ const Curator = () => {
       setSelectedTracks(initialSelections);
     }
 
-    setDescription(prompt);
     setLoading(false);
   };
 
@@ -112,30 +98,12 @@ const Curator = () => {
     }));
   };
 
-  // Generate the playlist to Spotify, change view to signal playlist creation.
-  const onGenerate = async () => {
-    setLoading(true);
-    const url = await generatePlaylist({
-      name: title,
-      userId: user.id,
-      songs: recs,
-      description: description,
-    });
-    setUrl(url);
-    setPrompt("");
-    setLoading(false);
-    setExported(true);
-  };
-
   // Clear states and return to prompting view.
   const onReset = async () => {
     setRecs([]);
     setSelectedTracks({});
-    setTitle("");
-    setDescription("");
     setPrompt("");
     setLoading(false);
-    setExported(false);
   };
 
   return (
@@ -143,19 +111,6 @@ const Curator = () => {
       <div className="flex w-2/3 items-center justify-center">
         {loading ? (
           <Loader />
-        ) : exported ? (
-          <div className="flex flex-col items-center justify-center space-y-2">
-            <FaCircleCheck className="text-secondary text-6xl" />
-
-            <p className="font-bold text-xl text-surface">Listen to</p>
-            <p
-              className="font-bold text-2xl text-black hover:cursor-pointer hover:underline"
-              onClick={() => window.open(url, "_blank")}
-            >
-              {title}
-            </p>
-            <ButtonPrimary text={"Do it again!"} onClick={() => onReset()} />
-          </div>
         ) : (
           <div className="w-3/4 pt-16 pb-24">
             <AudioProvider>
@@ -180,31 +135,28 @@ const Curator = () => {
             </AudioProvider>
           </div>
         )}
-        {recs.length && !exported > 0 && !loading ? (
+        {recs.length && !loading ? (
           <div
             className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
           >
             <ChoiceLayer
-              onGenerate={onGenerate}
               onRegenerate={onSubmit}
               onCancel={onReset}
-              onChangeTitle={onChangeTitle}
-              disabled={title.length === 0}
             />
           </div>
-        ) : !exported && !loading ? (
-          <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
-            <CuratorInput
-              onSubmit={onSubmit}
-              value={prompt}
-              onChangeText={(event) => onChangePrompt(event)}
-              disabled={prompt.length === 0}
-            />
-          </div>
+        ) : !loading ? (
+            <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
+              <CuratorInput
+                onSubmit={onSubmit}
+                value={prompt}
+                onChangeText={(event) => onChangePrompt(event)}
+                disabled={prompt.length === 0}
+              />
+            </div>
         ) : null}
       </div>
     </div>
   );
 };
 
-export default Curator;
+export default TryItCurator;
