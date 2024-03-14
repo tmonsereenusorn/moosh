@@ -27,7 +27,6 @@ const Curator = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
-  const [historyOpen, setHistoryOpen] = useState(true);
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -145,6 +144,11 @@ const Curator = () => {
     setExported(false);
   };
 
+  const toggleDrawer = () => {
+    const drawer = document.getElementById("drawer");
+    drawer?.classList.toggle("-translate-x-full");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex w-2/3 items-center justify-center">
@@ -211,9 +215,9 @@ const Curator = () => {
         ) : !exported && !loading ? (
           <>
             <div className="absolute left-2 top-1/2">
-             <FaChevronRight className="text-surface scale-150 hover:cursor-pointer" onClick={() => setHistoryOpen(true)} />
+             <FaChevronRight className="text-surface scale-150 hover:cursor-pointer" onClick={toggleDrawer} />
             </div>
-            {historyOpen && <HistoryDrawer onClose={() => setHistoryOpen(false)} />}
+            <HistoryDrawer onClose={toggleDrawer} />
             <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
               <CuratorInput
                 onSubmit={onSubmit}
