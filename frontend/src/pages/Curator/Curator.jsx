@@ -10,10 +10,11 @@ import { AudioProvider } from "../../contexts/AudioProvider";
 import CuratorInput from "../../components/CuratorInput";
 import TrackCard from "../../components/TrackCard";
 import Loader from "../../components/Loader";
-import { FaCircleCheck } from "react-icons/fa6";
+import { FaCircleCheck, FaChevronRight } from "react-icons/fa6";
 import { useAuth } from "../../contexts/AuthProvider";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
 import ChoiceLayer from "../../components/ChoiceLayer";
+import HistoryDrawer from "../../components/History/HistoryDrawer";
 
 const Curator = () => {
   const { user } = useAuth();
@@ -26,6 +27,7 @@ const Curator = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
+  const [historyOpen, setHistoryOpen] = useState(true);
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -207,14 +209,20 @@ const Curator = () => {
             />
           </div>
         ) : !exported && !loading ? (
-          <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
-            <CuratorInput
-              onSubmit={onSubmit}
-              value={prompt}
-              onChangeText={(event) => onChangePrompt(event)}
-              disabled={prompt.length === 0}
-            />
-          </div>
+          <>
+            <div className="absolute left-2 top-1/2">
+             <FaChevronRight className="text-surface scale-150 hover:cursor-pointer" onClick={() => setHistoryOpen(true)} />
+            </div>
+            {historyOpen && <HistoryDrawer onClose={() => setHistoryOpen(false)} />}
+            <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
+              <CuratorInput
+                onSubmit={onSubmit}
+                value={prompt}
+                onChangeText={(event) => onChangePrompt(event)}
+                disabled={prompt.length === 0}
+              />
+            </div>
+          </>
         ) : null}
       </div>
     </div>
