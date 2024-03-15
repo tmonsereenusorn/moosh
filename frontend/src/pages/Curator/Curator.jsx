@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   getRecommendationsFromPrompt,
   getRecommendationsFromExistingTracks,
 } from "../../api/recommendation";
-import { generatePlaylist } from "../../api/generatePlaylist";
+import { exportPlaylist } from "../../api/exportPlaylist";
 import { AudioProvider } from "../../contexts/AudioProvider";
 
 import CuratorInput from "../../components/CuratorInput";
@@ -19,6 +19,7 @@ import {
   addExportedPlaylist,
   addPrompt,
   deletePrompt,
+  getPromptsForUser,
   updatePromptSongs,
 } from "../../api/history";
 
@@ -34,12 +35,32 @@ const Curator = () => {
   const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
 
+  // For firestore function calls.
+  const [playlistIdState, setPlaylistIdState] = useState("");
+  const [promptIdState, setPromptIdState] = useState("");
+  const [historyData, setHistoryData] = useState([]);
+
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
   };
 
   const onChangeTitle = (event) => {
     setTitle(event.target.value);
+  };
+
+  const sleep = async (ms) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  useEffect(() => {
+    sleep(200);
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const data = await getPromptsForUser();
+    console.log("DATA: " + data);
+    setHistoryData(data);
   };
 
   // Get recommendations, reset prompt.
@@ -91,6 +112,11 @@ const Curator = () => {
         updatedSelections[track.id] = true;
       });
 
+      // Update prompt's songs in firestore.
+      await deletePrompt(promptIdState);
+      const promptId = await addPrompt(prompt);
+      const songsId = await updatePromptSongs(promptId, updatedSelections);
+
       // Apply the updated selection status.
       setSelectedTracks(updatedSelections);
     } else {
@@ -103,6 +129,9 @@ const Curator = () => {
         displayOrder: index,
       }));
 
+      const promptId = await addPrompt(prompt);
+      const songsId = await updatePromptSongs(promptId, updatedNewRecs);
+      setPromptIdState(promptId);
       setRecs(updatedNewRecs);
 
       const initialSelections = updatedNewRecs.reduce((acc, track) => {
@@ -113,6 +142,7 @@ const Curator = () => {
       setSelectedTracks(initialSelections);
     }
 
+    // Firestore updates.
     setDescription(prompt);
     setLoading(false);
   };
@@ -125,15 +155,19 @@ const Curator = () => {
   };
 
   // Generate the playlist to Spotify, change view to signal playlist creation.
-  const onGenerate = async () => {
+  const onExport = async () => {
     setLoading(true);
-    const url = await generatePlaylist({
+    const data = await exportPlaylist({
       name: title,
       userId: user.id,
       songs: recs,
       description: description,
     });
-    setUrl(url);
+    setPlaylistIdState(data.id);
+    // Firestore update.
+    await addExportedPlaylist(playlistIdState, promptIdState);
+
+    setUrl(data.url);
     setPrompt("");
     setLoading(false);
     setExported(true);
@@ -397,6 +431,9 @@ const Curator = () => {
 
     const dummy_id = "DUMMY ID";
     const playlist_id = addExportedPlaylist(dummy_id, prompt_id);
+
+    const prompts = getPromptsForUser();
+    console.log(prompts);
   };
 
   return (
@@ -461,7 +498,7 @@ const Curator = () => {
             className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
           >
             <ChoiceLayer
-              onGenerate={onGenerate}
+              onGenerate={onExport}
               onRegenerate={onSubmit}
               onCancel={onReset}
               onChangeTitle={onChangeTitle}
@@ -476,7 +513,7 @@ const Curator = () => {
                 onClick={toggleDrawer}
               />
             </div>
-            <HistoryDrawer onClose={toggleDrawer} />
+            <HistoryDrawer onClose={toggleDrawer} historyData={historyData} />
             <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
               <CuratorInput
                 onSubmit={onSubmit}

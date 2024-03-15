@@ -118,6 +118,9 @@ export const addExportedPlaylist = async (playlist_id = "", prompt_id = "") => {
 
   try {
     // Add the playlist id to the user's playlist collection.
+    console.log(
+      "CALLED, playlist_id: " + playlist_id + "prompt_id: " + prompt_id
+    );
     const playlistRef = doc(
       db,
       "users",
@@ -140,10 +143,30 @@ export const addExportedPlaylist = async (playlist_id = "", prompt_id = "") => {
 };
 
 /***** GETTERS *****/
-
 // Fetch all playlists in Moosh library from a user's Spotify.
-export const updateHistory = () => {};
-export const getPromptsForUser = (user_id) => {};
+export const updateHistory = async () => {};
+
+export const getPromptsForUser = async () => {
+  const uid = firebaseAuth.currentUser?.uid;
+  console.log("CALLEEDDDDD");
+  console.log("UID: " + uid);
+  try {
+    const promptsRef = collection(db, "users", uid, "prompts");
+    console.log("promptsref: " + promptsRef);
+
+    const promptsSnapshot = await getDocs(promptsRef);
+    var res = [];
+    promptsSnapshot.forEach((doc) => {
+      console.log("ITEM: " + JSON.stringify(doc.data()));
+      res.push(doc.data());
+    });
+    console.log("DATA IN HISTORY: " + JSON.stringify(res));
+    return res;
+  } catch (error) {
+    console.error("Failed to get prompts: " + error);
+  }
+};
+
 export const getPlaylistsForUser = (user_id) => {};
 
 // Spotify
