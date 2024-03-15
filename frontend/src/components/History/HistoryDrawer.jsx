@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { FaChevronLeft } from "react-icons/fa";
 import HistoryItem from "./HistoryItem";
-import { getPromptsForUser } from "../../api/history";
+import {
+  getPlaylistsForUser,
+  getPromptsForUser,
+  getSongsForPrompt,
+} from "../../api/history";
 
-const libraryData = [
-  {
-    prompt: "this is an example prompt lololololololol.",
-    playlistRef: "",
-  },
-];
-
-const HistoryDrawer = ({ onClose, historyData }) => {
+const HistoryDrawer = ({ onClose, visible, onClickCallback }) => {
   const [tab, setTab] = useState(0);
+  const [historyData, setHistoryData] = useState([]);
+  const [playlistData, setPlaylistData] = useState([]);
 
   const toggleTab = () => {
     const historyDoc = document.getElementById("history-bar");
@@ -21,6 +20,23 @@ const HistoryDrawer = ({ onClose, historyData }) => {
     historyDoc.classList.toggle("bg-secondary");
     libraryDoc.classList.toggle("bg-secondary/[0.3]");
     libraryDoc.classList.toggle("bg-secondary");
+  };
+
+  const onClick = async (promptId) => {
+    const songs = await getSongsForPrompt(promptId);
+    onClickCallback(songs);
+  };
+
+  // Refetches data every time visible state is changed.
+  useEffect(() => {
+    fetchData();
+  }, [visible, tab]);
+
+  const fetchData = async () => {
+    const histData = await getPromptsForUser();
+    setHistoryData(histData);
+    const playData = await getPlaylistsForUser();
+    setPlaylistData(playData);
   };
 
   return (
@@ -49,7 +65,7 @@ const HistoryDrawer = ({ onClose, historyData }) => {
           className="font-bold text-surface text-xl hover:cursor-pointer space-y-1 w-1/3 text-center"
           onClick={toggleTab}
         >
-          <p>Library</p>
+          <p>Playlists</p>
           <div
             id="library-bar"
             className="w-full rounded-md h-1 bg-secondary/[0.3]"
@@ -59,10 +75,22 @@ const HistoryDrawer = ({ onClose, historyData }) => {
       <div className="overflow-y-auto w-full">
         {tab === 0
           ? historyData?.map((item) => {
-              return <HistoryItem prompt={item.prompt} />;
+              return (
+                <HistoryItem
+                  text={item.data.prompt}
+                  promptId={item.id}
+                  onClick={() => onClick(item.id)}
+                />
+              );
             })
-          : libraryData?.map((item) => {
-              return <HistoryItem prompt={item.prompt} />;
+          : playlistData?.map((item) => {
+              return (
+                <HistoryItem
+                  text={item.title}
+                  promptId={item.id}
+                  playlistId={""}
+                />
+              );
             })}
       </div>
     </div>

@@ -20,6 +20,7 @@ import {
 // prompt doc id.
 export const addPrompt = async (prompt = "") => {
   const uid = firebaseAuth.currentUser?.uid;
+
   try {
     const promptObj = {
       prompt: prompt,
@@ -113,14 +114,15 @@ export const deletePrompt = async (prompt_id = "") => {
 // Takes playlist id, prompt id. Add an exported playlist a users playlist
 // collection and add a reference to the playlist to the corresponding prompt.
 // Returns playlist id.
-export const addExportedPlaylist = async (playlist_id = "", prompt_id = "") => {
+export const addExportedPlaylist = async (
+  playlist_id = "",
+  prompt_id = "",
+  title = ""
+) => {
   const uid = firebaseAuth.currentUser?.uid;
 
   try {
     // Add the playlist id to the user's playlist collection.
-    console.log(
-      "CALLED, playlist_id: " + playlist_id + "prompt_id: " + prompt_id
-    );
     const playlistRef = doc(
       db,
       "users",
@@ -129,7 +131,7 @@ export const addExportedPlaylist = async (playlist_id = "", prompt_id = "") => {
       playlist_id.toString()
     );
     const playlistObj = {
-      title: "TITLE",
+      title: title,
       timestamp: new Date().toISOString(),
     };
     await setDoc(playlistRef, playlistObj);
@@ -148,26 +150,64 @@ export const updateHistory = async () => {};
 
 export const getPromptsForUser = async () => {
   const uid = firebaseAuth.currentUser?.uid;
-  console.log("CALLEEDDDDD");
-  console.log("UID: " + uid);
   try {
     const promptsRef = collection(db, "users", uid, "prompts");
-    console.log("promptsref: " + promptsRef);
 
     const promptsSnapshot = await getDocs(promptsRef);
     var res = [];
     promptsSnapshot.forEach((doc) => {
-      console.log("ITEM: " + JSON.stringify(doc.data()));
-      res.push(doc.data());
+      const data = doc.data();
+      res.push({ id: doc.id, data });
     });
-    console.log("DATA IN HISTORY: " + JSON.stringify(res));
     return res;
   } catch (error) {
     console.error("Failed to get prompts: " + error);
   }
 };
 
-export const getPlaylistsForUser = (user_id) => {};
+export const getSongsForPrompt = async (prompt_id = "") => {
+  const uid = firebaseAuth.currentUser?.uid;
+
+  try {
+    const songsRef = collection(
+      db,
+      "users",
+      uid,
+      "prompts",
+      prompt_id,
+      "songs"
+    );
+
+    const songsSnapshot = await getDocs(songsRef);
+    var res = [];
+    songsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      res.push(data);
+    });
+    return res;
+  } catch (error) {
+    console.error("Failed to fetch songs for prompt: " + error);
+  }
+};
+
+// Incomplete.
+export const getPlaylistsForUser = async (user_id) => {
+  const uid = firebaseAuth.currentUser?.uid;
+
+  try {
+    const playlistsRef = collection(db, "users", uid, "playlists");
+
+    const playlistsSnapshot = await getDocs(playlistsRef);
+    var res = [];
+    playlistsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      res.push(data);
+    });
+    return res;
+  } catch (error) {
+    console.error("Failed to get prompts: " + error);
+  }
+};
 
 // Spotify
 export const deletePlaylist = (playlist_id) => {};
