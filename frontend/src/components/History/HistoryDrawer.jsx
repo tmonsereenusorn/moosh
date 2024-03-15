@@ -1,26 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaChevronLeft } from "react-icons/fa";
 import HistoryItem from "./HistoryItem";
+import {
+  getPlaylistsForUser,
+  getPromptsForUser,
+  getSongsForPrompt,
+} from "../../api/history";
 
-const historyData = [
-  {
-    prompt: "this is an example prompt lololololololol yadyaydayda.",
-    playlistRef: ""
-  },
-  {
-    prompt: "this is an example prompt lololololololol yadyaydayda."
-  }
-];
-
-const libraryData = [
-  {
-    prompt: "this is an example prompt lololololololol.",
-    playlistRef: ""
-  }
-];
-
-const HistoryDrawer = ({ onClose }) => {
+const HistoryDrawer = ({ onClose, visible, onClickCallback }) => {
   const [tab, setTab] = useState(0);
+  const [historyData, setHistoryData] = useState([]);
+  const [playlistData, setPlaylistData] = useState([]);
 
   const toggleTab = () => {
     const historyDoc = document.getElementById("history-bar");
@@ -32,10 +22,33 @@ const HistoryDrawer = ({ onClose }) => {
     libraryDoc.classList.toggle("bg-secondary");
   };
 
+  const onClick = async (promptId) => {
+    const songs = await getSongsForPrompt(promptId);
+    onClickCallback(songs);
+  };
+
+  // Refetches data every time visible state is changed.
+  useEffect(() => {
+    fetchData();
+  }, [visible, tab]);
+
+  const fetchData = async () => {
+    const histData = await getPromptsForUser();
+    setHistoryData(histData);
+    const playData = await getPlaylistsForUser();
+    setPlaylistData(playData);
+  };
+
   return (
-    <div id="drawer" className="absolute left-0 top-0 h-screen w-1/5 bg-gray-100 border-r border-surface/[0.3] z-30 p-4 transition-transform -translate-x-full">
+    <div
+      id="drawer"
+      className="absolute left-0 top-0 h-screen w-1/5 bg-gray-100 border-r border-surface/[0.3] z-30 p-4 transition-transform -translate-x-full"
+    >
       <div className="h-4 mb-4 flex justify-end items-center w-full">
-        <FaChevronLeft className="text-surface/[.7] hover:cursor-pointer" onClick={onClose} />
+        <FaChevronLeft
+          className="text-surface/[.7] hover:cursor-pointer"
+          onClick={onClose}
+        />
       </div>
       <div className="w-full flex space-x-12 justify-center items-center mb-4">
         <div
@@ -43,26 +56,42 @@ const HistoryDrawer = ({ onClose }) => {
           onClick={toggleTab}
         >
           <p>History</p>
-          <div id="history-bar" className="w-full rounded-md h-1 bg-secondary" />
+          <div
+            id="history-bar"
+            className="w-full rounded-md h-1 bg-secondary"
+          />
         </div>
         <div
           className="font-bold text-surface text-xl hover:cursor-pointer space-y-1 w-1/3 text-center"
           onClick={toggleTab}
         >
-          <p>Library</p>
-          <div id="library-bar" className="w-full rounded-md h-1 bg-secondary/[0.3]" />
+          <p>Playlists</p>
+          <div
+            id="library-bar"
+            className="w-full rounded-md h-1 bg-secondary/[0.3]"
+          />
         </div>
       </div>
       <div className="overflow-y-auto w-full">
-        {tab === 0 ? (
-          historyData.map(item => {
-            return <HistoryItem prompt={item.prompt} />;
-          })
-        ) : (
-          libraryData.map(item => {
-            return <HistoryItem prompt={item.prompt} />;
-          })
-        )}
+        {tab === 0
+          ? historyData?.map((item) => {
+              return (
+                <HistoryItem
+                  text={item.data.prompt}
+                  promptId={item.id}
+                  onClick={() => onClick(item.id)}
+                />
+              );
+            })
+          : playlistData?.map((item) => {
+              return (
+                <HistoryItem
+                  text={item.title}
+                  promptId={item.id}
+                  playlistId={""}
+                />
+              );
+            })}
       </div>
     </div>
   );

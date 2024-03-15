@@ -4,12 +4,7 @@ import { authenticate } from "./auth";
 import { SPOTIFY_V1_URL } from "../constants";
 
 // Generate playlist by creating empty playlist then populating with recs.
-export const generatePlaylist = async ({
-  name,
-  userId,
-  songs,
-  description,
-}) => {
+export const exportPlaylist = async ({ name, userId, songs, description }) => {
   await authenticate();
 
   const token = Cookies.get("token");
@@ -30,16 +25,13 @@ export const generatePlaylist = async ({
       description: description,
     });
 
-    // Get url from response object to return to frontend.
-    const url = data.external_urls.spotify;
-
     // Returns snapshot of playlist after update. May be useful later for history.
     const snapshot = await populatePlaylist({
       playlistId: `${data.id}`,
       uris: uris,
       token: token,
     });
-    return url;
+    return data;
   } catch (err) {
     console.error(err);
   }
