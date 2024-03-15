@@ -10,6 +10,8 @@ import {
   getDoc,
   doc,
   writeBatch,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 /***** SETTERS *****/
@@ -72,8 +74,70 @@ export const updatePromptSongs = async (prompt_id = "", songs = []) => {
     console.error("Error adding songs to prompt collection: ", error);
   }
 };
-export const deletePrompt = (prompt_id) => {};
-export const addExportedPlaylist = (playlist_id) => {};
+
+// Takes a prompt id. Deletes prompt and all of its songs from database. Call
+// then recreate on regeneration.
+export const deletePrompt = async (prompt_id = "") => {
+  const uid = firebaseAuth.currentUser?.uid;
+
+  try {
+    const songsRef = collection(
+      db,
+      "users",
+      uid,
+      "prompts",
+      prompt_id.toString(),
+      "songs"
+    );
+
+    // Batch delete songs and prompt itself.
+    const songsSnapshot = await getDocs(songsRef);
+    const batch = writeBatch(db);
+    songsSnapshot.forEach((doc) => {
+      batch.delete(doc.id);
+    });
+    const promptRef = await doc(
+      db,
+      "users",
+      uid,
+      "prompts",
+      prompt_id.toString()
+    );
+    batch.delete(promptRef);
+    batch.commit();
+  } catch (error) {
+    console.error("Failed to delete prompt: " + error);
+  }
+};
+
+// Takes playlist id, prompt id. Add an exported playlist a users playlist
+// collection and add a reference to the playlist to the corresponding prompt.
+// Returns playlist id.
+export const addExportedPlaylist = async (playlist_id = "", prompt_id = "") => {
+  const uid = firebaseAuth.currentUser?.uid;
+
+  try {
+    // Add the playlist id to the user's playlist collection.
+    const playlistRef = doc(
+      db,
+      "users",
+      uid,
+      "playlists",
+      playlist_id.toString()
+    );
+    const playlistObj = {
+      title: "TITLE",
+      timestamp: new Date().toISOString(),
+    };
+    await setDoc(playlistRef, playlistObj);
+    // Update the playlist id as a member of the corresponding prompt.
+    const promptRef = doc(db, "users", uid, "prompts", prompt_id.toString());
+    await updateDoc(promptRef, { playlist: `${playlist_id.toString()}` });
+    return playlist_id;
+  } catch (error) {
+    console.error("Failed to add exported playlist: " + error);
+  }
+};
 
 /***** GETTERS *****/
 

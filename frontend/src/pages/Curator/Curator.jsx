@@ -15,7 +15,12 @@ import { useAuth } from "../../contexts/AuthProvider";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
 import ChoiceLayer from "../../components/ChoiceLayer";
 import HistoryDrawer from "../../components/History/HistoryDrawer";
-import { addPrompt, updatePromptSongs } from "../../api/history";
+import {
+  addExportedPlaylist,
+  addPrompt,
+  deletePrompt,
+  updatePromptSongs,
+} from "../../api/history";
 
 const Curator = () => {
   const { user } = useAuth();
@@ -382,9 +387,16 @@ const Curator = () => {
       },
     ];
     const prompt = "testing prompt";
-    const prompt_id = await addPrompt("testing prompt");
+    var prompt_id = await addPrompt("THIS PROMPT STAYS");
     console.log("'" + prompt + "'" + " added: " + prompt_id);
     const songs_id = await updatePromptSongs(prompt_id, testSongs);
+
+    console.log("deleting in Curator");
+    var delete_id = await addPrompt("THIS PROMPT IS DELETED");
+    await deletePrompt(delete_id);
+
+    const dummy_id = "DUMMY ID";
+    const playlist_id = addExportedPlaylist(dummy_id, prompt_id);
   };
 
   return (
