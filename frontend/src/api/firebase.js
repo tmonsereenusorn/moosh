@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, where, collection, getDocs, query, addDoc } from "firebase/firestore";
+import { getFirestore, setDoc, getDoc, doc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -28,6 +28,15 @@ export const firebaseLogin = async (email, password) => {
 export const firebaseSignup = async (email, password) => {
   try {
     const cred = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+    const userObject = {
+      email: cred.user.email,
+      spotifyUri: null,
+      createdAt: new Date().toISOString()
+    }
+
+    const userRef = doc(db, "users", cred.user.uid);
+    await setDoc(userRef, userObject);
+
     return cred.user;
   } catch (e) {
     console.error(e);
@@ -45,24 +54,37 @@ export const firebaseSignout = async () => {
 
 export const updateSpotifyURI = async (uri) => {
   try {
-    const uidSnapshot = await getDocs(query(collection(db, "users"), where("uid", "==", firebaseAuth.currentUser.uid)));
-    const uriSnapshot = await getDocs(query(collection(db, "users"), where("spotifyUri", "==", uri)));
-    const uidDocs = uidSnapshot.docs;
-    const uriDocs = uriSnapshot.docs;
-    
-    if (uidDocs.length === 0 && uriDocs.length === 0) {
-      await addDoc(collection(db, "users"), {
-        spotifyUri: uri,
-        uid: firebaseAuth.currentUser?.uid
-      });
-      return 0;
-    } else if (uidDocs[0]?.id === uriDocs[0]?.id) {
+    const userRef = doc(db, "users", firebaseAuth.currentUser.uid);
+    const userSnapshot = await getDoc(userRef);
+
+    if (userSnapshot.exists()) {
+      // If the user document exists, update the spotifyUri field
+      await setDoc(userRef, { spotifyUri: uri }, { merge: true });
       return 0;
     } else {
-      console.error("moosh account already linked to Spotify user.");
+      console.error("User document does not exist.");
       return -1;
     }
   } catch (e) {
     console.error(e);
+  }
+};
+
+export const fetchUserData = async () => {
+  const uid = firebaseAuth.currentUser.uid;
+
+  try {
+    const userRef = doc(db, 'users', uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      return userSnap.data();
+    } else {
+      console.log('No user data for uid: ', uid);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    return null;
   }
 };
