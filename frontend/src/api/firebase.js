@@ -13,7 +13,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const firebaseAuth = getAuth(app);
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
 export const firebaseLogin = async (email, password) => {
   try {
@@ -92,7 +92,7 @@ export const fetchUserData = async () => {
       return null;
     }
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error fetching user data: ", error);
     return null;
   }
 };

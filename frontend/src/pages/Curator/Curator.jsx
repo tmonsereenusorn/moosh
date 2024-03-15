@@ -15,6 +15,7 @@ import { useAuth } from "../../contexts/AuthProvider";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
 import ChoiceLayer from "../../components/ChoiceLayer";
 import HistoryDrawer from "../../components/History/HistoryDrawer";
+import { addPrompt, updatePromptSongs } from "../../api/history";
 
 const Curator = () => {
   const { user } = useAuth();
@@ -149,9 +150,252 @@ const Curator = () => {
     drawer?.classList.toggle("-translate-x-full");
   };
 
+  const testHistory = async () => {
+    const testSongs = [
+      {
+        artist: "George Benson",
+        duration: "5m 41s",
+        id: "1m3BAsNsQAaSNMD2M6vlKY",
+        preview:
+          "https://p.scdn.co/mp3-preview/9fdd27aa36c177a509f99abedbb941aadaa915f0?cid=aec032c67a054b5195e97348dea395e5",
+        title: "Breezin'",
+        uri: "spotify:track:1m3BAsNsQAaSNMD2M6vlKY",
+        url: "https://open.spotify.com/track/1m3BAsNsQAaSNMD2M6vlKY",
+        isNew: false,
+        displayOrder: 0,
+      },
+      {
+        artist: "Global Communication",
+        duration: "5m 23s",
+        id: "2RV7JBwjOaixnJwsSAUYEG",
+        preview: null,
+        title: "5 23",
+        uri: "spotify:track:2RV7JBwjOaixnJwsSAUYEG",
+        url: "https://open.spotify.com/track/2RV7JBwjOaixnJwsSAUYEG",
+        isNew: false,
+        displayOrder: 1,
+      },
+      {
+        artist: "Spyro Gyra",
+        duration: "4m 51s",
+        id: "7DaMc5geC3tDco5ejhXqw3",
+        preview: null,
+        title: "Shaker Song",
+        uri: "spotify:track:7DaMc5geC3tDco5ejhXqw3",
+        url: "https://open.spotify.com/track/7DaMc5geC3tDco5ejhXqw3",
+        isNew: false,
+        displayOrder: 2,
+      },
+      {
+        artist: "Frank Ocean",
+        duration: "2m 13s",
+        id: "4S4Mfvv03M1cHgIOJcbUCL",
+        preview:
+          "https://p.scdn.co/mp3-preview/a23f4faaefc0b1105bd70e3e46189bcf930dcd42?cid=aec032c67a054b5195e97348dea395e5",
+        title: "In My Room",
+        uri: "spotify:track:4S4Mfvv03M1cHgIOJcbUCL",
+        url: "https://open.spotify.com/track/4S4Mfvv03M1cHgIOJcbUCL",
+        isNew: false,
+        displayOrder: 3,
+      },
+      {
+        artist: "Air",
+        duration: "7m 6s",
+        id: "3ZzhV6JIDKWvWR7wiKWD0C",
+        preview:
+          "https://p.scdn.co/mp3-preview/037b566893a28d0855e119ae60134ee59d22e0ea?cid=aec032c67a054b5195e97348dea395e5",
+        title: "La femme d'argent",
+        uri: "spotify:track:3ZzhV6JIDKWvWR7wiKWD0C",
+        url: "https://open.spotify.com/track/3ZzhV6JIDKWvWR7wiKWD0C",
+        isNew: false,
+        displayOrder: 4,
+      },
+      {
+        artist: "The Bad Plus",
+        duration: "4m 4s",
+        id: "73dk1Hmi0bDX9IMYISFuac",
+        preview:
+          "https://p.scdn.co/mp3-preview/a59a0583acd8aa3527d48cb02621ded9086bccd6?cid=aec032c67a054b5195e97348dea395e5",
+        title: "Flim",
+        uri: "spotify:track:73dk1Hmi0bDX9IMYISFuac",
+        url: "https://open.spotify.com/track/73dk1Hmi0bDX9IMYISFuac",
+        isNew: false,
+        displayOrder: 5,
+      },
+      {
+        artist: "Aphex Twin",
+        duration: "2m 57s",
+        id: "4YvnrZMF1VmTAZIJlBhvCg",
+        preview: null,
+        title: "Flim",
+        uri: "spotify:track:4YvnrZMF1VmTAZIJlBhvCg",
+        url: "https://open.spotify.com/track/4YvnrZMF1VmTAZIJlBhvCg",
+        isNew: false,
+        displayOrder: 6,
+      },
+      {
+        artist: "Global Communication",
+        duration: "8m 7s",
+        id: "4XTkUcapS6M4jok4ExAj8C",
+        preview: null,
+        title: "8:07",
+        uri: "spotify:track:4XTkUcapS6M4jok4ExAj8C",
+        url: "https://open.spotify.com/track/4XTkUcapS6M4jok4ExAj8C",
+        isNew: false,
+        displayOrder: 7,
+      },
+      {
+        artist: "Herbie Hancock",
+        duration: "15m 41s",
+        id: "4Ce66JznW8QbeyTdSzdGwR",
+        preview:
+          "https://p.scdn.co/mp3-preview/b377de79d3feccc6b10115659358cec4f0a70375?cid=aec032c67a054b5195e97348dea395e5",
+        title: "Chameleon",
+        uri: "spotify:track:4Ce66JznW8QbeyTdSzdGwR",
+        url: "https://open.spotify.com/track/4Ce66JznW8QbeyTdSzdGwR",
+        isNew: false,
+        displayOrder: 8,
+      },
+      {
+        artist: "Charles Earland",
+        duration: "11m 13s",
+        id: "0hY1lriPizkVAlt4XXx1pG",
+        preview: null,
+        title: "More Today Than Yesterday - Instrumental",
+        uri: "spotify:track:0hY1lriPizkVAlt4XXx1pG",
+        url: "https://open.spotify.com/track/0hY1lriPizkVAlt4XXx1pG",
+        isNew: false,
+        displayOrder: 9,
+      },
+      {
+        artist: "Current Joys",
+        duration: "3m 14s",
+        id: "7sIx70dGj3VBiHWr0KZXfD",
+        preview:
+          "https://p.scdn.co/mp3-preview/a40c1254500ab382d313fae73aa441b8826fec72?cid=aec032c67a054b5195e97348dea395e5",
+        title: "Blondie",
+        uri: "spotify:track:7sIx70dGj3VBiHWr0KZXfD",
+        url: "https://open.spotify.com/track/7sIx70dGj3VBiHWr0KZXfD",
+        isNew: false,
+        displayOrder: 10,
+      },
+      {
+        artist: "Bonobo",
+        duration: "3m 57s",
+        id: "7Cg3F9ZsZ2TYUnlza49NYh",
+        preview:
+          "https://p.scdn.co/mp3-preview/5d4ca824dabf031ca06a259fae5468f1433a8220?cid=aec032c67a054b5195e97348dea395e5",
+        title: "Kong",
+        uri: "spotify:track:7Cg3F9ZsZ2TYUnlza49NYh",
+        url: "https://open.spotify.com/track/7Cg3F9ZsZ2TYUnlza49NYh",
+        isNew: false,
+        displayOrder: 11,
+      },
+      {
+        artist: "Burial",
+        duration: "4m 2s",
+        id: "63FmCXIc4lmEq9fNqGkQ57",
+        preview: null,
+        title: "Archangel",
+        uri: "spotify:track:63FmCXIc4lmEq9fNqGkQ57",
+        url: "https://open.spotify.com/track/63FmCXIc4lmEq9fNqGkQ57",
+        isNew: false,
+        displayOrder: 12,
+      },
+      {
+        artist: "Bill Evans",
+        duration: "3m 53s",
+        id: "1I9w37PCOuGG1ppYc2TmFS",
+        preview: null,
+        title: "I Love You",
+        uri: "spotify:track:1I9w37PCOuGG1ppYc2TmFS",
+        url: "https://open.spotify.com/track/1I9w37PCOuGG1ppYc2TmFS",
+        isNew: false,
+        displayOrder: 13,
+      },
+      {
+        artist: "Tycho",
+        duration: "5m 16s",
+        id: "5MSfgtOBZkbxlcwsI9XNpf",
+        preview: null,
+        title: "A Walk",
+        uri: "spotify:track:5MSfgtOBZkbxlcwsI9XNpf",
+        url: "https://open.spotify.com/track/5MSfgtOBZkbxlcwsI9XNpf",
+        isNew: false,
+        displayOrder: 14,
+      },
+      {
+        artist: "Télépopmusik",
+        duration: "4m 56s",
+        id: "46LwAOzg3UYvxiXyyaFedz",
+        preview: null,
+        title: "Breathe",
+        uri: "spotify:track:46LwAOzg3UYvxiXyyaFedz",
+        url: "https://open.spotify.com/track/46LwAOzg3UYvxiXyyaFedz",
+        isNew: false,
+        displayOrder: 15,
+      },
+      {
+        artist: "A$AP Rocky",
+        duration: "3m 42s",
+        id: "6J9FgTr3z44Bw6ABeVL415",
+        preview:
+          "https://p.scdn.co/mp3-preview/1e38e9a8e64667d113d21ef96fece18c6ebde36e?cid=aec032c67a054b5195e97348dea395e5",
+        title: "Pharsyde (feat. Joe Fox)",
+        uri: "spotify:track:6J9FgTr3z44Bw6ABeVL415",
+        url: "https://open.spotify.com/track/6J9FgTr3z44Bw6ABeVL415",
+        isNew: false,
+        displayOrder: 16,
+      },
+      {
+        artist: "Tame Impala",
+        duration: "3m 10s",
+        id: "1JpcqmUlzNlK7lpFOkszzv",
+        preview: null,
+        title: "Beverly Laurel",
+        uri: "spotify:track:1JpcqmUlzNlK7lpFOkszzv",
+        url: "https://open.spotify.com/track/1JpcqmUlzNlK7lpFOkszzv",
+        isNew: false,
+        displayOrder: 17,
+      },
+      {
+        artist: "AES DANA",
+        duration: "6m 53s",
+        id: "7swx5xLemJWVosynhueQ4Z",
+        preview: null,
+        title: "Anthrazit",
+        uri: "spotify:track:7swx5xLemJWVosynhueQ4Z",
+        url: "https://open.spotify.com/track/7swx5xLemJWVosynhueQ4Z",
+        isNew: false,
+        displayOrder: 18,
+      },
+      {
+        artist: "Bill Evans",
+        duration: "6m 30s",
+        id: "2bnLeDamjX83qXbrgItDT2",
+        preview: null,
+        title: "I'll Never Smile Again - Album Version - (take 7)",
+        uri: "spotify:track:2bnLeDamjX83qXbrgItDT2",
+        url: "https://open.spotify.com/track/2bnLeDamjX83qXbrgItDT2",
+        isNew: false,
+        displayOrder: 19,
+      },
+    ];
+    const prompt = "testing prompt";
+    const prompt_id = await addPrompt("testing prompt");
+    console.log("'" + prompt + "'" + " added: " + prompt_id);
+    const songs_id = await updatePromptSongs(prompt_id, testSongs);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex w-2/3 items-center justify-center">
+        <div
+          className="fixed top-[30vh] flex w-24 h-12 bg-primary hover:cursor-pointer"
+          onClick={() => testHistory()}
+        >
+          TEST HISTORY
+        </div>
         {loading ? (
           <Loader />
         ) : exported ? (
@@ -215,7 +459,10 @@ const Curator = () => {
         ) : !exported && !loading ? (
           <>
             <div className="absolute left-2 top-1/2">
-             <FaChevronRight className="text-surface scale-150 hover:cursor-pointer" onClick={toggleDrawer} />
+              <FaChevronRight
+                className="text-surface scale-150 hover:cursor-pointer"
+                onClick={toggleDrawer}
+              />
             </div>
             <HistoryDrawer onClose={toggleDrawer} />
             <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
