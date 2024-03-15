@@ -54,7 +54,7 @@ export const firebaseSignout = async () => {
 
 export const updateSpotifyURI = async (uri) => {
   try {
-    const userRef = await doc(db, "users", firebaseAuth.currentUser.uid);
+    const userRef = doc(db, "users", firebaseAuth.currentUser.uid);
     const userSnapshot = await getDoc(userRef);
 
     if (userSnapshot.exists()) {
