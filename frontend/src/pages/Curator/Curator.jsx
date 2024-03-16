@@ -153,7 +153,7 @@ const Curator = () => {
     // Firestore update.
     await addExportedPlaylist(data.id, promptIdState, title);
 
-    setUrl(data.url);
+    setUrl(data.external_urls.spotify);
     setPrompt("");
     setLoading(false);
     setExported(true);
