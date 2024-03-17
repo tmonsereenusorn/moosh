@@ -113,6 +113,13 @@ const TryItCurator = () => {
           <Loader />
         ) : (
           <div className="w-3/4 pt-16 pb-24">
+            {recs.length > 0 && (
+              <div className="w-full items-center justify-center p-2">
+                <div className="text-2xl font-bold text-surface text-center">
+                  {prompt}
+                </div>
+              </div>
+            )}
             <AudioProvider>
               {recs.map((recommendation) => {
                 return (
