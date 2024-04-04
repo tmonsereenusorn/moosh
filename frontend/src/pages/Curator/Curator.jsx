@@ -290,7 +290,6 @@ const Curator = () => {
                         <Box color="teal" />
                       </SliderThumb>
                     </Slider>
-                    {/* Add more settings components here */}
                   </div>
                 )}
               </div>
