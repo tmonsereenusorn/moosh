@@ -31,7 +31,10 @@ const HistoryItem = ({ text, onClick, timestamp, promptId, playlistRef }) => {
         <div className="absolute right-2 flex items-center">
           <Popover placement="right">
             <PopoverTrigger>
-              <BsThreeDots className="scale-200 hover:text-primary hover:cursor-pointer text-surface" />
+              <BsThreeDots
+                onClick={(e) => e.stopPropagation()}
+                className="scale-200 hover:text-primary hover:cursor-pointer text-surface"
+              />
             </PopoverTrigger>
             <HistoryItemPopover onShare={onShare} onDelete={onDelete} />
           </Popover>
