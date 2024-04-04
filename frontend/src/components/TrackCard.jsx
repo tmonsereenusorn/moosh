@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 import { Checkbox } from "@chakra-ui/react";
 import { useAudio } from "../contexts/AudioProvider";
+import Tooltip from "./Tooltip";
+
 
 const TrackCard = ({
   artist,
@@ -50,9 +52,11 @@ const TrackCard = ({
             )}
           </div>
         ) : (
+          <Tooltip text="Spotify preview not available">
           <div className="rounded-full h-8 w-8 bg-disabled flex justify-center items-center">
             <FaPlay className="text-white" />
           </div>
+          </Tooltip>
         )}
       </div>
       <div className="w-1/3 px-2">
