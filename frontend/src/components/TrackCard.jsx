@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 import { Checkbox } from "@chakra-ui/react";
 import { useAudio } from "../contexts/AudioProvider";
