@@ -1,4 +1,4 @@
-import { getAuth } from "firebase/auth";
+import axios from "axios";
 import { db, firebaseAuth } from "./firebase";
 import {
   getFirestore,
@@ -12,7 +12,10 @@ import {
   writeBatch,
   setDoc,
   updateDoc,
+  onSnapshot
 } from "firebase/firestore";
+import { authenticate } from "./auth";
+import { SPOTIFY_V1_URL } from "../constants";
 
 /***** SETTERS *****/
 
@@ -148,18 +151,14 @@ export const addExportedPlaylist = async (
 // Fetch all playlists in Moosh library from a user's Spotify.
 export const updateHistory = async () => {};
 
-export const getPromptsForUser = async () => {
-  const uid = firebaseAuth.currentUser?.uid;
+export const getPromptsForUser = (setHistory, uid) => {
   try {
     const promptsRef = collection(db, "users", uid, "prompts");
 
-    const promptsSnapshot = await getDocs(promptsRef);
-    var res = [];
-    promptsSnapshot.forEach((doc) => {
-      const data = doc.data();
-      res.push({ id: doc.id, data });
+    return onSnapshot(query(promptsRef), snapshot => {
+      const data = snapshot.docs.map(doc => { return { id: doc.id, ...doc.data() }});
+      setHistory(data);
     });
-    return res;
   } catch (error) {
     console.error("Failed to get prompts: " + error);
   }
@@ -190,26 +189,48 @@ export const getSongsForPrompt = async (prompt_id = "") => {
   }
 };
 
-// Incomplete.
-export const getPlaylistsForUser = async (user_id) => {
-  const uid = firebaseAuth.currentUser?.uid;
-
+export const getPlaylistsForUser = (setPlaylists, uid) => {
   try {
     const playlistsRef = collection(db, "users", uid, "playlists");
 
-    const playlistsSnapshot = await getDocs(playlistsRef);
-    var res = [];
-    playlistsSnapshot.forEach((doc) => {
-      const data = doc.data();
-      res.push(data);
+    return onSnapshot(query(playlistsRef), snapshot => {
+      const data = snapshot.docs.map(doc => { return { id: doc.id, ...doc.data() }});
+      setPlaylists(data);
     });
-    return res;
   } catch (error) {
     console.error("Failed to get prompts: " + error);
   }
 };
 
 // Spotify
-export const deletePlaylist = (playlist_id) => {};
-export const updatePlaylistDescription = (playlist_id) => {};
-export const updatePlaylistTitle = (playlist_id) => {};
+export const updatePlaylistDescription = async (playlist_id, description) => {
+  await authenticate();
+  const token = Cookies.get("token");
+  const config = {
+    headers: { Authorization: `Bearer ${token}`, ContentType: "application/json" },
+  };
+
+  try {
+    await axios.put(`${SPOTIFY_V1_URL}/playlists/${playlist_id}`, { description: description }, config);
+    return 0;
+  } catch (error) {
+    console.error(error);
+    return -1;
+  }
+};
+
+export const updatePlaylistTitle = async (playlist_id, name) => {
+  await authenticate();
+  const token = Cookies.get("token");
+  const config = {
+    headers: { Authorization: `Bearer ${token}`, ContentType: "application/json" },
+  };
+
+  try {
+    await axios.put(`${SPOTIFY_V1_URL}/playlists/${playlist_id}`, { name: name }, config);
+    return 0;
+  } catch (error) {
+    console.error(error);
+    return -1;
+  }
+};

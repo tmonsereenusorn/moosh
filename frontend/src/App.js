@@ -16,7 +16,7 @@ import TryItCurator from "./pages/Curator/TryItCurator";
 
 function App() {
   const [domLoading, setDomLoading] = useState(true);
-  const { authorized, setAuthorized, setUser } = useAuth();
+  const { authorized, setAuthorized, setUser, setUid } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -34,6 +34,7 @@ function App() {
     }
 
     authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
+    firebaseAuth.onAuthStateChanged(auth => setUid(auth.uid));
     if (!authorized && location.pathname === "/curator") navigate("/login");
     // eslint-disable-next-line
   }, []);

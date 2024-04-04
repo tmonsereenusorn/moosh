@@ -28,7 +28,7 @@ const HistoryItem = ({ text, onClick, timestamp, promptId, playlistRef }) => {
         {text}
       </p>
       {active && (
-        <div className="absolute right-2 flex items-center">
+        <div className="absolute right-2 flex items-center z-30">
           <Popover placement="right">
             <PopoverTrigger>
               <BsThreeDots className="scale-200 hover:text-primary hover:cursor-pointer text-surface" />
