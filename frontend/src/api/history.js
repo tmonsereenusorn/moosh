@@ -1,5 +1,6 @@
 import axios from "axios";
 import { db, firebaseAuth } from "./firebase";
+import Cookies from "js-cookie";
 import {
   getFirestore,
   where,
@@ -12,7 +13,7 @@ import {
   writeBatch,
   setDoc,
   updateDoc,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
 import { authenticate } from "./auth";
 import { SPOTIFY_V1_URL } from "../constants";
