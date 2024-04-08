@@ -29,8 +29,6 @@ const HistoryDrawer = ({ onClose, visible, onClickCallback }) => {
     onClickCallback(songs);
   };
 
-  console.log(historyData);
-
   // Refetches data every time visible state is changed.
   useEffect(() => {
     if (uid) {
@@ -47,9 +45,9 @@ const HistoryDrawer = ({ onClose, visible, onClickCallback }) => {
   return (
     <div
       id="drawer"
-      className="absolute left-0 top-0 h-screen w-1/5 bg-gray-100 border-r border-surface/[0.3] z-30 p-4 transition-transform -translate-x-full"
+      className="absolute left-0 top-0 h-screen w-1/5 bg-gray-100 border-r border-surface/[0.3] z-30 transition-transform -translate-x-full"
     >
-      <div className="h-4 mb-4 flex justify-end items-center w-full">
+      <div className="h-4 mb-4 flex justify-end items-center w-full p-4">
         <FaChevronLeft
           className="text-surface/[.7] hover:cursor-pointer"
           onClick={onClose}
