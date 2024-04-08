@@ -24,7 +24,7 @@ import {
 } from "../../api/history";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
-import { Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Text } from '@chakra-ui/react';
+import CuratorSettingsDrawer from "../../components/CuratorSettingsDrawer";
 
 const Curator = () => {
   const { user } = useAuth();
@@ -265,7 +265,7 @@ const Curator = () => {
               visible={drawerVisible}
               onClickCallback={(songs) => onHistoryItemClick(songs)}
             />
-            <div className="fixed bottom-[45vh] w-full flex justify-center">
+            <div className="fixed inset-0 flex justify-center items-center">
               <div className="w-1/2 flex flex-col items-center space-y-2">
                 <div className="w-full flex justify-center items-center">
                   <CuratorInput
@@ -279,18 +279,7 @@ const Curator = () => {
                   </button>
                 </div>
                 {isSettingsOpen && (
-                  <div className="bg-white rounded-lg p-4 w-full border-2 border-surface">
-                    <h1 className="text-lg font-semibold text-center">Curator Settings</h1>
-                    <Text mb={2}>Number of Songs: {numSongs}</Text>
-                    <Slider defaultValue={numSongs} onChange={setNumSongs} min={5} max={50} colorScheme="teal">
-                      <SliderTrack>
-                        <SliderFilledTrack />
-                      </SliderTrack>
-                      <SliderThumb boxSize={6}>
-                        <Box color="teal" />
-                      </SliderThumb>
-                    </Slider>
-                  </div>
+                  <CuratorSettingsDrawer numSongs={numSongs} setNumSongs={setNumSongs} />
                 )}
               </div>
             </div>
