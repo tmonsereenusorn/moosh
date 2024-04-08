@@ -6,11 +6,13 @@ import {
   getPromptsForUser,
   getSongsForPrompt,
 } from "../../api/history";
+import { useAuth } from "../../contexts/AuthProvider";
 
 const HistoryDrawer = ({ onClose, visible, onClickCallback }) => {
   const [tab, setTab] = useState(0);
   const [historyData, setHistoryData] = useState([]);
   const [playlistData, setPlaylistData] = useState([]);
+  const { uid } = useAuth();
 
   const toggleTab = () => {
     const historyDoc = document.getElementById("history-bar");
@@ -27,17 +29,20 @@ const HistoryDrawer = ({ onClose, visible, onClickCallback }) => {
     onClickCallback(songs);
   };
 
+  console.log(historyData);
+
   // Refetches data every time visible state is changed.
   useEffect(() => {
-    fetchData();
-  }, [visible, tab]);
+    if (uid) {
+      const unsubscribeHistory = getPromptsForUser(setHistoryData, uid);
+      const unsubscribePlaylists = getPlaylistsForUser(setPlaylistData, uid);
 
-  const fetchData = async () => {
-    const histData = await getPromptsForUser();
-    setHistoryData(histData);
-    const playData = await getPlaylistsForUser();
-    setPlaylistData(playData);
-  };
+      return () => {
+        unsubscribeHistory();
+        unsubscribePlaylists();
+      };
+    }
+  }, [uid]);
 
   return (
     <div
@@ -77,7 +82,8 @@ const HistoryDrawer = ({ onClose, visible, onClickCallback }) => {
           ? historyData?.map((item) => {
               return (
                 <HistoryItem
-                  text={item.data.prompt}
+                  key={item.id}
+                  text={item.prompt}
                   promptId={item.id}
                   onClick={() => onClick(item.id)}
                 />
@@ -86,6 +92,7 @@ const HistoryDrawer = ({ onClose, visible, onClickCallback }) => {
           : playlistData?.map((item) => {
               return (
                 <HistoryItem
+                  key={item.id}
                   text={item.title}
                   promptId={item.id}
                   playlistId={""}

@@ -1,6 +1,7 @@
 ai_model/gpt_env/
 
 api/venv/
+api/env/
 api/.env
 api/.cache
 
