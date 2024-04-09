@@ -182,7 +182,9 @@ const Curator = () => {
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
     const drawer = document.getElementById("drawer");
+    const drawerToggle = document.getElementById("drawerToggle");
     drawer?.classList.toggle("-translate-x-full");
+    drawerToggle?.classList.toggle("-translate-x-72");
   };
 
   const onHistoryItemClick = (songs) => {
@@ -254,14 +256,8 @@ const Curator = () => {
           </div>
         ) : !exported && !loading ? (
           <>
-            <div className="absolute left-2 top-1/2">
-              <FaChevronRight
-                className="text-surface scale-150 hover:cursor-pointer"
-                onClick={toggleDrawer}
-              />
-            </div>
             <HistoryDrawer
-              onClose={toggleDrawer}
+              toggleDrawer={toggleDrawer}
               visible={drawerVisible}
               onClickCallback={(songs) => onHistoryItemClick(songs)}
             />
