@@ -22,7 +22,7 @@ const HistoryItem = ({ text, onClick, timestamp, promptId, playlistRef }) => {
       onMouseLeave={() => setActive(false)}
       onClick={() => onClick()}
     >
-      <div className="absolute left-0 right-1 h-8 bg-gradient-to-l from-gray-100 from-0% via-white/[0] via-1% hover:cursor-pointer" />
+      <div className="absolute left-0 right-1 h-8 bg-gradient-to-l from-gray-100 from-0% via-white/[0.01] via-90% hover:cursor-pointer" />
       <p className="text-sm whitespace-nowrap overflow-x-hidden font-semibold">
         {text}
       </p>
