@@ -15,6 +15,7 @@ import { useAuth } from "../../contexts/AuthProvider";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
 import ChoiceLayer from "../../components/ChoiceLayer";
 import HistoryDrawer from "../../components/History/HistoryDrawer";
+import { Checkbox } from "@chakra-ui/react";
 import {
   addExportedPlaylist,
   addPrompt,
@@ -34,6 +35,7 @@ const Curator = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
+  const [selectAllButton, setSelectAllButton] = useState(true)
 
   // For firestore function calls.
   const [playlistIdState, setPlaylistIdState] = useState("");
@@ -58,7 +60,7 @@ const Curator = () => {
     ).length;
 
     // If there are unselected tracks, fetch new recommendations directly from spotify using kept tracks
-    if (unselectedCount > 0) {
+    if (unselectedCount > 0 && unselectedCount != recs.length) {
       const keptSongs = recs
         .filter((rec) => selectedTracks[rec.id])
         .map((rec) => rec.id);
@@ -180,6 +182,29 @@ const Curator = () => {
     setRecs(songs);
   };
 
+  const toggleSelectAllButton = () => {
+    const allSelected = Object.keys(selectedTracks).length > 0 && 
+                        Object.values(selectedTracks).every((isSelected) => isSelected);
+  
+    if (allSelected) {
+      // If all are currently selected, deselect all
+      const allDeselected = recs.reduce((acc, track) => {
+        acc[track.id] = false;
+        return acc;
+      }, {});
+      setSelectedTracks(allDeselected);
+      setSelectAllButton(false);
+    } else {
+      // If not all are selected, select all
+      const allSelected = recs.reduce((acc, track) => {
+        acc[track.id] = true;
+        return acc;
+      }, {});
+      setSelectedTracks(allSelected);
+      setSelectAllButton(true);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex w-2/3 items-center justify-center">
@@ -204,6 +229,13 @@ const Curator = () => {
               <div className="w-full items-center justify-center p-2">
                 <div className="text-2xl font-bold text-surface text-center">
                   {prompt}
+                </div>
+                <div className="justify-left pl-4">
+                  <Checkbox
+                    colorScheme="dark_accent"
+                    onChange={toggleSelectAllButton}
+                    isChecked={selectAllButton}
+                  />
                 </div>
               </div>
             )}
