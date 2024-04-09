@@ -22,6 +22,9 @@ import {
   getPromptsForUser,
   updatePromptSongs,
 } from "../../api/history";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
+import CuratorSettingsDrawer from "../../components/CuratorSettingsDrawer";
 
 const Curator = () => {
   const { user } = useAuth();
@@ -34,6 +37,8 @@ const Curator = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [numSongs, setNumSongs] = useState(20);
 
   // For firestore function calls.
   const [playlistIdState, setPlaylistIdState] = useState("");
@@ -47,6 +52,10 @@ const Curator = () => {
 
   const onChangeTitle = (event) => {
     setTitle(event.target.value);
+  };
+
+  const toggleSettingsDrawer = () => {
+    setIsSettingsOpen((prevIsSettingsOpen) => !prevIsSettingsOpen);
   };
 
   // Get recommendations, reset prompt.
@@ -107,7 +116,7 @@ const Curator = () => {
       setSelectedTracks(updatedSelections);
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const newRecs = await getRecommendationsFromPrompt(prompt, 20);
+      const newRecs = await getRecommendationsFromPrompt(prompt, numSongs);
 
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
@@ -256,13 +265,30 @@ const Curator = () => {
               visible={drawerVisible}
               onClickCallback={(songs) => onHistoryItemClick(songs)}
             />
-            <div className="fixed bottom-[45vh] w-1/2 justify-center items-center">
-              <CuratorInput
-                onSubmit={onSubmit}
-                value={prompt}
-                onChangeText={(event) => onChangePrompt(event)}
-                disabled={prompt.length === 0}
-              />
+            <div className="fixed inset-0 flex justify-center items-center">
+              <div className="w-1/2 flex flex-col items-center space-y-2">
+                <div className="w-full flex justify-center items-center">
+                  <CuratorInput
+                    onSubmit={onSubmit}
+                    value={prompt}
+                    onChangeText={(event) => onChangePrompt(event)}
+                    disabled={prompt.length === 0}
+                  />
+                  <button
+                    aria-label="Curator Settings"
+                    className="ml-3"
+                    onClick={toggleSettingsDrawer}
+                  >
+                    <FontAwesomeIcon icon={faCog} />
+                  </button>
+                </div>
+                {isSettingsOpen && (
+                  <CuratorSettingsDrawer
+                    numSongs={numSongs}
+                    setNumSongs={setNumSongs}
+                  />
+                )}
+              </div>
             </div>
           </>
         ) : null}
