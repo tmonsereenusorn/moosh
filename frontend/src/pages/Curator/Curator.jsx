@@ -22,8 +22,8 @@ import {
   getPromptsForUser,
   updatePromptSongs,
 } from "../../api/history";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
 import CuratorSettingsDrawer from "../../components/CuratorSettingsDrawer";
 
 const Curator = () => {
@@ -56,7 +56,7 @@ const Curator = () => {
 
   const toggleSettingsDrawer = () => {
     setIsSettingsOpen((prevIsSettingsOpen) => !prevIsSettingsOpen);
-  }
+  };
 
   // Get recommendations, reset prompt.
   const onSubmit = async () => {
@@ -274,12 +274,19 @@ const Curator = () => {
                     onChangeText={(event) => onChangePrompt(event)}
                     disabled={prompt.length === 0}
                   />
-                  <button aria-label="Curator Settings" className="ml-3" onClick={toggleSettingsDrawer}>
+                  <button
+                    aria-label="Curator Settings"
+                    className="ml-3"
+                    onClick={toggleSettingsDrawer}
+                  >
                     <FontAwesomeIcon icon={faCog} />
                   </button>
                 </div>
                 {isSettingsOpen && (
-                  <CuratorSettingsDrawer numSongs={numSongs} setNumSongs={setNumSongs} />
+                  <CuratorSettingsDrawer
+                    numSongs={numSongs}
+                    setNumSongs={setNumSongs}
+                  />
                 )}
               </div>
             </div>
