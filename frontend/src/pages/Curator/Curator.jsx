@@ -10,7 +10,7 @@ import { AudioProvider } from "../../contexts/AudioProvider";
 import CuratorInput from "../../components/CuratorInput";
 import TrackCard from "../../components/TrackCard";
 import Loader from "../../components/Loader";
-import { FaCircleCheck, FaChevronRight } from "react-icons/fa6";
+import { FaCircleCheck } from "react-icons/fa6";
 import { useAuth } from "../../contexts/AuthProvider";
 import { ButtonPrimary } from "../../components/ButtonPrimary";
 import ChoiceLayer from "../../components/ChoiceLayer";
@@ -182,7 +182,9 @@ const Curator = () => {
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
     const drawer = document.getElementById("drawer");
+    const drawerToggle = document.getElementById("drawerToggle");
     drawer?.classList.toggle("-translate-x-full");
+    drawerToggle?.classList.toggle("-translate-x-72");
   };
 
   const onHistoryItemClick = (songs) => {
@@ -240,10 +242,16 @@ const Curator = () => {
             </div>
           </div>
         )}
-        {recs.length && !exported > 0 && !loading ? (
-          <div
-            className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
-          >
+        <>
+          <HistoryDrawer
+            toggleDrawer={toggleDrawer}
+            visible={drawerVisible}
+            onClickCallback={(songs) => onHistoryItemClick(songs)}
+          />
+          {recs.length && !exported > 0 && !loading ? (
+            <div
+              className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
+            >
             <ChoiceLayer
               onGenerate={onExport}
               onRegenerate={onSubmit}
@@ -253,18 +261,6 @@ const Curator = () => {
             />
           </div>
         ) : !exported && !loading ? (
-          <>
-            <div className="absolute left-2 top-1/2">
-              <FaChevronRight
-                className="text-surface scale-150 hover:cursor-pointer"
-                onClick={toggleDrawer}
-              />
-            </div>
-            <HistoryDrawer
-              onClose={toggleDrawer}
-              visible={drawerVisible}
-              onClickCallback={(songs) => onHistoryItemClick(songs)}
-            />
             <div className="fixed inset-0 flex justify-center items-center">
               <div className="w-1/2 flex flex-col items-center space-y-2">
                 <div className="w-full flex justify-center items-center">
@@ -290,8 +286,8 @@ const Curator = () => {
                 )}
               </div>
             </div>
-          </>
-        ) : null}
+          ) : null}
+        </>
       </div>
     </div>
   );
