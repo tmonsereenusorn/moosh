@@ -278,6 +278,7 @@ const Curator = () => {
               onCancel={onReset}
               onChangeTitle={onChangeTitle}
               disabled={title.length === 0}
+              unselectedCount={getUnselectedCount()}
             />
           </div>
         ) : !exported && !loading ? (

@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormControl,
   HStack,
+  Tooltip,
 } from "@chakra-ui/react";
 import { SpotifyLogo } from "./SpotifyLogo";
 
@@ -20,6 +21,7 @@ const ChoiceLayer = ({
   onCancel = () => {},
   onChangeTitle = () => {},
   disabled = false,
+  unselectedCount
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
   const firstFieldRef = useRef(null);
@@ -77,7 +79,9 @@ const ChoiceLayer = ({
         onClick={async () => await onRegenerate()}
       >
         <GrCycle />
-        <p className="w-full text-center">Regenerate</p>
+        <Tooltip label={`Regenerate ${unselectedCount == 0 ? 'all' : unselectedCount} track${unselectedCount == 1 ? '' : 's'}`}>
+          <p className="w-full text-center">Regenerate</p>
+        </Tooltip>
       </div>
       <div
         className="w-full bg-gray-200 py-2 px-6 rounded-md hover:cursor-pointer text-surface font-semibold flex justify-center items-center"
