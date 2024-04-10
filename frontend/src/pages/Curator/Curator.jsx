@@ -35,7 +35,7 @@ const Curator = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
-  const [selectAllButton, setSelectAllButton] = useState(true)
+  const [selectAllButton, setSelectAllButton] = useState(true);
 
   // For firestore function calls.
   const [playlistIdState, setPlaylistIdState] = useState("");
@@ -205,6 +205,10 @@ const Curator = () => {
     }
   };
 
+  const getUnselectedCount = () => {
+    return recs.filter((rec) => !selectedTracks[rec.id]).length;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex w-2/3 items-center justify-center">
@@ -230,12 +234,13 @@ const Curator = () => {
                 <div className="text-2xl font-bold text-surface text-center">
                   {prompt}
                 </div>
-                <div className="justify-left pl-4">
+                <div className="flex justify-left items-center pl-4">
                   <Checkbox
                     colorScheme="dark_accent"
                     onChange={toggleSelectAllButton}
                     isChecked={selectAllButton}
                   />
+                  <p class="font-bold text-md text-black ml-3">{getUnselectedCount()} deselected</p>
                 </div>
               </div>
             )}
