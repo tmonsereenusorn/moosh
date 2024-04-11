@@ -9,7 +9,6 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    // ModalCloseButton,
     SimpleGrid,
     List,
     ListItem,
@@ -32,13 +31,12 @@ const SignUpModal = ({ closeModal, modalOpen }) => {
     }
 
     return (
-        <Modal size={"2xl"} isOpen={modalOpen} onClose={() => closeModal(false)}>
+        <Modal autoFocus={false} size={"2xl"} isOpen={modalOpen} onClose={() => closeModal(false)}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>
                     <div className="text-center text-primary font-bold text-4xl">Sign Up for Moosh</div>
                 </ModalHeader>
-                {/* <ModalCloseButton/> */}
                 <ModalBody>
                     <Box p={5}>
                         <SimpleGrid columns={2} spacing={4}>
