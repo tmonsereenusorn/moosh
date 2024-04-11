@@ -250,6 +250,7 @@ const Curator = () => {
               onCancel={onReset}
               onChangeTitle={onChangeTitle}
               disabled={title.length === 0}
+              tryItMode={false}
             />
           </div>
         ) : !exported && !loading ? (

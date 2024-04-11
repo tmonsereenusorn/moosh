@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { GrCycle } from "react-icons/gr";
 import { MdOutlineCancel } from "react-icons/md";
@@ -13,6 +13,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { SpotifyLogo } from "./SpotifyLogo";
+import SignUpModal from "./SignUpModal";
 
 const ChoiceLayer = ({
   onGenerate = () => {},
@@ -20,12 +21,21 @@ const ChoiceLayer = ({
   onCancel = () => {},
   onChangeTitle = () => {},
   disabled = false,
+  tryItMode
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const [ openModal, setOpenModal ] = useState(false);
   const firstFieldRef = useRef(null);
+
+  // const handlePopoverClick = () => {
+  //   if (tryItMode) {
+  //     setOpenModal(true);
+  //   }
+  // }
 
   return (
     <div className="w-3/4 flex space-x-8">
+      {openModal && <SignUpModal closeModal={setOpenModal} modalOpen={openModal} />}
       <Popover
         isOpen={isOpen}
         initialFocusRef={firstFieldRef}
@@ -49,7 +59,9 @@ const ChoiceLayer = ({
                 isRequired
                 onChange={onChangeTitle}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !disabled) {
+                  if (tryItMode) {
+                    setOpenModal(true);
+                  } else if (e.key === "Enter" && !disabled) {
                     onGenerate();
                     onClose();
                   }
@@ -60,7 +72,9 @@ const ChoiceLayer = ({
                   disabled ? "bg-gray-100" : "bg-secondary hover:cursor-pointer"
                 } flex justify-center items-center text-white`}
                 onClick={() => {
-                  if (!disabled) {
+                  if (tryItMode) {
+                    setOpenModal(true);
+                  } else if (!disabled) {
                     onGenerate();
                     onClose();
                   }
@@ -72,6 +86,7 @@ const ChoiceLayer = ({
           </FormControl>
         </PopoverContent>
       </Popover>
+      
       <div
         className="w-full bg-primary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center"
         onClick={async () => await onRegenerate()}
