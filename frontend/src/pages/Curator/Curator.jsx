@@ -183,9 +183,10 @@ const Curator = () => {
   };
 
   const toggleSelectAllButton = () => {
-    const allSelected = Object.keys(selectedTracks).length > 0 && 
-                        Object.values(selectedTracks).every((isSelected) => isSelected);
-  
+    const allSelected =
+      Object.keys(selectedTracks).length > 0 &&
+      Object.values(selectedTracks).every((isSelected) => isSelected);
+
     if (allSelected) {
       // If all are currently selected, deselect all
       const allDeselected = recs.reduce((acc, track) => {
@@ -206,7 +207,7 @@ const Curator = () => {
   };
 
   const getUnselectedCount = () => {
-    return recs.filter((rec) => !selectedTracks[rec.id]).length;
+    return recs.filter((rec) => selectedTracks[rec.id]).length;
   };
 
   return (
@@ -240,7 +241,9 @@ const Curator = () => {
                     onChange={toggleSelectAllButton}
                     isChecked={selectAllButton}
                   />
-                  <p class="font-bold text-md text-black ml-3">{getUnselectedCount()} deselected</p>
+                  <p class="font-bold text-sm text-surface ml-3">
+                    {getUnselectedCount()} selected
+                  </p>
                 </div>
               </div>
             )}
