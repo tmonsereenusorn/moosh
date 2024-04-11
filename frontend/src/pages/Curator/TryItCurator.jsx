@@ -149,6 +149,7 @@ const TryItCurator = () => {
             <ChoiceLayer
               onRegenerate={onSubmit}
               onCancel={onReset}
+              tryItMode={true}
             />
           </div>
         ) : !loading ? (
