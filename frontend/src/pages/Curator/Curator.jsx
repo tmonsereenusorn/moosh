@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from "react";
-
 import {
   getRecommendationsFromPrompt,
   getRecommendationsFromExistingTracks,
 } from "../../api/recommendation";
 import { exportPlaylist } from "../../api/exportPlaylist";
-import { AudioProvider } from "../../contexts/AudioProvider";
-
-import CuratorInput from "../../components/CuratorInput";
-import TrackCard from "../../components/TrackCard";
 import Loader from "../../components/Loader";
-import { FaCircleCheck } from "react-icons/fa6";
 import { useAuth } from "../../contexts/AuthProvider";
-import { ButtonPrimary } from "../../components/ButtonPrimary";
-import ChoiceLayer from "../../components/ChoiceLayer";
 import HistoryDrawer from "../../components/History/HistoryDrawer";
-import { Checkbox } from "@chakra-ui/react";
 import {
   addExportedPlaylist,
   addPrompt,
   deletePrompt,
-  getPromptsForUser,
   updatePromptSongs,
 } from "../../api/history";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCog } from "@fortawesome/free-solid-svg-icons";
-import CuratorSettingsDrawer from "../../components/CuratorSettingsDrawer";
+
+import PromptView from "./views/PromptView";
+import ExportedView from "./views/ExportedView";
+import CuratedView from "./views/CuratedView";
+
+const CuratorStages = Object.freeze({
+  PROMPT: 0,
+  CURATED: 1,
+  EXPORTED: 2,
+  LOADING: 3,
+});
 
 const Curator = () => {
   const { user } = useAuth();
@@ -41,12 +39,27 @@ const Curator = () => {
   const [selectAllButton, setSelectAllButton] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [numSongs, setNumSongs] = useState(20);
+  const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
 
   // For firestore function calls.
   const [playlistIdState, setPlaylistIdState] = useState("");
   const [promptIdState, setPromptIdState] = useState("");
   const [historyData, setHistoryData] = useState([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
+
+  useEffect(() => {
+    if (loading) {
+      setCuratorStage(CuratorStages.LOADING);
+    } else if (exported) {
+      setCuratorStage(CuratorStages.EXPORTED);
+    } else {
+      if (recs.length > 0) {
+        setCuratorStage(CuratorStages.CURATED);
+      } else {
+        setCuratorStage(CuratorStages.PROMPT);
+      }
+    }
+  }, [exported, loading, recs]);
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -209,147 +222,53 @@ const Curator = () => {
     setRecs(songs);
   };
 
-  const toggleSelectAllButton = () => {
-    const allSelected =
-      Object.keys(selectedTracks).length > 0 &&
-      Object.values(selectedTracks).every((isSelected) => isSelected);
-
-    if (allSelected) {
-      // If all are currently selected, deselect all
-      const allDeselected = recs.reduce((acc, track) => {
-        acc[track.id] = false;
-        return acc;
-      }, {});
-      setSelectedTracks(allDeselected);
-      setSelectAllButton(false);
-    } else {
-      // If not all are selected, select all
-      const allSelected = recs.reduce((acc, track) => {
-        acc[track.id] = true;
-        return acc;
-      }, {});
-      setSelectedTracks(allSelected);
-      setSelectAllButton(true);
+  const renderSwitch = () => {
+    switch (curatorStage) {
+      case CuratorStages.LOADING:
+        return <Loader />;
+      case CuratorStages.PROMPT:
+        return (
+          <PromptView
+            onSubmit={onSubmit}
+            prompt={prompt}
+            onChangePrompt={onChangePrompt}
+            toggleSettingsDrawer={toggleSettingsDrawer}
+            isSettingsOpen={isSettingsOpen}
+            numSongs={numSongs}
+            setNumSongs={setNumSongs}
+          />
+        );
+      case CuratorStages.CURATED:
+        return (
+          <CuratedView
+            recs={recs}
+            prompt={prompt}
+            onExport={onExport}
+            onSubmit={onSubmit}
+            onReset={onReset}
+            onChangeTitle={onChangeTitle}
+            title={title}
+            selectedTracks={selectedTracks}
+            toggleTrackSelection={toggleTrackSelection}
+          />
+        );
+      case CuratorStages.EXPORTED:
+        return <ExportedView url={url} title={title} onReset={onReset} />;
+      default:
+        return null;
     }
-  };
-
-  const getUnselectedCount = () => {
-    return recs.filter((rec) => !selectedTracks[rec.id]).length;
-  };
-
-  const getSelectedCount = () => {
-    return recs.filter((rec) => selectedTracks[rec.id]).length;
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex w-2/3 items-center justify-center">
-        {loading ? (
-          <Loader />
-        ) : exported ? (
-          <div className="flex flex-col items-center justify-center space-y-2">
-            <FaCircleCheck className="text-secondary text-6xl" />
-
-            <p className="font-bold text-xl text-surface">Listen to</p>
-            <p
-              className="font-bold text-2xl text-black hover:cursor-pointer hover:underline"
-              onClick={() => window.open(url, "_blank")}
-            >
-              {title}
-            </p>
-            <ButtonPrimary text={"Do it again!"} onClick={() => onReset()} />
-          </div>
-        ) : (
-          <div className="flex flex-col w-3/4 h-[100vh] pt-14 pb-24">
-            {recs.length > 0 && (
-              <div className="w-full items-center justify-center p-2">
-                <div className="text-2xl font-bold text-surface text-center">
-                  {prompt}
-                </div>
-                <div className="flex justify-left items-center pl-4">
-                  <Checkbox
-                    colorScheme="dark_accent"
-                    onChange={toggleSelectAllButton}
-                    isChecked={selectAllButton}
-                  />
-                  <p class="font-bold text-sm text-surface ml-3">
-                    {getSelectedCount()} selected
-                  </p>
-                </div>
-              </div>
-            )}
-            <div className="flex-grow overflow-y-auto">
-              <AudioProvider>
-                {recs.map((recommendation) => {
-                  return (
-                    <TrackCard
-                      key={recommendation.id}
-                      artist={recommendation.artist}
-                      title={recommendation.title}
-                      duration={recommendation.duration}
-                      preview={recommendation.preview}
-                      uri={recommendation.uri}
-                      url={recommendation.url}
-                      isSelected={selectedTracks[recommendation.id]}
-                      isNew={recommendation.isNew}
-                      onToggleSelection={() =>
-                        toggleTrackSelection(recommendation.id)
-                      }
-                    />
-                  );
-                })}
-              </AudioProvider>
-            </div>
-          </div>
-        )}
         <>
           <HistoryDrawer
             toggleDrawer={toggleDrawer}
             visible={drawerVisible}
             onClickCallback={(songs) => onHistoryItemClick(songs)}
           />
-          {recs.length && !exported > 0 && !loading ? (
-            <div
-              className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
-            >
-            <ChoiceLayer
-              onGenerate={onExport}
-              onRegenerate={onSubmit}
-              onCancel={onReset}
-              onChangeTitle={onChangeTitle}
-              disabled={title.length === 0}
-              unselectedCount={getUnselectedCount()}
-              selectedCount={getSelectedCount()}
-              tryItMode={false}
-            />
-          </div>
-        ) : !exported && !loading ? (
-            <div className="fixed inset-0 flex justify-center items-center">
-              <div className="w-1/2 flex flex-col items-center space-y-2">
-                <div className="w-full flex justify-center items-center">
-                  <CuratorInput
-                    onSubmit={onSubmit}
-                    value={prompt}
-                    onChangeText={(event) => onChangePrompt(event)}
-                    disabled={prompt.length === 0}
-                  />
-                  <button
-                    aria-label="Curator Settings"
-                    className="ml-3"
-                    onClick={toggleSettingsDrawer}
-                  >
-                    <FontAwesomeIcon icon={faCog} />
-                  </button>
-                </div>
-                {isSettingsOpen && (
-                  <CuratorSettingsDrawer
-                    numSongs={numSongs}
-                    setNumSongs={setNumSongs}
-                  />
-                )}
-              </div>
-            </div>
-          ) : null}
+          {renderSwitch()}
         </>
       </div>
     </div>

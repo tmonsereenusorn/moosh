@@ -34,7 +34,7 @@ function App() {
     }
 
     authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
-    firebaseAuth.onAuthStateChanged(auth => setUid(auth.uid));
+    firebaseAuth.onAuthStateChanged(auth => setUid(auth?.uid));
     if (!authorized && location.pathname === "/curator") navigate("/login");
     // eslint-disable-next-line
   }, []);
