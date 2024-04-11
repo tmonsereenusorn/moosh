@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   getRecommendationsFromPrompt,
   getRecommendationsFromExistingTracks,
@@ -22,7 +22,6 @@ const CuratorStages = Object.freeze({
   PROMPT: 0,
   CURATED: 1,
   EXPORTED: 2,
-  LOADING: 3,
 });
 
 const Curator = () => {
@@ -30,7 +29,6 @@ const Curator = () => {
 
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
-  const [exported, setExported] = useState(false); // For rendering a final view after sending playlist to Spotify.
   const [recs, setRecs] = useState([]);
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
@@ -42,24 +40,8 @@ const Curator = () => {
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
 
   // For firestore function calls.
-  const [playlistIdState, setPlaylistIdState] = useState("");
   const [promptIdState, setPromptIdState] = useState("");
-  const [historyData, setHistoryData] = useState([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
-
-  useEffect(() => {
-    if (loading) {
-      setCuratorStage(CuratorStages.LOADING);
-    } else if (exported) {
-      setCuratorStage(CuratorStages.EXPORTED);
-    } else {
-      if (recs.length > 0) {
-        setCuratorStage(CuratorStages.CURATED);
-      } else {
-        setCuratorStage(CuratorStages.PROMPT);
-      }
-    }
-  }, [exported, loading, recs]);
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -125,7 +107,7 @@ const Curator = () => {
       // Update prompt's songs in firestore.
       await deletePrompt(promptIdState);
       const promptId = await addPrompt(prompt);
-      const songsId = await updatePromptSongs(promptId, updatedSelections);
+      await updatePromptSongs(promptId, updatedSelections);
 
       // Apply the updated selection status.
       setSelectedTracks(updatedSelections);
@@ -140,7 +122,7 @@ const Curator = () => {
       }));
 
       const promptId = await addPrompt(prompt);
-      const songsId = await updatePromptSongs(promptId, updatedNewRecs);
+      await updatePromptSongs(promptId, updatedNewRecs);
       setPromptIdState(promptId);
       setRecs(updatedNewRecs);
 
@@ -155,6 +137,7 @@ const Curator = () => {
     // Firestore updates.
     setDescription(prompt);
     setLoading(false);
+    setCuratorStage(CuratorStages.CURATED);
   };
 
   const toggleTrackSelection = (id) => {
@@ -189,14 +172,13 @@ const Curator = () => {
       songs: recs,
       description: description,
     });
-    setPlaylistIdState(data.id);
     // Firestore update.
     await addExportedPlaylist(data.id, promptIdState, title);
 
     setUrl(data.external_urls.spotify);
     setPrompt("");
     setLoading(false);
-    setExported(true);
+    setCuratorStage(CuratorStages.EXPORTED);
   };
 
   // Clear states and return to prompting view.
@@ -207,7 +189,7 @@ const Curator = () => {
     setDescription("");
     setPrompt("");
     setLoading(false);
-    setExported(false);
+    setCuratorStage(CuratorStages.PROMPT);
   };
 
   const toggleDrawer = () => {
@@ -224,8 +206,6 @@ const Curator = () => {
 
   const renderSwitch = () => {
     switch (curatorStage) {
-      case CuratorStages.LOADING:
-        return <Loader />;
       case CuratorStages.PROMPT:
         return (
           <PromptView
@@ -260,7 +240,7 @@ const Curator = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="max-h-screen flex items-center justify-center overflow-y-hidden">
       <div className="flex w-2/3 items-center justify-center">
         <>
           <HistoryDrawer
@@ -268,7 +248,11 @@ const Curator = () => {
             visible={drawerVisible}
             onClickCallback={(songs) => onHistoryItemClick(songs)}
           />
-          {renderSwitch()}
+          {loading ? (
+            <Loader />
+          ) : (
+            renderSwitch()
+          )}
         </>
       </div>
     </div>

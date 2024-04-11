@@ -70,7 +70,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
             />
           </div>
         </div>
-        <div className="overflow-y-auto w-full">
+        <div className="overflow-y-scroll w-full">
           {tab === 0
             ? historyData?.map((item) => {
                 return (
