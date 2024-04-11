@@ -240,7 +240,7 @@ const Curator = () => {
   };
 
   return (
-    <div className="max-h-screen flex items-center justify-center overflow-y-hidden">
+    <div className="h-screen flex items-center justify-center overflow-y-hidden">
       <div className="flex w-2/3 items-center justify-center">
         <>
           <HistoryDrawer
