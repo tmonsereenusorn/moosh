@@ -27,12 +27,6 @@ const ChoiceLayer = ({
   const [ openModal, setOpenModal ] = useState(false);
   const firstFieldRef = useRef(null);
 
-  // const handlePopoverClick = () => {
-  //   if (tryItMode) {
-  //     setOpenModal(true);
-  //   }
-  // }
-
   return (
     <div className="w-3/4 flex space-x-8">
       {openModal && <SignUpModal closeModal={setOpenModal} modalOpen={openModal} />}
