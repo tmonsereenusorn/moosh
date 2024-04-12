@@ -41,7 +41,7 @@ const ChoiceLayer = ({
         placement="top"
       >
         <PopoverTrigger>
-          <Tooltip label={`Export ${selectedCount} track${selectedCount == 1 ? '' : 's'}`} >
+          <Tooltip label={`Export ${selectedCount} track${selectedCount === 1 ? '' : 's'}`} >
             <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
               <SpotifyLogo className="my-4" />
               
@@ -93,7 +93,7 @@ const ChoiceLayer = ({
         onClick={async () => await onRegenerate()}
       >
         <GrCycle />
-        <Tooltip label={`Regenerate ${unselectedCount == 0 ? selectedCount : unselectedCount} track${unselectedCount == 1 ? '' : 's'}`}>
+        <Tooltip label={`Regenerate ${unselectedCount === 0 ? selectedCount : unselectedCount} track${unselectedCount === 1 ? '' : 's'}`}>
           <p className="w-full text-center">Regenerate</p>
         </Tooltip>
       </div>

@@ -13,7 +13,11 @@ const CuratedView = ({
   onChangeTitle,
   title,
   selectedTracks,
-  toggleTrackSelection
+  toggleTrackSelection,
+  toggleSelectAllButton,
+  selectAllButton,
+  getSelectedCount,
+  getUnselectedCount
 }) => {
   return (
     <>

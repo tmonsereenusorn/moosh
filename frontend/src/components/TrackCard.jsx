@@ -22,6 +22,7 @@ const TrackCard = ({
     return () => {
       stopSong();
     };
+  // eslint-disable-next-line
   }, []);
 
   return (

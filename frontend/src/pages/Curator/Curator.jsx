@@ -64,7 +64,7 @@ const Curator = () => {
     ).length;
 
     // If there are unselected tracks, fetch new recommendations directly from spotify using kept tracks
-    if (unselectedCount > 0 && unselectedCount != recs.length) {
+    if (unselectedCount > 0 && unselectedCount !== recs.length) {
       const keptSongs = recs
         .filter((rec) => selectedTracks[rec.id])
         .map((rec) => rec.id);
@@ -204,6 +204,38 @@ const Curator = () => {
     setRecs(songs);
   };
 
+  const toggleSelectAllButton = () => {
+    const allSelected =
+      Object.keys(selectedTracks).length > 0 &&
+      Object.values(selectedTracks).every((isSelected) => isSelected);
+
+    if (allSelected) {
+      // If all are currently selected, deselect all
+      const allDeselected = recs.reduce((acc, track) => {
+        acc[track.id] = false;
+        return acc;
+      }, {});
+      setSelectedTracks(allDeselected);
+      setSelectAllButton(false);
+    } else {
+      // If not all are selected, select all
+      const allSelected = recs.reduce((acc, track) => {
+        acc[track.id] = true;
+        return acc;
+      }, {});
+      setSelectedTracks(allSelected);
+      setSelectAllButton(true);
+    }
+  };
+
+  const getUnselectedCount = () => {
+    return recs.filter((rec) => !selectedTracks[rec.id]).length;
+  };
+
+  const getSelectedCount = () => {
+    return recs.filter((rec) => selectedTracks[rec.id]).length;
+  };
+
   const renderSwitch = () => {
     switch (curatorStage) {
       case CuratorStages.PROMPT:
@@ -230,6 +262,10 @@ const Curator = () => {
             title={title}
             selectedTracks={selectedTracks}
             toggleTrackSelection={toggleTrackSelection}
+            selectAllButton={selectAllButton}
+            toggleSelectAllButton={toggleSelectAllButton}
+            getSelectedCount={getSelectedCount}
+            getUnselectedCount={getUnselectedCount}
           />
         );
       case CuratorStages.EXPORTED:
