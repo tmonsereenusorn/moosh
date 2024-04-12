@@ -14,7 +14,6 @@ import {
     ListItem,
     ListIcon,
     Box,
-    Text,
   } from '@chakra-ui/react'
 import { ButtonPrimary } from "./ButtonPrimary";
 import { MdIosShare } from "react-icons/md";
