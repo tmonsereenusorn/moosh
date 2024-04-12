@@ -145,10 +145,26 @@ const Curator = () => {
   };
 
   const toggleTrackSelection = (id) => {
-    setSelectedTracks((prevSelectedTracks) => ({
-      ...prevSelectedTracks,
-      [id]: !prevSelectedTracks[id],
-    }));
+    setSelectedTracks((prevSelectedTracks) => {
+      // Update the track selection state
+      const newSelectedTracks = {
+        ...prevSelectedTracks,
+        [id]: !prevSelectedTracks[id]
+      };
+  
+      // Check if all tracks are deselected after the update
+      const allDeselected = Object.keys(newSelectedTracks).length > 0 &&
+                            Object.values(newSelectedTracks).every(isSelected => !isSelected);
+  
+      // If all tracks are deselected, update the select all button state
+      if (allDeselected) {
+        setSelectAllButton(false);
+      } else {
+        setSelectAllButton(true);
+      }
+  
+      return newSelectedTracks;
+    });
   };
 
   // Generate the playlist to Spotify, change view to signal playlist creation.
@@ -218,6 +234,10 @@ const Curator = () => {
   };
 
   const getUnselectedCount = () => {
+    return recs.filter((rec) => !selectedTracks[rec.id]).length;
+  };
+
+  const getSelectedCount = () => {
     return recs.filter((rec) => selectedTracks[rec.id]).length;
   };
 
@@ -253,7 +273,7 @@ const Curator = () => {
                     isChecked={selectAllButton}
                   />
                   <p class="font-bold text-sm text-surface ml-3">
-                    {getUnselectedCount()} selected
+                    {getSelectedCount()} selected
                   </p>
                 </div>
               </div>
@@ -299,6 +319,7 @@ const Curator = () => {
               onChangeTitle={onChangeTitle}
               disabled={title.length === 0}
               unselectedCount={getUnselectedCount()}
+              selectedCount={getSelectedCount()}
               tryItMode={false}
             />
           </div>

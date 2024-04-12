@@ -23,6 +23,7 @@ const ChoiceLayer = ({
   onChangeTitle = () => {},
   disabled = false,
   unselectedCount,
+  selectedCount,
   tryItMode
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
@@ -40,10 +41,14 @@ const ChoiceLayer = ({
         placement="top"
       >
         <PopoverTrigger>
-          <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
-            <SpotifyLogo className="my-4" />
-            <p className="w-full text-center">Export to Spotify</p>
-          </div>
+          <Tooltip label={`Export ${selectedCount} tracks`} >
+            <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
+              <SpotifyLogo className="my-4" />
+              
+                <p className="w-full text-center">Export to Spotify</p>
+              
+            </div>
+          </Tooltip>
         </PopoverTrigger>
         <PopoverContent p={5}>
           <FormControl isRequired>
@@ -88,7 +93,7 @@ const ChoiceLayer = ({
         onClick={async () => await onRegenerate()}
       >
         <GrCycle />
-        <Tooltip label={`Regenerate ${unselectedCount == 0 ? 'all' : unselectedCount} track${unselectedCount == 1 ? '' : 's'}`}>
+        <Tooltip label={`Regenerate ${unselectedCount == 0 ? selectedCount : unselectedCount} track${unselectedCount == 1 ? '' : 's'}`}>
           <p className="w-full text-center">Regenerate</p>
         </Tooltip>
       </div>
