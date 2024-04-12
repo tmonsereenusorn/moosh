@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormControl,
   HStack,
+  Tooltip,
 } from "@chakra-ui/react";
 import { SpotifyLogo } from "./SpotifyLogo";
 import SignUpModal from "./SignUpModal";
@@ -21,6 +22,8 @@ const ChoiceLayer = ({
   onCancel = () => {},
   onChangeTitle = () => {},
   disabled = false,
+  unselectedCount,
+  selectedCount,
   tryItMode
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
@@ -38,10 +41,14 @@ const ChoiceLayer = ({
         placement="top"
       >
         <PopoverTrigger>
-          <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
-            <SpotifyLogo className="my-4" />
-            <p className="w-full text-center">Export to Spotify</p>
-          </div>
+          <Tooltip label={`Export ${selectedCount} track${selectedCount == 1 ? '' : 's'}`} >
+            <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
+              <SpotifyLogo className="my-4" />
+              
+                <p className="w-full text-center">Export to Spotify</p>
+              
+            </div>
+          </Tooltip>
         </PopoverTrigger>
         <PopoverContent p={5}>
           <FormControl isRequired>
@@ -86,7 +93,9 @@ const ChoiceLayer = ({
         onClick={async () => await onRegenerate()}
       >
         <GrCycle />
-        <p className="w-full text-center">Regenerate</p>
+        <Tooltip label={`Regenerate ${unselectedCount == 0 ? selectedCount : unselectedCount} track${unselectedCount == 1 ? '' : 's'}`}>
+          <p className="w-full text-center">Regenerate</p>
+        </Tooltip>
       </div>
       <div
         className="w-full bg-gray-200 py-2 px-6 rounded-md hover:cursor-pointer text-surface font-semibold flex justify-center items-center"

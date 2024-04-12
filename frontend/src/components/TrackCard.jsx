@@ -26,9 +26,8 @@ const TrackCard = ({
 
   return (
     <div
-      className={`border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md ${
-        isNew ? "bg-primary bg-opacity-10" : ""
-      }`}
+      className={`border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md 
+      ${isNew ? "bg-primary bg-opacity-10" : ""} ${isSelected ? "" : "bg-opacity-30 bg-disabled brightness-75 grayscale"}`}
     >
       <div className="flex justify-center items-center w-12 z-0">
         <Checkbox
