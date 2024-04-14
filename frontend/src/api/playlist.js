@@ -26,12 +26,15 @@ export const exportPlaylist = async ({ name, userId, songs, description }) => {
     });
 
     // Returns snapshot of playlist after update. May be useful later for history.
-    const snapshot = await populatePlaylist({
+    await populatePlaylist({
       playlistId: `${data.id}`,
       uris: uris,
       token: token,
     });
-    return data;
+
+    const snapshot = await fetchPlaylist(data.id);
+    
+    return snapshot.data;
   } catch (err) {
     console.error(err);
   }
@@ -80,6 +83,32 @@ const createPlaylist = async ({ name, userId, token, description }) => {
       config
     );
 
+    return res;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const fetchPlaylist = async (playlistId) => {
+  await authenticate();
+
+  const token = Cookies.get("token");
+  if (!token) {
+    console.error("Unauthorized playlist fetching");
+  }
+  
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const res = await axios.get(
+      `${SPOTIFY_V1_URL}/playlists/${playlistId}`,
+      config
+    );
     return res;
   } catch (err) {
     console.error(err);

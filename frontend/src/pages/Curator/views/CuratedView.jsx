@@ -33,7 +33,7 @@ const CuratedView = ({
                 onChange={toggleSelectAllButton}
                 isChecked={selectAllButton}
               />
-              <p class="font-bold text-sm text-surface ml-3">
+              <p className="font-bold text-sm text-surface ml-3">
                 {getSelectedCount()} selected
               </p>
             </div>

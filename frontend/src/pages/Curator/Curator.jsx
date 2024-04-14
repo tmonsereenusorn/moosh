@@ -3,7 +3,7 @@ import {
   getRecommendationsFromPrompt,
   getRecommendationsFromExistingTracks,
 } from "../../api/recommendation";
-import { exportPlaylist } from "../../api/exportPlaylist";
+import { exportPlaylist } from "../../api/playlist";
 import Loader from "../../components/Loader";
 import { useAuth } from "../../contexts/AuthProvider";
 import HistoryDrawer from "../../components/History/HistoryDrawer";
@@ -172,8 +172,9 @@ const Curator = () => {
       songs: recs,
       description: description,
     });
+
     // Firestore update.
-    await addExportedPlaylist(data.id, promptIdState, title);
+    await addExportedPlaylist(data.id, promptIdState, title, data?.images[0]?.url, data?.external_urls?.spotify);
 
     setUrl(data.external_urls.spotify);
     setPrompt("");
@@ -197,11 +198,12 @@ const Curator = () => {
     const drawer = document.getElementById("drawer");
     const drawerToggle = document.getElementById("drawerToggle");
     drawer?.classList.toggle("-translate-x-full");
-    drawerToggle?.classList.toggle("-translate-x-72");
+    drawerToggle?.classList.toggle("translate-x-72");
   };
 
   const onHistoryItemClick = (songs) => {
     setRecs(songs);
+    setCuratorStage(CuratorStages.CURATED);
   };
 
   const toggleSelectAllButton = () => {

@@ -62,7 +62,7 @@ export default Popover;
 const getPopoverCoords = (triggerRect, contentRect, position) => {
   switch (position) {
     case "right":
-      const left = triggerRect.left + triggerRect.width;
+      const left = triggerRect.left + triggerRect.width - (contentRect.width / 2);
       const top = triggerRect.top;
 
       return { left, top };
