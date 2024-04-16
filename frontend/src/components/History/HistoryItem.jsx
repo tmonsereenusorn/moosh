@@ -19,13 +19,18 @@ const HistoryItem = ({ item, onClick, isPlaylist }) => {
 
   return (
     <div
-      className="flex items-center px-1 h-8 space-x-2 rounded-md hover:bg-surface/[0.1]"
+      className="flex items-center min-h-8 px-2 space-x-2 rounded-md hover:bg-surface/[0.1] bg-gradient-to-l from-gray-100 from-0% via-white/[0.01] via-90% hover:cursor-pointer"
       onMouseOver={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
       onClick={onClick}
     >
-      <div className="absolute left-0 right-1 h-8 bg-gradient-to-l from-gray-100 from-0% via-white/[0.01] via-90% hover:cursor-pointer" />
-      {!!item.image && <img src={item.image} alt={`Cover for playlist ${text}.`} className="w-6 h-6 mr-2" />}
+      {!!item.image && (
+        <img
+          src={item.image}
+          alt={`Cover for playlist ${text}.`}
+          className="w-10 h-10 my-2 mr-2"
+        />
+      )}
       <p className="flex-grow text-sm whitespace-nowrap overflow-x-hidden font-semibold">
         {text}
       </p>
