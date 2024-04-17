@@ -8,25 +8,102 @@ import {
 } from "../../api/history";
 import { useAuth } from "../../contexts/AuthProvider";
 
+const DAY_OFS = 24 * 60 * 60 * 1000;
+
+const TimeIndexedList = ({
+  week,
+  month,
+  beyond,
+  onClickCallback,
+  isPlaylist = false,
+}) => {
+  const onClick = async (item) => {
+    if (isPlaylist) {
+      window.open(item.url, "_blank");
+      return;
+    }
+    const songs = await getSongsForPrompt(item.id);
+    onClickCallback(songs);
+  };
+
+  return (
+    <div className="space-y-2">
+      {week?.length > 0 && (
+        <div>
+          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+            Previous 7 Days
+          </p>
+          {week?.map((item) => {
+            return (
+              <HistoryItem
+                key={item.id}
+                item={item}
+                onClick={() => onClick(item)}
+                isPlaylist={isPlaylist}
+              />
+            );
+          })}
+        </div>
+      )}
+      {month?.length > 0 && (
+        <div>
+          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+            Previous 30 Days
+          </p>
+          {month?.map((item) => {
+            return (
+              <HistoryItem
+                key={item.id}
+                item={item}
+                onClick={() => onClick(item)}
+                isPlaylist={isPlaylist}
+              />
+            );
+          })}
+        </div>
+      )}
+      {beyond?.length > 0 && (
+        <div>
+          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+            Long Ago...
+          </p>
+          {beyond?.map((item) => {
+            return (
+              <HistoryItem
+                key={item.id}
+                item={item}
+                onClick={() => onClick(item)}
+                isPlaylist={isPlaylist}
+              />
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
   const [tab, setTab] = useState(0);
   const [historyData, setHistoryData] = useState([]);
   const [playlistData, setPlaylistData] = useState([]);
+  const [weekHistory, setWeekHistory] = useState([]);
+  const [monthHistory, setMonthHistory] = useState([]);
+  const [beyondHistory, setBeyondHistory] = useState([]);
+  const [weekPlaylists, setWeekPlaylists] = useState([]);
+  const [monthPlaylists, setMonthPlaylists] = useState([]);
+  const [beyondPlaylists, setBeyondPlaylists] = useState([]);
+
   const { uid } = useAuth();
 
   const toggleTab = () => {
     const historyDoc = document.getElementById("history-bar");
-    const libraryDoc = document.getElementById("library-bar");
+    const libraryDoc = document.getElementById("playlist-bar");
     setTab(tab === 0 ? 1 : 0);
     historyDoc.classList.toggle("bg-secondary/[0.3]");
     historyDoc.classList.toggle("bg-secondary");
     libraryDoc.classList.toggle("bg-secondary/[0.3]");
     libraryDoc.classList.toggle("bg-secondary");
-  };
-
-  const onClick = async (promptId) => {
-    const songs = await getSongsForPrompt(promptId);
-    onClickCallback(songs);
   };
 
   // Refetches data every time visible state is changed.
@@ -42,66 +119,110 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
     }
   }, [uid]);
 
+  useEffect(() => {
+    const sortedHistory = historyData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    setWeekHistory(
+      sortedHistory.filter(
+        (item) => new Date(item.timestamp) > new Date().getTime() - 7 * DAY_OFS
+      )
+    );
+    setMonthHistory(
+      sortedHistory.filter(
+        (item) =>
+          new Date(item.timestamp) > new Date().getTime() - 30 * DAY_OFS &&
+          new Date(item.timestamp) <= new Date().getTime() - 7 * DAY_OFS
+      )
+    );
+    setBeyondHistory(
+      sortedHistory.filter(
+        (item) =>
+          new Date(item.timestamp) <= new Date().getTime() - 30 * DAY_OFS
+      )
+    );
+  }, [historyData]);
+
+  useEffect(() => {
+    const sortedPlaylists = playlistData.sort(
+      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+    );
+    setWeekPlaylists(
+      sortedPlaylists.filter(
+        (item) => new Date(item.timestamp) > new Date().getTime() - 7 * DAY_OFS
+      )
+    );
+    setMonthPlaylists(
+      sortedPlaylists.filter(
+        (item) =>
+          new Date(item.timestamp) > new Date().getTime() - 30 * DAY_OFS &&
+          new Date(item.timestamp) <= new Date().getTime() - 7 * DAY_OFS
+      )
+    );
+    setBeyondPlaylists(
+      sortedPlaylists.filter(
+        (item) =>
+          new Date(item.timestamp) <= new Date().getTime() - 30 * DAY_OFS
+      )
+    );
+  }, [playlistData]);
+
   return (
-    <div className="absolute left-0 top-0 h-screen flex w-1/5 z-30">
+    <>
       <div
         id="drawer"
-        className="h-screen w-full bg-gray-100 border-r border-surface/[0.3] transition-transform -translate-x-full py-4 px-2"
+        className="h-screen w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-8 px-2 space-y-2"
       >
-        <div className="w-full flex space-x-12 justify-center items-center mb-4">
-          <div
-            className="font-bold text-surface text-xl hover:cursor-pointer space-y-1 w-1/3 text-center"
-            onClick={toggleTab}
-          >
-            <p>History</p>
+        <div className="flex space-x-4 sm:space-x-12 items-center justify-center mb-3">
+          <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
+            <p className="text-lg sm:text-2xl font-semibold text-surface">History</p>
             <div
               id="history-bar"
-              className="w-full rounded-md h-1 bg-secondary"
+              className="w-full h-1 rounded-md bg-secondary"
             />
           </div>
-          <div
-            className="font-bold text-surface text-xl hover:cursor-pointer space-y-1 w-1/3 text-center"
-            onClick={toggleTab}
-          >
-            <p>Playlists</p>
+          <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
+            <p className="text-lg sm:text-2xl font-semibold text-surface">Playlists</p>
             <div
-              id="library-bar"
-              className="w-full rounded-md h-1 bg-secondary/[0.3]"
+              id="playlist-bar"
+              className="w-full h-1 rounded-md bg-secondary/[0.3]"
             />
           </div>
         </div>
-        <div className="overflow-y-scroll w-full">
-          {tab === 0
-            ? historyData?.map((item) => {
-                return (
-                  <HistoryItem
-                    key={item.id}
-                    text={item.prompt}
-                    promptId={item.id}
-                    onClick={() => onClick(item.id)}
-                  />
-                );
-              })
-            : playlistData?.map((item) => {
-                return (
-                  <HistoryItem
-                    key={item.id}
-                    text={item.title}
-                    promptId={item.id}
-                    playlistId={""}
-                  />
-                );
-              })}
+        <div className="overflow-y-auto h-full pb-8 pr-1 relative">
+          {tab === 0 ? (
+            <TimeIndexedList
+              week={weekHistory}
+              month={monthHistory}
+              beyond={beyondHistory}
+              onClickCallback={onClickCallback}
+            />
+          ) : (
+            <TimeIndexedList
+              week={weekPlaylists}
+              month={monthPlaylists}
+              beyond={beyondPlaylists}
+              onClickCallback={onClickCallback}
+              isPlaylist={true}
+            />
+          )}
         </div>
       </div>
-      <div id="drawerToggle" className="h-screen flex items-center justify-center transition-transform -translate-x-72 px-1">
-        {visible ? 
-          <FaChevronLeft className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary" onClick={toggleDrawer} />
-        : 
-          <FaChevronRight className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary" onClick={toggleDrawer} />
-        }
+      <div
+        id="drawerToggle"
+        className="transition-transform absolute left-4 flex h-screen justify-center items-center z-30"
+      >
+        {visible ? (
+          <FaChevronLeft
+            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary"
+            onClick={toggleDrawer}
+          />
+        ) : (
+          <FaChevronRight
+            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary"
+            onClick={toggleDrawer}
+          />
+        )}
       </div>
-    </div>
+    </>
   );
 };
 

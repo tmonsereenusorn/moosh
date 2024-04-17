@@ -2,13 +2,10 @@ import axios from "axios";
 import { db, firebaseAuth } from "./firebase";
 import Cookies from "js-cookie";
 import {
-  getFirestore,
-  where,
   collection,
   getDocs,
   query,
   addDoc,
-  getDoc,
   doc,
   writeBatch,
   setDoc,
@@ -91,7 +88,7 @@ export const deletePrompt = async (prompt_id = "") => {
       "users",
       uid,
       "prompts",
-      prompt_id.toString(),
+      prompt_id,
       "songs"
     );
 
@@ -99,14 +96,15 @@ export const deletePrompt = async (prompt_id = "") => {
     const songsSnapshot = await getDocs(songsRef);
     const batch = writeBatch(db);
     songsSnapshot.forEach((doc) => {
-      batch.delete(doc.id);
+      batch.delete(doc.ref);
     });
-    const promptRef = await doc(
+
+    const promptRef = doc(
       db,
       "users",
       uid,
       "prompts",
-      prompt_id.toString()
+      prompt_id
     );
     batch.delete(promptRef);
     batch.commit();
@@ -121,7 +119,9 @@ export const deletePrompt = async (prompt_id = "") => {
 export const addExportedPlaylist = async (
   playlist_id = "",
   prompt_id = "",
-  title = ""
+  title = "",
+  image_url = "",
+  song_url = ""
 ) => {
   const uid = firebaseAuth.currentUser?.uid;
 
@@ -137,6 +137,8 @@ export const addExportedPlaylist = async (
     const playlistObj = {
       title: title,
       timestamp: new Date().toISOString(),
+      image: image_url,
+      url: song_url,
     };
     await setDoc(playlistRef, playlistObj);
     // Update the playlist id as a member of the corresponding prompt.
@@ -227,8 +229,15 @@ export const updatePlaylistTitle = async (playlist_id, name) => {
     headers: { Authorization: `Bearer ${token}`, ContentType: "application/json" },
   };
 
+  const uid = firebaseAuth.currentUser?.uid;
+
   try {
     await axios.put(`${SPOTIFY_V1_URL}/playlists/${playlist_id}`, { name: name }, config);
+    
+    // Update Firestore after Spotify update success
+    const playlistRef = doc(db, "users", uid, "playlists", playlist_id);
+    await updateDoc(playlistRef, { title: name });
+
     return 0;
   } catch (error) {
     console.error(error);
