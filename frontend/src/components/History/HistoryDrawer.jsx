@@ -120,7 +120,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
   }, [uid]);
 
   useEffect(() => {
-    const sortedHistory = historyData.sort((a, b) => a.timestamp - b.timestamp);
+    const sortedHistory = historyData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     setWeekHistory(
       sortedHistory.filter(
         (item) => new Date(item.timestamp) > new Date().getTime() - 7 * DAY_OFS
@@ -143,7 +143,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
 
   useEffect(() => {
     const sortedPlaylists = playlistData.sort(
-      (a, b) => a.timestamp - b.timestamp
+      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
     );
     setWeekPlaylists(
       sortedPlaylists.filter(
@@ -171,16 +171,16 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
         id="drawer"
         className="h-screen w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-8 px-2 space-y-2"
       >
-        <div className="flex space-x-12 items-center justify-center mb-3">
+        <div className="flex space-x-4 sm:space-x-12 items-center justify-center mb-3">
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
-            <p className="sm:text-2xl font-semibold text-surface">History</p>
+            <p className="text-lg sm:text-2xl font-semibold text-surface">History</p>
             <div
               id="history-bar"
               className="w-full h-1 rounded-md bg-secondary"
             />
           </div>
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
-            <p className="sm:text-2xl font-semibold text-surface">Playlists</p>
+            <p className="text-lg sm:text-2xl font-semibold text-surface">Playlists</p>
             <div
               id="playlist-bar"
               className="w-full h-1 rounded-md bg-secondary/[0.3]"

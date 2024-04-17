@@ -198,7 +198,8 @@ const Curator = () => {
     const drawer = document.getElementById("drawer");
     const drawerToggle = document.getElementById("drawerToggle");
     drawer?.classList.toggle("-translate-x-full");
-    drawerToggle?.classList.toggle("translate-x-72");
+    drawerToggle?.classList.toggle("sm:translate-x-72");
+    drawerToggle?.classList.toggle("translate-x-56");
   };
 
   const onHistoryItemClick = (songs) => {
