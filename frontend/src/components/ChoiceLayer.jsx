@@ -44,7 +44,7 @@ const ChoiceLayer = ({
             placement="top"
           >
             <PopoverTrigger>
-              <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
+              <div className="w-full bg-secondary py-2 px-4 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
                 <SpotifyLogo className="my-4" />
                 <p className="w-full text-center">Export to Spotify</p>
               </div>
