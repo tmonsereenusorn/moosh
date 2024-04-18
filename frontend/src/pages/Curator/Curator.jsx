@@ -166,10 +166,11 @@ const Curator = () => {
   // Generate the playlist to Spotify, change view to signal playlist creation.
   const onExport = async () => {
     setLoading(true);
+    const songsToExport = recs.filter((rec) => selectedTracks[rec.id]);
     const data = await exportPlaylist({
       name: title,
       userId: user.id,
-      songs: recs,
+      songs: songsToExport,
       description: description,
     });
 
