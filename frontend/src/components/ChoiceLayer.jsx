@@ -12,6 +12,7 @@ import {
   FormControl,
   HStack,
   Tooltip,
+  Box
 } from "@chakra-ui/react";
 import { SpotifyLogo } from "./SpotifyLogo";
 import SignUpModal from "./SignUpModal";
@@ -33,58 +34,61 @@ const ChoiceLayer = ({
   return (
     <div className="w-3/4 flex space-x-8">
       {openModal && <SignUpModal closeModal={setOpenModal} modalOpen={openModal} />}
-      <Popover
-        isOpen={isOpen}
-        initialFocusRef={firstFieldRef}
-        onOpen={onOpen}
-        onClose={onClose}
-        placement="top"
-      >
-        <PopoverTrigger>
-          {/* <Tooltip label={`Export ${selectedCount} track${selectedCount === 1 ? '' : 's'}`} > */}
-            <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
-              <SpotifyLogo className="my-4" />
-              <p className="w-full text-center">Export to Spotify</p>
-            </div>
-          {/* </Tooltip> */}
-        </PopoverTrigger>
-        <PopoverContent p={5}>
-          <FormControl isRequired>
-            <FormLabel>playlist name.</FormLabel>
-            <HStack>
-              <Input
-                variant="outline"
-                placeholder="e.g. good playlist"
-                isRequired
-                onChange={onChangeTitle}
-                onKeyDown={(e) => {
-                  if (tryItMode) {
-                    setOpenModal(true);
-                  } else if (e.key === "Enter" && !disabled) {
-                    onGenerate();
-                    onClose();
-                  }
-                }}
-              />
-              <div
-                className={`rounded-md w-12 h-10 ${
-                  disabled ? "bg-gray-100" : "bg-secondary hover:cursor-pointer"
-                } flex justify-center items-center text-white`}
-                onClick={() => {
-                  if (tryItMode) {
-                    setOpenModal(true);
-                  } else if (!disabled) {
-                    onGenerate();
-                    onClose();
-                  }
-                }}
-              >
-                <FaCheck className="text-xl" />
+      <Tooltip label={isOpen ? undefined : `Export ${selectedCount} track${selectedCount === 1 ? '' : 's'}`}>
+        <Box display="flex" width="full">
+          <Popover
+            isOpen={isOpen}
+            initialFocusRef={firstFieldRef}
+            onOpen={onOpen}
+            onClose={onClose}
+            placement="top"
+          >
+            <PopoverTrigger>
+              <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
+                <SpotifyLogo className="my-4" />
+                <p className="w-full text-center">Export to Spotify</p>
               </div>
-            </HStack>
-          </FormControl>
-        </PopoverContent>
-      </Popover>
+            </PopoverTrigger>
+            <PopoverContent p={5}>
+              <FormControl isRequired>
+                <FormLabel>Playlist Name</FormLabel>
+                <HStack>
+                  <Input
+                    ref={firstFieldRef}
+                    variant="outline"
+                    placeholder="e.g., Good Playlist"
+                    isRequired
+                    onChange={onChangeTitle}
+                    onKeyDown={(e) => {
+                      if (tryItMode) {
+                        setOpenModal(true);
+                      } else if (e.key === "Enter" && !disabled) {
+                        onGenerate();
+                        onClose();
+                      }
+                    }}
+                  />
+                  <div
+                    className={`rounded-md w-12 h-10 ${
+                      disabled ? "bg-gray-100" : "bg-secondary hover:cursor-pointer"
+                    } flex justify-center items-center text-white`}
+                    onClick={() => {
+                      if (tryItMode) {
+                        setOpenModal(true);
+                      } else if (!disabled) {
+                        onGenerate();
+                        onClose();
+                      }
+                    }}
+                  >
+                    <FaCheck className="text-xl" />
+                  </div>
+                </HStack>
+              </FormControl>
+            </PopoverContent>
+          </Popover>
+        </Box>
+      </Tooltip>
       
       <div
         className="w-full bg-primary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center"
