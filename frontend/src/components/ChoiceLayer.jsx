@@ -12,7 +12,6 @@ import {
   FormControl,
   HStack,
   Tooltip,
-  Box
 } from "@chakra-ui/react";
 import { SpotifyLogo } from "./SpotifyLogo";
 import SignUpModal from "./SignUpModal";
@@ -49,7 +48,7 @@ const ChoiceLayer = ({
                 <p className="w-full text-center ml-2">Export to Spotify</p>
               </div>
             </PopoverTrigger>
-            <PopoverContent p={5}>
+            <PopoverContent className="text-black" p={5}>
               <FormControl isRequired>
                 <FormLabel>Playlist Name</FormLabel>
                 <HStack>
