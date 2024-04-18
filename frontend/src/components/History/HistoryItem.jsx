@@ -3,6 +3,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import Popover from "../Popover";
 import { deletePrompt } from "../../api/history";
+import { Tooltip } from "@chakra-ui/react";
 
 const HistoryItem = ({ item, onClick, isPlaylist }) => {
   const [active, setActive] = useState(false);
@@ -31,9 +32,11 @@ const HistoryItem = ({ item, onClick, isPlaylist }) => {
           className="w-10 h-10 my-2 mr-2"
         />
       )}
-      <p className="flex-grow text-sm whitespace-nowrap overflow-x-hidden font-semibold">
-        {text}
-      </p>
+      <Tooltip label={text}>
+        <p className="flex-grow text-sm whitespace-nowrap overflow-x-hidden font-semibold">
+          {text}
+        </p>
+      </Tooltip>
       <Popover position="right">
         <Popover.Trigger>
           {active && !isPlaylist && (
