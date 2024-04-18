@@ -35,7 +35,7 @@ const ChoiceLayer = ({
     <div className="w-3/4 flex space-x-8">
       {openModal && <SignUpModal closeModal={setOpenModal} modalOpen={openModal} />}
       <Tooltip label={isOpen ? undefined : `Export ${selectedCount} track${selectedCount === 1 ? '' : 's'}`}>
-        <Box display="flex" width="full">
+        <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
           <Popover
             isOpen={isOpen}
             initialFocusRef={firstFieldRef}
@@ -44,9 +44,9 @@ const ChoiceLayer = ({
             placement="top"
           >
             <PopoverTrigger>
-              <div className="w-full bg-secondary py-2 px-4 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
+              <div className="flex items-center">
                 <SpotifyLogo className="my-4" />
-                <p className="w-full text-center">Export to Spotify</p>
+                <p className="w-full text-center ml-2">Export to Spotify</p>
               </div>
             </PopoverTrigger>
             <PopoverContent p={5}>
@@ -87,7 +87,7 @@ const ChoiceLayer = ({
               </FormControl>
             </PopoverContent>
           </Popover>
-        </Box>
+        </div>
       </Tooltip>
       
       <div
