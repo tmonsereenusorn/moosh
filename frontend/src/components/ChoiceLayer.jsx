@@ -89,15 +89,15 @@ const ChoiceLayer = ({
         </div>
       </Tooltip>
       
+      <Tooltip label={`Regenerate ${unselectedCount === 0 ? selectedCount : unselectedCount} track${unselectedCount === 1 ? '' : 's'}`}>
       <div
         className="w-full bg-primary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center"
         onClick={async () => await onRegenerate()}
       >
         <GrCycle />
-        <Tooltip label={`Regenerate ${unselectedCount === 0 ? selectedCount : unselectedCount} track${unselectedCount === 1 ? '' : 's'}`}>
           <p className="w-full text-center">Regenerate</p>
-        </Tooltip>
       </div>
+      </Tooltip>
       <div
         className="w-full bg-gray-200 py-2 px-6 rounded-md hover:cursor-pointer text-surface font-semibold flex justify-center items-center"
         onClick={() => onCancel()}
