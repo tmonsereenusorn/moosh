@@ -1,0 +1,8 @@
+{
+  "flask": {
+    "image": ":moosh-api.backend.6",
+    "ports": {
+        "8080": "HTTP"
+    }
+  }
+}

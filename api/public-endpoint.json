@@ -1,0 +1,7 @@
+{
+  "containerName": "flask",
+  "containerPort": 8080,
+  "healthCheck": {
+    "path": "/ping"
+  }
+}
