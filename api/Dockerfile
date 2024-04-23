@@ -30,9 +30,6 @@ RUN apk update && \
 # Install any Python dependencies
 RUN pip install -r requirements.txt
 
-# Remove build dependencies to reduce image size (optional, uncomment if needed)
-# RUN apk del build-deps
-
 # Copy the content of the local src directory to the working directory
 COPY server.py .
 COPY model.py .
