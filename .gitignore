@@ -5,4 +5,8 @@ api/env/
 api/.env
 api/.cache
 
+# deployments
+api/containers.json
+api/public-endpoint.json
+
 .DS_Store
