@@ -1,7 +1,0 @@
-{
-  "containerName": "moosh",
-  "containerPort": 8080,
-  "healthCheck": {
-    "path": "/ping"
-  }
-}

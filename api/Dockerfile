@@ -39,7 +39,6 @@ COPY model.py .
 COPY decorators.py .
 COPY spotify_api.py .
 
-COPY .env .
 COPY gunicorn_config.py .
 
 # Specify the command to run on container start
