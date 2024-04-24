@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { FaPlay, FaStop } from "react-icons/fa";
+import { FaPlay, FaStop, FaSpotify } from "react-icons/fa";
 import { Checkbox } from "@chakra-ui/react";
 import { useAudio } from "../contexts/AudioProvider";
 import Tooltip from "./Tooltip";
@@ -68,8 +68,13 @@ const TrackCard = ({
         </p>
         <p className="text-xs text-dark_accent">{artist}</p>
       </div>
-      <div className="w-2/3 flex justify-end items-center">
-        <p className="text-xs text-surface">{duration}</p>
+      <div className="w-2/3">
+        <div className="w-full h-1/2 flex justify-end items-start">
+          <FaSpotify className="text-surface/[0.3] h-3 w-3" />
+        </div>
+        <div className="w-full h-1/2 flex justify-end items-start">
+          <p className="text-xs text-surface">{duration}</p>
+        </div>
       </div>
     </div>
   );
