@@ -203,8 +203,9 @@ const Curator = () => {
     drawerToggle?.classList.toggle("translate-x-56");
   };
 
-  const onHistoryItemClick = (songs) => {
+  const onHistoryItemClick = (songs, item) => {
     setRecs(songs);
+    setPrompt(item.prompt);
     setCuratorStage(CuratorStages.CURATED);
   };
 
@@ -286,7 +287,7 @@ const Curator = () => {
           <HistoryDrawer
             toggleDrawer={toggleDrawer}
             visible={drawerVisible}
-            onClickCallback={(songs) => onHistoryItemClick(songs)}
+            onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
           />
           {loading ? (
             <Loader />
