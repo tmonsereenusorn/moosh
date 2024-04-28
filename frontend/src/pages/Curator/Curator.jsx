@@ -206,6 +206,16 @@ const Curator = () => {
   const onHistoryItemClick = (songs, item) => {
     setRecs(songs);
     setPrompt(item.prompt);
+    setNumSongs(songs.length);
+    
+    // Select all tracks
+    const newSelectedTracks = songs.reduce((acc, track) => {
+      acc[track.id] = true;
+      return acc;
+    }, {});
+
+    setSelectedTracks(newSelectedTracks);
+    setSelectAllButton(true);
     setCuratorStage(CuratorStages.CURATED);
   };
 
