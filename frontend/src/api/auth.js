@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 const STR_SIZE = 64;
 const clientId = process.env.REACT_APP_CLIENT_ID;
 const redirectUri = process.env.REACT_APP_REDIRECT_URI;
-const SCOPES = "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read user-read-recently-played user-library-read"
+const SCOPES = "user-read-private user-read-email playlist-modify-private playlist-modify-public user-top-read user-read-recently-played user-library-read"
 
 /* Using the code verifier and code generated from the first part of the PKCE
    authentication process to request a temporary access token from Spotify.
