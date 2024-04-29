@@ -35,13 +35,12 @@ const Curator = () => {
   const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
   const [selectAllButton, setSelectAllButton] = useState(true);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [numSongs, setNumSongs] = useState(20);
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
 
   // For firestore function calls.
   const [promptIdState, setPromptIdState] = useState("");
-  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
+  const [settingsDrawerVisible, setSettingsDrawerVisible] = useState(false);
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -51,12 +50,8 @@ const Curator = () => {
     setTitle(event.target.value);
   };
 
-  const toggleSettingsDrawer = () => {
-    setIsSettingsOpen((prevIsSettingsOpen) => !prevIsSettingsOpen);
-  };
-
   // Get recommendations, reset prompt.
-  const onSubmit = async () => {
+  const onSubmit = async (numSongs) => {
     setLoading(true);
 
     const unselectedCount = Object.values(selectedTracks).filter(
@@ -194,13 +189,21 @@ const Curator = () => {
     setCuratorStage(CuratorStages.PROMPT);
   };
 
-  const toggleDrawer = () => {
-    setDrawerVisible(!drawerVisible);
-    const drawer = document.getElementById("drawer");
-    const drawerToggle = document.getElementById("drawerToggle");
+  const toggleHistoryDrawer = () => {
+    if (settingsDrawerVisible) toggleSettingsDrawer();
+    setHistoryDrawerVisible(visibility => !visibility);
+    const drawer = document.getElementById("historyDrawer");
+    const drawerToggle = document.getElementById("historyDrawerToggle");
     drawer?.classList.toggle("-translate-x-full");
     drawerToggle?.classList.toggle("sm:translate-x-72");
     drawerToggle?.classList.toggle("translate-x-56");
+  };
+
+  const toggleSettingsDrawer = () => {
+    if (historyDrawerVisible) toggleHistoryDrawer();
+    setSettingsDrawerVisible(visibility => !visibility);
+    const drawer = document.getElementById("settingsDrawer");
+    drawer?.classList.toggle("translate-y-full");
   };
 
   const onHistoryItemClick = (songs, item) => {
@@ -259,10 +262,8 @@ const Curator = () => {
             onSubmit={onSubmit}
             prompt={prompt}
             onChangePrompt={onChangePrompt}
+            settingsDrawerVisible={settingsDrawerVisible}
             toggleSettingsDrawer={toggleSettingsDrawer}
-            isSettingsOpen={isSettingsOpen}
-            numSongs={numSongs}
-            setNumSongs={setNumSongs}
           />
         );
       case CuratorStages.CURATED:
@@ -295,10 +296,10 @@ const Curator = () => {
       <div className="flex w-2/3 items-center justify-center">
         <>
           <HistoryDrawer
-            toggleDrawer={toggleDrawer}
-            visible={drawerVisible}
-            onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
-          />
+            toggleDrawer={toggleHistoryDrawer}
+            visible={historyDrawerVisible}
+            onClickCallback={(songs, item) => onHistoryItemClick(songs)}
+          />          
           {loading ? (
             <Loader />
           ) : (
