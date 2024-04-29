@@ -17,7 +17,8 @@ const CuratedView = ({
   toggleSelectAllButton,
   selectAllButton,
   getSelectedCount,
-  getUnselectedCount
+  getUnselectedCount,
+  tryItMode
 }) => {
   return (
     <>
@@ -73,7 +74,7 @@ const CuratedView = ({
         disabled={title.length === 0}
         unselectedCount={getUnselectedCount()}
         selectedCount={getSelectedCount()}
-        tryItMode={false}
+        tryItMode={tryItMode}
       />
     </div>
     </>
