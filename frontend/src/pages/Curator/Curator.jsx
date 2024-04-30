@@ -203,8 +203,19 @@ const Curator = () => {
     drawerToggle?.classList.toggle("translate-x-56");
   };
 
-  const onHistoryItemClick = (songs) => {
+  const onHistoryItemClick = (songs, item) => {
     setRecs(songs);
+    setPrompt(item.prompt);
+    setNumSongs(songs.length);
+    
+    // Select all tracks
+    const newSelectedTracks = songs.reduce((acc, track) => {
+      acc[track.id] = true;
+      return acc;
+    }, {});
+
+    setSelectedTracks(newSelectedTracks);
+    setSelectAllButton(true);
     setCuratorStage(CuratorStages.CURATED);
   };
 
@@ -286,7 +297,7 @@ const Curator = () => {
           <HistoryDrawer
             toggleDrawer={toggleDrawer}
             visible={drawerVisible}
-            onClickCallback={(songs) => onHistoryItemClick(songs)}
+            onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
           />
           {loading ? (
             <Loader />

@@ -23,7 +23,7 @@ const TimeIndexedList = ({
       return;
     }
     const songs = await getSongsForPrompt(item.id);
-    onClickCallback(songs);
+    onClickCallback(songs, item);
   };
 
   return (
