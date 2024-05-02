@@ -37,31 +37,22 @@ const CuratorComponent = ({
   setNumSongs,
   curatorStage,
   setCuratorStage,
-  url = null,
-  setUrl = null,
-  title = null,
-  setTitle = null,
-  description = null,
-  setDescription = null,
-  selectAllButton = null,
-  setSelectAllButton = null,
-  isSettingsOpen = null,
-  setIsSettingsOpen = null,
-  promptIdState = null,
-  setPromptIdState = null,
-  drawerVisible = null,
-  setDrawerVisible = null,
+  url,
+  setUrl,
+  title,
+  setTitle,
+  description,
+  setDescription,
+  selectAllButton,
+  setSelectAllButton,
+  isSettingsOpen,
+  setIsSettingsOpen,
+  promptIdState,
+  setPromptIdState,
+  drawerVisible,
+  setDrawerVisible,
   usr = null
 }) => {
-
-  // useEffect(() => {
-  //   if (recs.length > 0) {
-  //     console.log('Received new recommendations:', recs);
-  //     // Check if additional setup is needed for the new recommendations
-  //     console.log(recs);
-  //   }
-  // }, [recs]);
-
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -144,9 +135,7 @@ const CuratorComponent = ({
         setPromptIdState(promptId);
         await updatePromptSongs(promptId, updatedNewRecs);
       }
-      console.log(updatedNewRecs)
       setRecs(updatedNewRecs);
-      console.log(recs)
 
       const initialSelections = updatedNewRecs.reduce((acc, track) => {
         acc[track.id] = true;
