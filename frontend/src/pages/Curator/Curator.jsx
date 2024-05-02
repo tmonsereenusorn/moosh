@@ -80,7 +80,7 @@ const Curator = () => {
     ).length;
 
     // If there are unselected tracks, fetch new recommendations directly from spotify using kept tracks
-    if (unselectedCount > 0 && unselectedCount !== recs.length) {
+    if (regeneration) {
       const keptSongs = recs
         .filter((rec) => selectedTracks[rec.id])
         .map((rec) => rec.id);
@@ -162,25 +162,13 @@ const Curator = () => {
 
       setSelectedTracks(initialSelections);
 
-      // Log prompting or regenerating.
-      if (regeneration) {
-        const regeneratationLogId = kpis.logRegeneration(
-          kpiNumToggles,
-          kpiNumToggleAlls,
-          kpiNumPreviewPlays,
-          kpiNumLinkClicks,
-          unselectedCount,
-          promptIdState
-        );
-        resetRegenerationKpis();
-      } else {
-        const promptLogId = kpis.logPrompt(
-          kpiNumKeystrokes,
-          numSongs,
-          prompt.length,
-          promptId
-        );
-      }
+      // Log prompting.
+      const promptLogId = kpis.logPrompt(
+        kpiNumKeystrokes,
+        numSongs,
+        prompt.length,
+        promptId
+      );
     }
 
     setDescription(prompt);

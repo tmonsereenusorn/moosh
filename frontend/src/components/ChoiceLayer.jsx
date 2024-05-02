@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { GrCycle } from "react-icons/gr";
 import { MdOutlineCancel } from "react-icons/md";
@@ -100,13 +100,25 @@ const ChoiceLayer = ({
       </Tooltip>
 
       <Tooltip
-        label={`Regenerate ${
-          unselectedCount === 0 ? selectedCount : unselectedCount
-        } track${unselectedCount === 1 ? "" : "s"}`}
+        label={
+          unselectedCount === 0
+            ? "Deselect songs to regenerate playlist"
+            : `Regenerate ${unselectedCount} song${
+                unselectedCount > 1 ? "s" : ""
+              }`
+        }
       >
         <div
-          className="w-full bg-primary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center"
-          onClick={async () => await onRegenerate(true)}
+          className={`w-full py-2 px-6 rounded-md font-semibold flex justify-center items-center ${
+            unselectedCount === 0
+              ? "bg-gray-200 text-gray-400"
+              : "bg-primary text-white hover:cursor-pointer"
+          }`}
+          onClick={
+            unselectedCount !== 0
+              ? async () => await onRegenerate(true)
+              : undefined
+          }
         >
           <GrCycle />
           <p className="w-full text-center">Regenerate</p>
