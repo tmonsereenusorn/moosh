@@ -75,7 +75,7 @@ const CuratorSettingsDrawer = ({ visible, toggleDrawer, settings, setSettings })
           </div>
           <div>
             <div className="flex space-x-2 items-center">
-              <Checkbox colorScheme="teal" value={settings.danceability?.enabled} onChange={e => toggleSetting(SETTINGS.DANCEABILITY, e.target.checked)} />
+              <Checkbox colorScheme="teal" isChecked={settings.danceability?.enabled} onChange={e => toggleSetting(SETTINGS.DANCEABILITY, e.target.checked)} />
               <p className="text-sm font-semibold text-surface">Danceability{settings.danceability?.enabled && <span>: {settings.danceability?.threshold}</span>}</p>
             </div>
             {settings.danceability?.enabled && (
@@ -91,7 +91,7 @@ const CuratorSettingsDrawer = ({ visible, toggleDrawer, settings, setSettings })
           </div>
           <div>
             <div className="flex space-x-2 items-center">
-              <Checkbox colorScheme="teal" value={settings.energy?.enabled} onChange={e => toggleSetting(SETTINGS.ENERGY, e.target.checked)} />
+              <Checkbox colorScheme="teal" isChecked={settings.energy?.enabled} onChange={e => toggleSetting(SETTINGS.ENERGY, e.target.checked)} />
               <p className="text-sm font-semibold text-surface">Energy{settings.energy?.enabled && <span>: {settings.energy?.threshold}</span>}</p>
             </div>
             {settings.energy?.enabled && (
@@ -107,7 +107,7 @@ const CuratorSettingsDrawer = ({ visible, toggleDrawer, settings, setSettings })
           </div>
           <div>
             <div className="flex space-x-2 items-center">
-              <Checkbox colorScheme="teal" value={settings.acousticness?.enabled} onChange={e => toggleSetting(SETTINGS.ACOUSTICNESS, e.target.checked)} />
+              <Checkbox colorScheme="teal" isChecked={settings.acousticness?.enabled} onChange={e => toggleSetting(SETTINGS.ACOUSTICNESS, e.target.checked)} />
               <p className="text-sm font-semibold text-surface">Acousticness{settings.acousticness?.enabled && <span>: {settings.acousticness?.threshold}</span>}</p>
             </div>
             {settings.acousticness?.enabled && (
