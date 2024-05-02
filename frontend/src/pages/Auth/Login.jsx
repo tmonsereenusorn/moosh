@@ -30,7 +30,7 @@ const Login = () => {
         setError(true);
       } else {
         fetchUserData().then(data => {
-          Cookies.set('refresh_token', data.refreshToken, { expires: 7, secure: true });
+          // Cookies.set('refresh_token', data.refreshToken, { expires: 7, secure: true });
           authorize(true);
         });
       }
