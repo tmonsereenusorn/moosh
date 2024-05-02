@@ -35,13 +35,27 @@ const Curator = () => {
   const [description, setDescription] = useState("");
   const [selectedTracks, setSelectedTracks] = useState({});
   const [selectAllButton, setSelectAllButton] = useState(true);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [numSongs, setNumSongs] = useState(20);
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
+  const [settings, setSettings] = useState({
+    numSongs: 20,
+    danceability: {
+      enabled: false,
+      threshold: 5
+    },
+    energy: {
+      enabled: false,
+      threshold: 5
+    },
+    acousticness: {
+      enabled: false,
+      threshold: 5
+    }
+  });
 
   // For firestore function calls.
   const [promptIdState, setPromptIdState] = useState("");
-  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
+  const [settingsDrawerVisible, setSettingsDrawerVisible] = useState(false);
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -49,10 +63,6 @@ const Curator = () => {
 
   const onChangeTitle = (event) => {
     setTitle(event.target.value);
-  };
-
-  const toggleSettingsDrawer = () => {
-    setIsSettingsOpen((prevIsSettingsOpen) => !prevIsSettingsOpen);
   };
 
   // Get recommendations, reset prompt.
@@ -69,9 +79,13 @@ const Curator = () => {
         .filter((rec) => selectedTracks[rec.id])
         .map((rec) => rec.id);
       const blacklistedSongs = recs.map((track) => track.id);
+      const regeneratedSettings = {
+        ...settings,
+        numSongs: unselectedCount
+      };
       const newRecs = await getRecommendationsFromExistingTracks(
         keptSongs,
-        unselectedCount,
+        regeneratedSettings,
         blacklistedSongs
       );
       const updatedNewRecs = newRecs.map((track, index) => ({
@@ -113,7 +127,7 @@ const Curator = () => {
       setSelectedTracks(updatedSelections);
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const newRecs = await getRecommendationsFromPrompt(prompt, numSongs);
+      const newRecs = await getRecommendationsFromPrompt(prompt, settings);
 
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
@@ -194,19 +208,32 @@ const Curator = () => {
     setCuratorStage(CuratorStages.PROMPT);
   };
 
-  const toggleDrawer = () => {
-    setDrawerVisible(!drawerVisible);
-    const drawer = document.getElementById("drawer");
-    const drawerToggle = document.getElementById("drawerToggle");
+  const toggleHistoryDrawer = () => {
+    if (settingsDrawerVisible) toggleSettingsDrawer();
+    setHistoryDrawerVisible(visibility => !visibility);
+    const drawer = document.getElementById("historyDrawer");
+    const drawerToggle = document.getElementById("historyDrawerToggle");
     drawer?.classList.toggle("-translate-x-full");
     drawerToggle?.classList.toggle("sm:translate-x-72");
     drawerToggle?.classList.toggle("translate-x-56");
   };
 
+  const toggleSettingsDrawer = () => {
+    if (historyDrawerVisible) toggleHistoryDrawer();
+    setSettingsDrawerVisible(visibility => !visibility);
+    const drawer = document.getElementById("settingsDrawer");
+    drawer?.classList.toggle("translate-y-full");
+  };
+
   const onHistoryItemClick = (songs, item) => {
     setRecs(songs);
     setPrompt(item.prompt);
-    setNumSongs(songs.length);
+    setSettings(prevSettings => {
+      return {
+        ...prevSettings,
+        numSongs: songs.length
+      }
+    });
     
     // Select all tracks
     const newSelectedTracks = songs.reduce((acc, track) => {
@@ -259,10 +286,10 @@ const Curator = () => {
             onSubmit={onSubmit}
             prompt={prompt}
             onChangePrompt={onChangePrompt}
+            settingsDrawerVisible={settingsDrawerVisible}
             toggleSettingsDrawer={toggleSettingsDrawer}
-            isSettingsOpen={isSettingsOpen}
-            numSongs={numSongs}
-            setNumSongs={setNumSongs}
+            settings={settings}
+            setSettings={setSettings}
           />
         );
       case CuratorStages.CURATED:
@@ -295,10 +322,10 @@ const Curator = () => {
       <div className="flex w-2/3 items-center justify-center">
         <>
           <HistoryDrawer
-            toggleDrawer={toggleDrawer}
-            visible={drawerVisible}
+            toggleDrawer={toggleHistoryDrawer}
+            visible={historyDrawerVisible}
             onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
-          />
+          />          
           {loading ? (
             <Loader />
           ) : (

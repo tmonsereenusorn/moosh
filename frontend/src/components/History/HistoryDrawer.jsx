@@ -168,7 +168,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
   return (
     <>
       <div
-        id="drawer"
+        id="historyDrawer"
         className="h-screen w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-8 px-2 space-y-2"
       >
         <div className="flex space-x-4 sm:space-x-12 items-center justify-center mb-3">
@@ -207,7 +207,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
         </div>
       </div>
       <div
-        id="drawerToggle"
+        id="historyDrawerToggle"
         className="transition-transform absolute left-4 flex h-screen justify-center items-center z-30"
       >
         {visible ? (

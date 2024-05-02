@@ -14,6 +14,7 @@ load_dotenv()
 from model import query_openai
 from decorators import retry
 from spotify_api import SpotifyAPI
+from helpers import Helpers
 
 @app.route("/ping", methods=["GET"])
 @retry()
@@ -30,12 +31,16 @@ def get_recommendations_with_seeds():
 
   body = request.json
   seed_tracks = body.get('seedTracks', '')
-  num_recs = int(body.get('numRecs', 20))
+  
+  # Parse curator settings
+  settings = body.get('settings', { 'numSongs': 20 })
+  num_recs, _, _, _ = Helpers.parse_curator_settings(settings)
+
   blacklisted_songs = body.get('blacklistedSongs', [])
 
   spotify_api = SpotifyAPI(access_token=access_token)
 
-  recommendations = spotify_api.make_recommendations_from_seed_tracks(len(blacklisted_songs) + num_recs, seed_tracks)
+  recommendations = spotify_api.make_recommendations(len(blacklisted_songs) + num_recs, seed_tracks)
   
   filtered_recommendations = [rec for rec in recommendations if rec['id'] not in blacklisted_songs]
 
@@ -57,8 +62,11 @@ def prompt_openai():
   
   body = request.json
   prompt = body.get('prompt', '')
-  num_recs = int(body.get('num_recs', 20))
 
+  # Parse curator settings
+  settings = body.get('settings', { 'numSongs': 20 })
+  num_recs, target_danceability, target_energy, target_acousticness = Helpers.parse_curator_settings(settings)
+  
   spotify_api = SpotifyAPI(access_token=access_token)
 
   seeds = None
@@ -105,13 +113,13 @@ def prompt_openai():
   else:
     seeds["seed_genres"] = None
 
-  recommendations = spotify_api.make_recommendations(num_recs, 
+  recommendations = spotify_api.make_recommendations(num_recs=num_recs, 
+                                                     seed_tracks=seeds["seed_tracks"],
                                                      seed_artists=seeds["seed_artists"],
                                                      seed_genres=seeds["seed_genres"],
-                                                     seed_tracks=seeds["seed_tracks"],
-                                                     target_acousticness=seeds["target_acousticness"],
-                                                     target_danceability=seeds["target_danceability"],
-                                                     target_energy=seeds["target_energy"],
+                                                     target_acousticness=target_acousticness or seeds["target_acousticness"],
+                                                     target_danceability=target_danceability or seeds["target_danceability"],
+                                                     target_energy=target_energy or seeds["target_energy"],
                                                      target_instrumentalness=seeds["target_instrumentalness"],
                                                      target_valence=seeds["target_valence"])
   
