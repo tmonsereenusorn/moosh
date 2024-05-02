@@ -33,6 +33,10 @@ const CuratorComponent = ({
   setRecs,
   selectedTracks,
   setSelectedTracks,
+  numSongs,
+  setNumSongs,
+  curatorStage,
+  setCuratorStage,
   url = null,
   setUrl = null,
   title = null,
@@ -43,30 +47,20 @@ const CuratorComponent = ({
   setSelectAllButton = null,
   isSettingsOpen = null,
   setIsSettingsOpen = null,
-  numSongs = null,
-  setNumSongs = null,
-  curatorStage,
-  setCuratorStage,
   promptIdState = null,
   setPromptIdState = null,
   drawerVisible = null,
   setDrawerVisible = null,
   usr = null
 }) => {
-  // const [prompt, setPrompt] = useState("");
-  // const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
-  // const [recs, setRecs] = useState([]);
-  // const [selectedTracks, setSelectedTracks] = useState({});
 
-  // const [url, setUrl] = useState("");
-  // const [title, setTitle] = useState("");
-  // const [description, setDescription] = useState("");
-  // const [selectAllButton, setSelectAllButton] = useState(true);
-  // const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  // const [numSongs, setNumSongs] = useState(20);
-  // const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
-  // const [promptIdState, setPromptIdState] = useState("");
-  // const [drawerVisible, setDrawerVisible] = useState(false);
+  // useEffect(() => {
+  //   if (recs.length > 0) {
+  //     console.log('Received new recommendations:', recs);
+  //     // Check if additional setup is needed for the new recommendations
+  //     console.log(recs);
+  //   }
+  // }, [recs]);
 
 
   const onChangePrompt = (event) => {
@@ -89,7 +83,7 @@ const CuratorComponent = ({
     ).length;
 
     // If there are unselected tracks, fetch new recommendations directly from spotify using kept tracks
-    if (unselectedCount > 0) {
+    if (unselectedCount > 0 && unselectedCount !== recs.length) {
       const keptSongs = recs.filter(rec => selectedTracks[rec.id]).map(rec => rec.id);
       const blacklistedSongs = recs.map((track) => track.id);
       const newRecs = await getRecommendationsFromExistingTracks(
@@ -139,7 +133,6 @@ const CuratorComponent = ({
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
       const newRecs = await getRecommendationsFromPrompt(prompt, numSongs, !tryItMode);
-
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
         isNew: false,
@@ -148,10 +141,12 @@ const CuratorComponent = ({
 
       if (!tryItMode) {
         const promptId = await addPrompt(prompt);
-        await updatePromptSongs(promptId, updatedNewRecs);
         setPromptIdState(promptId);
+        await updatePromptSongs(promptId, updatedNewRecs);
       }
+      console.log(updatedNewRecs)
       setRecs(updatedNewRecs);
+      console.log(recs)
 
       const initialSelections = updatedNewRecs.reduce((acc, track) => {
         acc[track.id] = true;
@@ -163,10 +158,9 @@ const CuratorComponent = ({
 
     if (!tryItMode) {
       setDescription(prompt);
-      setCuratorStage(CuratorStages.CURATED);
     }
-
     setLoading(false);
+    setCuratorStage(CuratorStages.CURATED);
   };
 
   const toggleTrackSelection = (id) => {
