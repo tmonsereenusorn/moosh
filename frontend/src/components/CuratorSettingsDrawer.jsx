@@ -8,7 +8,7 @@ const SETTINGS = {
   ACOUSTICNESS: "acousticness"
 };
 
-const CuratorSettingsDrawer = ({ visible, toggleDrawer, settings, setSettings }) => {
+const CuratorSettingsDrawer = ({ toggleDrawer, settings, setSettings }) => {
   const setNumSongs = n => {
     setSettings(prevSettings => {
       return {

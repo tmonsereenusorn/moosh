@@ -7,7 +7,6 @@ const PromptView = ({
   onSubmit,
   prompt,
   onChangePrompt,
-  settingsDrawerVisible,
   toggleSettingsDrawer,
   settings,
   setSettings
@@ -30,7 +29,6 @@ const PromptView = ({
             onClick={toggleSettingsDrawer}
           />
           <CuratorSettingsDrawer
-            visible={settingsDrawerVisible}
             toggleDrawer={toggleSettingsDrawer}
             settings={settings}
             setSettings={setSettings}

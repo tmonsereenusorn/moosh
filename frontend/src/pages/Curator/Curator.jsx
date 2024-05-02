@@ -286,7 +286,6 @@ const Curator = () => {
             onSubmit={onSubmit}
             prompt={prompt}
             onChangePrompt={onChangePrompt}
-            settingsDrawerVisible={settingsDrawerVisible}
             toggleSettingsDrawer={toggleSettingsDrawer}
             settings={settings}
             setSettings={setSettings}
