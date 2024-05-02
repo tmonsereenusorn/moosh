@@ -15,6 +15,11 @@ const TryItCurator = () => {
   const [selectedTracks, setSelectedTracks] = useState({});
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
   const [numSongs, setNumSongs] = useState(20);
+  const [title, setTitle] = useState("");
+  const [selectAllButton, setSelectAllButton] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [url, setUrl] = useState("");
 
   return (
     <CuratorComponent
@@ -31,6 +36,16 @@ const TryItCurator = () => {
       setCuratorStage={setCuratorStage}
       numSongs={numSongs}
       setNumSongs={setNumSongs}
+      title={title}
+      setTitle={setTitle}
+      selectAllButton={selectAllButton}
+      setSelectAllButton={setSelectAllButton}
+      isSettingsOpen={isSettingsOpen}
+      setIsSettingsOpen={setIsSettingsOpen}
+      description={description}
+      setDescription={setDescription}
+      url={url}
+      setUrl={setUrl}
       />
   );
 };
