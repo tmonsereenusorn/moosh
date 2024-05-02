@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import CuratorInput from "../../../components/CuratorInput";
 import CuratorSettingsDrawer from "../../../components/CuratorSettingsDrawer";
 
@@ -7,16 +7,19 @@ const PromptView = ({
   prompt,
   onChangePrompt,
   settingsDrawerVisible,
-  toggleSettingsDrawer
+  toggleSettingsDrawer,
+  settings,
+  setSettings
 }) => {
-  const [numSongs, setNumSongs] = useState(20);
-
   return (
     <div className="fixed inset-0 flex justify-center items-center">
       <div className="w-1/2 flex flex-col items-center space-y-2">
         <div className="w-full flex justify-center items-center">
           <CuratorInput
-            onSubmit={() => onSubmit(numSongs)}
+            onSubmit={() => {
+              toggleSettingsDrawer();
+              onSubmit();
+            }}
             value={prompt}
             onChangeText={(event) => onChangePrompt(event)}
             disabled={prompt.length === 0}
@@ -24,8 +27,8 @@ const PromptView = ({
           <CuratorSettingsDrawer
             visible={settingsDrawerVisible}
             toggleDrawer={toggleSettingsDrawer}
-            numSongs={numSongs}
-            setNumSongs={setNumSongs}
+            settings={settings}
+            setSettings={setSettings}
           />
         </div>
       </div>

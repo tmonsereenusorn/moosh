@@ -36,6 +36,21 @@ const Curator = () => {
   const [selectedTracks, setSelectedTracks] = useState({});
   const [selectAllButton, setSelectAllButton] = useState(true);
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
+  const [settings, setSettings] = useState({
+    numSongs: 20,
+    danceability: {
+      enabled: false,
+      threshold: 5
+    },
+    energy: {
+      enabled: false,
+      threshold: 5
+    },
+    acousticness: {
+      enabled: false,
+      threshold: 5
+    }
+  });
 
   // For firestore function calls.
   const [promptIdState, setPromptIdState] = useState("");
@@ -51,7 +66,7 @@ const Curator = () => {
   };
 
   // Get recommendations, reset prompt.
-  const onSubmit = async (numSongs) => {
+  const onSubmit = async () => {
     setLoading(true);
 
     const unselectedCount = Object.values(selectedTracks).filter(
@@ -64,9 +79,13 @@ const Curator = () => {
         .filter((rec) => selectedTracks[rec.id])
         .map((rec) => rec.id);
       const blacklistedSongs = recs.map((track) => track.id);
+      const regeneratedSettings = {
+        ...settings,
+        numSongs: unselectedCount
+      };
       const newRecs = await getRecommendationsFromExistingTracks(
         keptSongs,
-        unselectedCount,
+        regeneratedSettings,
         blacklistedSongs
       );
       const updatedNewRecs = newRecs.map((track, index) => ({
@@ -108,7 +127,7 @@ const Curator = () => {
       setSelectedTracks(updatedSelections);
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const newRecs = await getRecommendationsFromPrompt(prompt, numSongs);
+      const newRecs = await getRecommendationsFromPrompt(prompt, settings);
 
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
@@ -264,6 +283,8 @@ const Curator = () => {
             onChangePrompt={onChangePrompt}
             settingsDrawerVisible={settingsDrawerVisible}
             toggleSettingsDrawer={toggleSettingsDrawer}
+            settings={settings}
+            setSettings={setSettings}
           />
         );
       case CuratorStages.CURATED:

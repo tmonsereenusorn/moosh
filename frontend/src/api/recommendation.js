@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { authenticate } from "./auth";
 
-export const getRecommendationsFromExistingTracks = async (seedTracks, numRecs, blacklistedSongs, auth = true) => {
+export const getRecommendationsFromExistingTracks = async (seedTracks, settings, blacklistedSongs, auth = true) => {
   const config = {
     headers: { 
       "Content-Type": "application/json"
@@ -25,7 +25,7 @@ export const getRecommendationsFromExistingTracks = async (seedTracks, numRecs, 
 
     const requestBody = {
       seedTracks: limitedSeedTracks,
-      numRecs: numRecs,
+      settings: settings,
       blacklistedSongs: blacklistedSongs
     }
 
@@ -49,7 +49,7 @@ export const getRecommendationsFromExistingTracks = async (seedTracks, numRecs, 
 /* Get recommendations from the Moosh API which uses GPT and Spotify's recommendation
    API to generate the response.
 */
-export const getRecommendationsFromPrompt = async (prompt, numRecs, auth = true) => {
+export const getRecommendationsFromPrompt = async (prompt, settings, auth = true) => {
   const config = {
     headers: { 
       "Content-Type": "application/json"
@@ -69,7 +69,7 @@ export const getRecommendationsFromPrompt = async (prompt, numRecs, auth = true)
 
   const requestBody = {
     prompt: prompt,
-    num_recs: numRecs
+    settings: settings
   };
 
   try {

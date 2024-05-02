@@ -11,7 +11,7 @@ def retry(max_retries=5, backoff=1):
                     return result
                 except Exception as e:
                     retries += 1
-                    time.sleep(backoff)
+                    time.sleep(backoff * retries)
                     print("trying again")
                     most_recent_exception = e
             return repr(most_recent_exception), 500

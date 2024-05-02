@@ -73,8 +73,8 @@ class SpotifyAPI:
             return ""
 
     # Make recommendations using Spotify's Recommendation API based on GPT's seeds.
-    def make_recommendations(self, num_recs, seed_artists, seed_genres, seed_tracks, target_acousticness, 
-                         target_danceability, target_energy, target_instrumentalness, target_valence):
+    def make_recommendations(self, num_recs, seed_tracks, seed_artists=[], seed_genres=[], target_acousticness=None, 
+                         target_danceability=None, target_energy=None, target_instrumentalness=None, target_valence=None):
         kwargs = {
             "target_acousticness": target_acousticness,
             "target_danceability": target_danceability,
@@ -105,32 +105,3 @@ class SpotifyAPI:
         except spotipy.SpotifyException as e:
             print(f"Exception: {e}")
             return {}
-        
-    def make_recommendations_from_seed_tracks(self, num_recs, seed_tracks):
-        try:
-            data = self.sp.recommendations(
-                seed_artists=[],
-                seed_genres=[],
-                seed_tracks=seed_tracks, # only gives one track
-                limit=num_recs,
-            )
-            resp = [
-                {
-                    "id": track.get("id"),
-                    "uri": track.get("uri"),
-                    "artist": track.get('artists')[0].get("name"),
-                    "title": track.get("name"),
-                    "url": track.get("external_urls").get("spotify"),
-                    "preview": track.get("preview_url"),
-                    "duration": track.get("duration_ms"),
-                } for track in data.get("tracks")
-            ]
-            return resp
-        except spotipy.SpotifyException as e:
-            print(f"Exception: {e}")
-            return {}
-
-    
-
-
-

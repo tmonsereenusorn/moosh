@@ -34,6 +34,7 @@ RUN pip install -r requirements.txt
 COPY server.py .
 COPY model.py .
 COPY decorators.py .
+COPY helpers.py .
 COPY spotify_api.py .
 
 COPY gunicorn_config.py .
