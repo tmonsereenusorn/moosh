@@ -228,7 +228,12 @@ const Curator = () => {
   const onHistoryItemClick = (songs, item) => {
     setRecs(songs);
     setPrompt(item.prompt);
-    setNumSongs(songs.length);
+    setSettings(prevSettings => {
+      return {
+        ...prevSettings,
+        numSongs: songs.length
+      }
+    });
     
     // Select all tracks
     const newSelectedTracks = songs.reduce((acc, track) => {
@@ -319,7 +324,7 @@ const Curator = () => {
           <HistoryDrawer
             toggleDrawer={toggleHistoryDrawer}
             visible={historyDrawerVisible}
-            onClickCallback={(songs, item) => onHistoryItemClick(songs)}
+            onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
           />          
           {loading ? (
             <Loader />
