@@ -51,7 +51,7 @@ const CuratorComponent = ({
   setPromptIdState,
   drawerVisible,
   setDrawerVisible,
-  usr = null
+  user = null
 }) => {
 
   const onChangePrompt = (event) => {
@@ -266,7 +266,7 @@ const CuratorComponent = ({
     const songsToExport = recs.filter((rec) => selectedTracks[rec.id]);
     const data = await exportPlaylist({
       name: title,
-      userId: usr.id,
+      userId: user.id,
       songs: songsToExport,
       description: description,
     });
