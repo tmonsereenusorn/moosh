@@ -33,8 +33,6 @@ const CuratorComponent = ({
   setRecs,
   selectedTracks,
   setSelectedTracks,
-  numSongs,
-  setNumSongs,
   curatorStage,
   setCuratorStage,
   url,
@@ -45,13 +43,13 @@ const CuratorComponent = ({
   setDescription,
   selectAllButton,
   setSelectAllButton,
-  isSettingsOpen,
-  setIsSettingsOpen,
+  settingsDrawerVisible,
+  setSettingsDrawerVisible,
   promptIdState,
   setPromptIdState,
-  drawerVisible,
-  setDrawerVisible,
-  usr = null
+  historyDrawerVisible,
+  setHistoryDrawerVisible,
+  user = null
 }) => {
 
   const onChangePrompt = (event) => {
@@ -62,9 +60,6 @@ const CuratorComponent = ({
     setTitle(event.target.value);
   };
 
-  const toggleSettingsDrawer = () => {
-    setIsSettingsOpen((prevIsSettingsOpen) => !prevIsSettingsOpen);
-  };
   // Get recommendations, reset prompt.
   const onSubmit = async () => {
     setLoading(true);
@@ -77,9 +72,13 @@ const CuratorComponent = ({
     if (unselectedCount > 0 && unselectedCount !== recs.length) {
       const keptSongs = recs.filter(rec => selectedTracks[rec.id]).map(rec => rec.id);
       const blacklistedSongs = recs.map((track) => track.id);
+      const regeneratedSettings = {
+        ...settings,
+        numSongs: unselectedCount
+      };
       const newRecs = await getRecommendationsFromExistingTracks(
         keptSongs,
-        unselectedCount,
+        regeneratedSettings,
         blacklistedSongs,
         !tryItMode
       );
@@ -123,7 +122,7 @@ const CuratorComponent = ({
       setSelectedTracks(updatedSelections);
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const newRecs = await getRecommendationsFromPrompt(prompt, numSongs, !tryItMode);
+      const newRecs = await getRecommendationsFromPrompt(prompt, settings, !tryItMode);
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
         isNew: false,
@@ -186,6 +185,13 @@ const CuratorComponent = ({
     setCuratorStage(CuratorStages.PROMPT);
   };
 
+  const toggleSettingsDrawer = () => {
+    if (historyDrawerVisible) toggleHistoryDrawer();
+    setSettingsDrawerVisible(visibility => !visibility);
+    const drawer = document.getElementById("settingsDrawer");
+    drawer?.classList.toggle("translate-y-full");
+  };
+
   const toggleSelectAllButton = () => {
     const allSelected =
       Object.keys(selectedTracks).length > 0 &&
@@ -230,6 +236,8 @@ const CuratorComponent = ({
             isSettingsOpen={isSettingsOpen}
             numSongs={numSongs}
             setNumSongs={setNumSongs}
+            settings={settings}
+            setSettings={setSettings}
           />
         );
       case CuratorStages.CURATED:
@@ -249,6 +257,8 @@ const CuratorComponent = ({
             getSelectedCount={getSelectedCount}
             getUnselectedCount={getUnselectedCount}
             tryItMode={tryItMode}
+            settings={settings}
+            setSettings={setSettings}
           />
         );
       case CuratorStages.EXPORTED:
@@ -266,7 +276,7 @@ const CuratorComponent = ({
     const songsToExport = recs.filter((rec) => selectedTracks[rec.id]);
     const data = await exportPlaylist({
       name: title,
-      userId: usr.id,
+      userId: user.id,
       songs: songsToExport,
       description: description,
     });
@@ -280,20 +290,35 @@ const CuratorComponent = ({
     setCuratorStage(CuratorStages.EXPORTED);
   };
 
-  const toggleDrawer = () => {
-    setDrawerVisible(!drawerVisible);
-    const drawer = document.getElementById("drawer");
-    const drawerToggle = document.getElementById("drawerToggle");
+  const toggleHistoryDrawer = () => {
+    if (settingsDrawerVisible) toggleSettingsDrawer();
+    setHistoryDrawerVisible(visibility => !visibility);
+    const drawer = document.getElementById("historyDrawer");
+    const drawerToggle = document.getElementById("historyDrawerToggle");
     drawer?.classList.toggle("-translate-x-full");
     drawerToggle?.classList.toggle("sm:translate-x-72");
     drawerToggle?.classList.toggle("translate-x-56");
   };
 
-  const onHistoryItemClick = (songs) => {
+  const onHistoryItemClick = (songs, item) => {
     setRecs(songs);
+    setPrompt(item.prompt);
+    setSettings(prevSettings => {
+      return {
+        ...prevSettings,
+        numSongs: songs.length
+      }
+    });
+    // Select all tracks
+    const newSelectedTracks = songs.reduce((acc, track) => {
+      acc[track.id] = true;
+      return acc;
+    }, {});
+
+    setSelectedTracks(newSelectedTracks);
+    setSelectAllButton(true);
     setCuratorStage(CuratorStages.CURATED);
   };
-
 
   return (
     <div className="h-screen flex items-center justify-center overflow-y-hidden">
