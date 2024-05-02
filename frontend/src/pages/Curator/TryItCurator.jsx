@@ -14,12 +14,28 @@ const TryItCurator = () => {
   const [recs, setRecs] = useState([]);
   const [selectedTracks, setSelectedTracks] = useState({});
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
-  const [numSongs, setNumSongs] = useState(20);
   const [title, setTitle] = useState("");
   const [selectAllButton, setSelectAllButton] = useState(true);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
+
+  const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
+  const [settingsDrawerVisible, setSettingsDrawerVisible] = useState(false);
+  const [settings, setSettings] = useState({
+    numSongs: 20,
+    danceability: {
+      enabled: false,
+      threshold: 5
+    },
+    energy: {
+      enabled: false,
+      threshold: 5
+    },
+    acousticness: {
+      enabled: false,
+      threshold: 5
+    }
+  });
 
   return (
     <CuratorComponent
@@ -34,19 +50,21 @@ const TryItCurator = () => {
       setSelectedTracks={setSelectedTracks}
       curatorStage={curatorStage}
       setCuratorStage={setCuratorStage}
-      numSongs={numSongs}
-      setNumSongs={setNumSongs}
       title={title}
       setTitle={setTitle}
       selectAllButton={selectAllButton}
       setSelectAllButton={setSelectAllButton}
-      isSettingsOpen={isSettingsOpen}
-      setIsSettingsOpen={setIsSettingsOpen}
       description={description}
       setDescription={setDescription}
       url={url}
       setUrl={setUrl}
-      />
+      historyDrawerVisible={historyDrawerVisible}
+      setHistoryDrawerVisible={setHistoryDrawerVisible}
+      settingsDrawerVisible={settingsDrawerVisible}
+      setSettingsDrawerVisible={setSettingsDrawerVisible}
+      settings={settings}
+      setSettings={setSettings}
+    />
   );
 };
 

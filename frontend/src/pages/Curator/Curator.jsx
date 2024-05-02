@@ -59,8 +59,6 @@ const Curator = () => {
       setTitle={setTitle}
       selectAllButton={selectAllButton}
       setSelectAllButton={setSelectAllButton}
-      isSettingsOpen={isSettingsOpen}
-      setIsSettingsOpen={setIsSettingsOpen}
       description={description}
       setDescription={setDescription}
       url={url}
@@ -68,9 +66,13 @@ const Curator = () => {
       user={user}
       promptIdState={promptIdState}
       setPromptIdState={setPromptIdState}
-      drawerVisible={drawerVisible}
-      setDrawerVisible={setDrawerVisible}
-      />
+      historyDrawerVisible={historyDrawerVisible}
+      setHistoryDrawerVisible={setHistoryDrawerVisible}
+      settingsDrawerVisible={settingsDrawerVisible}
+      setSettingsDrawerVisible={setSettingsDrawerVisible}
+      settings={settings}
+      setSettings={setSettings}
+    />
   );
 };
 

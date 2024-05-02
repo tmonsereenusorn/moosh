@@ -49,6 +49,8 @@ const CuratorComponent = ({
   setPromptIdState,
   historyDrawerVisible,
   setHistoryDrawerVisible,
+  settings,
+  setSettings,
   user = null
 }) => {
 
@@ -131,8 +133,8 @@ const CuratorComponent = ({
 
       if (!tryItMode) {
         const promptId = await addPrompt(prompt);
-        setPromptIdState(promptId);
         await updatePromptSongs(promptId, updatedNewRecs);
+        setPromptIdState(promptId);
       }
       setRecs(updatedNewRecs);
 
@@ -233,9 +235,6 @@ const CuratorComponent = ({
             prompt={prompt}
             onChangePrompt={onChangePrompt}
             toggleSettingsDrawer={toggleSettingsDrawer}
-            isSettingsOpen={isSettingsOpen}
-            numSongs={numSongs}
-            setNumSongs={setNumSongs}
             settings={settings}
             setSettings={setSettings}
           />
@@ -301,6 +300,7 @@ const CuratorComponent = ({
   };
 
   const onHistoryItemClick = (songs, item) => {
+    console.log(item)
     setRecs(songs);
     setPrompt(item.prompt);
     setSettings(prevSettings => {
@@ -325,9 +325,9 @@ const CuratorComponent = ({
       <div className="flex w-2/3 items-center justify-center">
         <>
           {!tryItMode && <HistoryDrawer
-            toggleDrawer={toggleDrawer}
-            visible={drawerVisible}
-            onClickCallback={(songs) => onHistoryItemClick(songs)}
+            toggleDrawer={toggleHistoryDrawer}
+            visible={historyDrawerVisible}
+            onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
           />}
           {loading ? (
             <Loader />
