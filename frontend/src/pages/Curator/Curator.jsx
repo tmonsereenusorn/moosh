@@ -13,6 +13,7 @@ import {
   deletePrompt,
   updatePromptSongs,
 } from "../../api/history";
+import kpis from "../../api/kpis";
 
 import PromptView from "./views/PromptView";
 import ExportedView from "./views/ExportedView";
@@ -39,12 +40,22 @@ const Curator = () => {
   const [numSongs, setNumSongs] = useState(20);
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
 
+  // KPI specific state.
+  // Prompting
+  const [kpiNumKeystrokes, setKpiNumKeystrokes] = useState(0);
+  // Regenerations
+  const [kpiNumToggles, setKpiNumToggles] = useState(0);
+  const [kpiNumPreviewPlays, setKpiNumPreviewPlays] = useState(0);
+  const [kpiNumLinkClicks, setKpiNumLinkClicks] = useState(0);
+  const [kpiNumToggleAlls, setKpiNumToggleAlls] = useState(0);
+
   // For firestore function calls.
   const [promptIdState, setPromptIdState] = useState("");
   const [drawerVisible, setDrawerVisible] = useState(false);
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
+    setKpiNumKeystrokes((prev) => prev + 1);
   };
 
   const onChangeTitle = (event) => {
@@ -55,10 +66,15 @@ const Curator = () => {
     setIsSettingsOpen((prevIsSettingsOpen) => !prevIsSettingsOpen);
   };
 
+  const resetRegenerationKpis = () => {
+    setKpiNumToggles(0);
+    setKpiNumPreviewPlays(0);
+    setKpiNumLinkClicks(0);
+    setKpiNumToggleAlls(0);
+  };
   // Get recommendations, reset prompt.
-  const onSubmit = async () => {
+  const onSubmit = async (regeneration = false) => {
     setLoading(true);
-
     const unselectedCount = Object.values(selectedTracks).filter(
       (isSelected) => !isSelected
     ).length;
@@ -107,10 +123,22 @@ const Curator = () => {
       // Update prompt's songs in firestore.
       await deletePrompt(promptIdState);
       const promptId = await addPrompt(prompt);
+      setPromptIdState(promptId);
       await updatePromptSongs(promptId, updatedSelections);
 
       // Apply the updated selection status.
       setSelectedTracks(updatedSelections);
+
+      // Log regeneration.
+      const regeneratationLogId = kpis.logRegeneration(
+        kpiNumToggles,
+        kpiNumToggleAlls,
+        kpiNumPreviewPlays,
+        kpiNumLinkClicks,
+        unselectedCount,
+        promptIdState
+      );
+      resetRegenerationKpis();
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
       const newRecs = await getRecommendationsFromPrompt(prompt, numSongs);
@@ -122,6 +150,7 @@ const Curator = () => {
       }));
 
       const promptId = await addPrompt(prompt);
+
       await updatePromptSongs(promptId, updatedNewRecs);
       setPromptIdState(promptId);
       setRecs(updatedNewRecs);
@@ -132,33 +161,58 @@ const Curator = () => {
       }, {});
 
       setSelectedTracks(initialSelections);
+
+      // Log prompting or regenerating.
+      if (regeneration) {
+        const regeneratationLogId = kpis.logRegeneration(
+          kpiNumToggles,
+          kpiNumToggleAlls,
+          kpiNumPreviewPlays,
+          kpiNumLinkClicks,
+          unselectedCount,
+          promptIdState
+        );
+        resetRegenerationKpis();
+      } else {
+        const promptLogId = kpis.logPrompt(
+          kpiNumKeystrokes,
+          numSongs,
+          prompt.length,
+          promptId
+        );
+      }
     }
 
-    // Firestore updates.
     setDescription(prompt);
     setLoading(false);
     setCuratorStage(CuratorStages.CURATED);
   };
 
   const toggleTrackSelection = (id) => {
+    // Update regeneration metadata.
+    setKpiNumToggles((prev) => prev + 1);
+
     setSelectedTracks((prevSelectedTracks) => {
       // Update the track selection state
       const newSelectedTracks = {
         ...prevSelectedTracks,
-        [id]: !prevSelectedTracks[id]
+        [id]: !prevSelectedTracks[id],
       };
-  
+
       // Check if all tracks are deselected after the update
-      const allDeselected = Object.keys(newSelectedTracks).length > 0 &&
-                            Object.values(newSelectedTracks).every(isSelected => !isSelected);
-  
+      const allDeselected =
+        Object.keys(newSelectedTracks).length > 0 &&
+        Object.values(newSelectedTracks).every((isSelected) => !isSelected);
+
       // If all tracks are deselected, update the select all button state
       if (allDeselected) {
         setSelectAllButton(false);
       } else {
         setSelectAllButton(true);
       }
-  
+
+      setKpiNumToggles((prev) => prev + 1);
+
       return newSelectedTracks;
     });
   };
@@ -175,7 +229,13 @@ const Curator = () => {
     });
 
     // Firestore update.
-    await addExportedPlaylist(data.id, promptIdState, title, data?.images[0]?.url, data?.external_urls?.spotify);
+    await addExportedPlaylist(
+      data.id,
+      promptIdState,
+      title,
+      data?.images[0]?.url,
+      data?.external_urls?.spotify
+    );
 
     setUrl(data.external_urls.spotify);
     setPrompt("");
@@ -190,6 +250,11 @@ const Curator = () => {
     setTitle("");
     setDescription("");
     setPrompt("");
+
+    setKpiNumKeystrokes(0);
+    setKpiNumPreviewPlays(0);
+    setKpiNumToggles(0);
+
     setLoading(false);
     setCuratorStage(CuratorStages.PROMPT);
   };
@@ -209,6 +274,7 @@ const Curator = () => {
   };
 
   const toggleSelectAllButton = () => {
+    setKpiNumToggleAlls((prev) => prev + 1);
     const allSelected =
       Object.keys(selectedTracks).length > 0 &&
       Object.values(selectedTracks).every((isSelected) => isSelected);
@@ -270,6 +336,14 @@ const Curator = () => {
             toggleSelectAllButton={toggleSelectAllButton}
             getSelectedCount={getSelectedCount}
             getUnselectedCount={getUnselectedCount}
+            incrementPreviewClicks={() => {
+              setKpiNumPreviewPlays((prev) => prev + 1);
+              console.log(kpiNumPreviewPlays);
+            }}
+            incrementLinkClicks={() => {
+              setKpiNumLinkClicks((prev) => prev + 1);
+              console.log(kpiNumLinkClicks);
+            }}
           />
         );
       case CuratorStages.EXPORTED:
@@ -288,11 +362,7 @@ const Curator = () => {
             visible={drawerVisible}
             onClickCallback={(songs) => onHistoryItemClick(songs)}
           />
-          {loading ? (
-            <Loader />
-          ) : (
-            renderSwitch()
-          )}
+          {loading ? <Loader /> : renderSwitch()}
         </>
       </div>
     </div>

@@ -17,8 +17,18 @@ const CuratedView = ({
   toggleSelectAllButton,
   selectAllButton,
   getSelectedCount,
-  getUnselectedCount
+  getUnselectedCount,
+  incrementPreviewClicks,
+  incrementLinkClicks,
 }) => {
+  // Used for KPI logging.
+  const previewCallback = () => {
+    incrementPreviewClicks();
+  };
+  const linkCallback = () => {
+    incrementLinkClicks();
+  };
+
   return (
     <>
       <div className="flex flex-col w-3/4 h-[100vh] pt-14 pb-24">
@@ -56,6 +66,8 @@ const CuratedView = ({
                   onToggleSelection={() =>
                     toggleTrackSelection(recommendation.id)
                   }
+                  previewCallback={previewCallback}
+                  linkCallback={linkCallback}
                 />
               );
             })}
@@ -65,17 +77,17 @@ const CuratedView = ({
       <div
         className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
       >
-      <ChoiceLayer
-        onGenerate={onExport}
-        onRegenerate={onSubmit}
-        onCancel={onReset}
-        onChangeTitle={onChangeTitle}
-        disabled={title.length === 0}
-        unselectedCount={getUnselectedCount()}
-        selectedCount={getSelectedCount()}
-        tryItMode={false}
-      />
-    </div>
+        <ChoiceLayer
+          onGenerate={onExport}
+          onRegenerate={onSubmit}
+          onCancel={onReset}
+          onChangeTitle={onChangeTitle}
+          disabled={title.length === 0}
+          unselectedCount={getUnselectedCount()}
+          selectedCount={getSelectedCount()}
+          tryItMode={false}
+        />
+      </div>
     </>
   );
 };

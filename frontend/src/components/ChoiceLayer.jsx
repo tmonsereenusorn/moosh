@@ -24,16 +24,24 @@ const ChoiceLayer = ({
   disabled = false,
   unselectedCount,
   selectedCount,
-  tryItMode
+  tryItMode,
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
-  const [ openModal, setOpenModal ] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const firstFieldRef = useRef(null);
 
   return (
     <div className="w-3/4 flex space-x-8">
-      {openModal && <SignUpModal closeModal={setOpenModal} modalOpen={openModal} />}
-      <Tooltip label={isOpen ? undefined : `Export ${selectedCount} track${selectedCount === 1 ? '' : 's'}`}>
+      {openModal && (
+        <SignUpModal closeModal={setOpenModal} modalOpen={openModal} />
+      )}
+      <Tooltip
+        label={
+          isOpen
+            ? undefined
+            : `Export ${selectedCount} track${selectedCount === 1 ? "" : "s"}`
+        }
+      >
         <div className="w-full bg-secondary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center">
           <Popover
             isOpen={isOpen}
@@ -69,7 +77,9 @@ const ChoiceLayer = ({
                   />
                   <div
                     className={`rounded-md w-12 h-10 ${
-                      disabled ? "bg-gray-100" : "bg-secondary hover:cursor-pointer"
+                      disabled
+                        ? "bg-gray-100"
+                        : "bg-secondary hover:cursor-pointer"
                     } flex justify-center items-center text-white`}
                     onClick={() => {
                       if (tryItMode) {
@@ -88,15 +98,19 @@ const ChoiceLayer = ({
           </Popover>
         </div>
       </Tooltip>
-      
-      <Tooltip label={`Regenerate ${unselectedCount === 0 ? selectedCount : unselectedCount} track${unselectedCount === 1 ? '' : 's'}`}>
-      <div
-        className="w-full bg-primary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center"
-        onClick={async () => await onRegenerate()}
+
+      <Tooltip
+        label={`Regenerate ${
+          unselectedCount === 0 ? selectedCount : unselectedCount
+        } track${unselectedCount === 1 ? "" : "s"}`}
       >
-        <GrCycle />
+        <div
+          className="w-full bg-primary py-2 px-6 rounded-md hover:cursor-pointer font-semibold text-white flex justify-center items-center"
+          onClick={async () => await onRegenerate(true)}
+        >
+          <GrCycle />
           <p className="w-full text-center">Regenerate</p>
-      </div>
+        </div>
       </Tooltip>
       <div
         className="w-full bg-gray-200 py-2 px-6 rounded-md hover:cursor-pointer text-surface font-semibold flex justify-center items-center"

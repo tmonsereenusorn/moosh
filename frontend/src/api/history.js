@@ -99,13 +99,7 @@ export const deletePrompt = async (prompt_id = "") => {
       batch.delete(doc.ref);
     });
 
-    const promptRef = doc(
-      db,
-      "users",
-      uid,
-      "prompts",
-      prompt_id
-    );
+    const promptRef = doc(db, "users", uid, "prompts", prompt_id);
     batch.delete(promptRef);
     batch.commit();
   } catch (error) {
@@ -158,8 +152,10 @@ export const getPromptsForUser = (setHistory, uid) => {
   try {
     const promptsRef = collection(db, "users", uid, "prompts");
 
-    return onSnapshot(query(promptsRef), snapshot => {
-      const data = snapshot.docs.map(doc => { return { id: doc.id, ...doc.data() }});
+    return onSnapshot(query(promptsRef), (snapshot) => {
+      const data = snapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() };
+      });
       setHistory(data);
     });
   } catch (error) {
@@ -196,8 +192,10 @@ export const getPlaylistsForUser = (setPlaylists, uid) => {
   try {
     const playlistsRef = collection(db, "users", uid, "playlists");
 
-    return onSnapshot(query(playlistsRef), snapshot => {
-      const data = snapshot.docs.map(doc => { return { id: doc.id, ...doc.data() }});
+    return onSnapshot(query(playlistsRef), (snapshot) => {
+      const data = snapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() };
+      });
       setPlaylists(data);
     });
   } catch (error) {
@@ -210,11 +208,18 @@ export const updatePlaylistDescription = async (playlist_id, description) => {
   await authenticate();
   const token = Cookies.get("token");
   const config = {
-    headers: { Authorization: `Bearer ${token}`, ContentType: "application/json" },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ContentType: "application/json",
+    },
   };
 
   try {
-    await axios.put(`${SPOTIFY_V1_URL}/playlists/${playlist_id}`, { description: description }, config);
+    await axios.put(
+      `${SPOTIFY_V1_URL}/playlists/${playlist_id}`,
+      { description: description },
+      config
+    );
     return 0;
   } catch (error) {
     console.error(error);
@@ -226,14 +231,21 @@ export const updatePlaylistTitle = async (playlist_id, name) => {
   await authenticate();
   const token = Cookies.get("token");
   const config = {
-    headers: { Authorization: `Bearer ${token}`, ContentType: "application/json" },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ContentType: "application/json",
+    },
   };
 
   const uid = firebaseAuth.currentUser?.uid;
 
   try {
-    await axios.put(`${SPOTIFY_V1_URL}/playlists/${playlist_id}`, { name: name }, config);
-    
+    await axios.put(
+      `${SPOTIFY_V1_URL}/playlists/${playlist_id}`,
+      { name: name },
+      config
+    );
+
     // Update Firestore after Spotify update success
     const playlistRef = doc(db, "users", uid, "playlists", playlist_id);
     await updateDoc(playlistRef, { title: name });
