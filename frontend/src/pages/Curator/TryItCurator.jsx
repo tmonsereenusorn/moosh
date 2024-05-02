@@ -14,6 +14,7 @@ const TryItCurator = () => {
   const [recs, setRecs] = useState([]);
   const [selectedTracks, setSelectedTracks] = useState({});
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
+  const [numSongs, setNumSongs] = useState(20);
 
   return (
     <CuratorComponent
@@ -28,6 +29,8 @@ const TryItCurator = () => {
       setSelectedTracks={setSelectedTracks}
       curatorStage={curatorStage}
       setCuratorStage={setCuratorStage}
+      numSongs={numSongs}
+      setNumSongs={setNumSongs}
       />
   );
 };
