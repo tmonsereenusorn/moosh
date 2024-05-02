@@ -39,6 +39,7 @@ export const firebaseSignup = async (email, password) => {
     const userObject = {
       email: cred.user.email,
       spotifyUri: null,
+      refreshToken: null,
       createdAt: new Date().toISOString(),
     };
 
@@ -62,16 +63,31 @@ export const firebaseSignout = async () => {
 
 export const updateSpotifyURI = async (uri) => {
   try {
-    const userRef = await doc(db, "users", firebaseAuth.currentUser.uid);
+    const userRef = doc(db, "users", firebaseAuth.currentUser.uid);
     const userSnapshot = await getDoc(userRef);
 
     if (userSnapshot.exists()) {
-      // If the user document exists, update the spotifyUri field
-      await setDoc(userRef, { spotifyUri: uri }, { merge: true });
+      const data = userSnapshot.data();
+      if (!!!data.spotifyUri) {
+        await setDoc(userRef, { spotifyUri: uri }, { merge: true });
+      }
       return 0;
     } else {
       console.error("User document does not exist.");
       return -1;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const updateRefreshToken = async (token) => {
+  try {
+    const userRef = doc(db, "users", firebaseAuth.currentUser.uid);
+    const userSnapshot = await getDoc(userRef);
+
+    if (userSnapshot.exists()) {
+      await setDoc(userRef, { refreshToken: token }, { merge: true });
     }
   } catch (e) {
     console.error(e);

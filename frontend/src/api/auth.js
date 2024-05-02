@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import { updateRefreshToken } from './firebase';
 
 const STR_SIZE = 64;
 const clientId = process.env.REACT_APP_CLIENT_ID;
@@ -43,6 +44,7 @@ const getToken = async (fromRefresh = false) => {
 
     Cookies.set('token', response.access_token, { expires: new Date(new Date().getTime() + response.expires_in * 1000), secure: true });
     Cookies.set('refresh_token', response.refresh_token, { expires: 7, secure: true });
+    await updateRefreshToken(response.refresh_token);
 
     // clear code query in URL to avoid reuse and send to curator after login
     window.history.replaceState({}, document.title, "/");
