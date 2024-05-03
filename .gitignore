@@ -1,9 +1,11 @@
 ai_model/gpt_env/
 
 api/venv/
+api/api_env/
 api/env/
 api/.env
 api/.cache
+api/__pycache__/
 
 # deployments
 api/containers.json

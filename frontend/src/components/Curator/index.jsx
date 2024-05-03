@@ -2,20 +2,20 @@ import React from "react";
 import {
   getRecommendationsFromPrompt,
   getRecommendationsFromExistingTracks,
-} from "../api/recommendation";
-import { exportPlaylist } from "../api/playlist";
-import Loader from "./Loader";
-import HistoryDrawer from "./History/HistoryDrawer";
+} from "../../api/recommendation";
+import { exportPlaylist } from "../../api/playlist";
+import Loader from "../Loader";
+import HistoryDrawer from "../History/HistoryDrawer";
 import {
   addExportedPlaylist,
   addPrompt,
   deletePrompt,
   updatePromptSongs,
-} from "../api/history";
+} from "../../api/history";
 
-import PromptView from "../pages/Curator/views/PromptView";
-import ExportedView from "../pages/Curator/views/ExportedView";
-import CuratedView from "../pages/Curator/views/CuratedView";
+import PromptView from "./views/PromptView";
+import ExportedView from "./views/ExportedView";
+import CuratedView from "./views/CuratedView";
 
 const CuratorStages = Object.freeze({
   PROMPT: 0,

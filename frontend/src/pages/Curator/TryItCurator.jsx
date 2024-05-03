@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import CuratorComponent from "../../components/CuratorComponent";
+import CuratorComponent from "../../components/Curator";
 
 const CuratorStages = Object.freeze({
   PROMPT: 0,
