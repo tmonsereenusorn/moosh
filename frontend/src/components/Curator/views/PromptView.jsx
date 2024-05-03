@@ -1,7 +1,7 @@
 import React from "react";
 import { FaCog } from "react-icons/fa";
-import CuratorInput from "../../../components/CuratorInput";
-import CuratorSettingsDrawer from "../../../components/CuratorSettingsDrawer";
+import CuratorInput from "../CuratorInput";
+import CuratorSettingsDrawer from "../CuratorSettingsDrawer";
 
 const PromptView = ({
   onSubmit,
