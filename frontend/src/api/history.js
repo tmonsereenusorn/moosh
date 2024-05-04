@@ -19,20 +19,27 @@ import { SPOTIFY_V1_URL } from "../constants";
 
 // Takes in a prompt. Adds prompt to a user's prompts subcollection. Returns
 // prompt doc id.
-export const addPrompt = async (prompt = "") => {
+export const addPrompt = async (prompt = "", prompt_id = null) => {
   const uid = firebaseAuth.currentUser?.uid;
-
   try {
     const promptObj = {
       prompt: prompt,
       timestamp: new Date().toISOString(),
       playlist: null,
     };
-    const promptRef = await addDoc(
-      collection(db, "users", uid, "prompts"),
-      promptObj
-    );
-    return promptRef.id;
+
+    // If a prompt id is provdied, create the document with that ID.
+    var promptRef;
+    if (prompt_id) {
+      await setDoc(doc(db, "users", uid, "prompts", prompt_id), promptObj);
+    } else {
+      promptRef = await addDoc(
+        collection(db, "users", uid, "prompts"),
+        promptObj
+      );
+    }
+
+    return prompt_id ? prompt_id : promptRef.id;
   } catch (error) {
     console.error("Error adding prompt to user: ", error);
   }
@@ -75,6 +82,22 @@ export const updatePromptSongs = async (prompt_id = "", songs = []) => {
   } catch (error) {
     console.error("Error adding songs to prompt collection: ", error);
   }
+};
+
+// Regenerates a prompt with new songs and the same prompt ID.
+export const updatePromptRegeneration = async (
+  prompt = "",
+  prompt_id = "",
+  songs = []
+) => {
+  // Delete prompt
+  await deletePrompt(prompt_id);
+  // Add new prompt with the same ID
+  await addPrompt(prompt, prompt_id);
+
+  // Update songs.
+  const songsId = updatePromptSongs(prompt_id, songs);
+  return songsId;
 };
 
 // Takes a prompt id. Deletes prompt and all of its songs from database. Call

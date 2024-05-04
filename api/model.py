@@ -9,7 +9,7 @@ from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 from termcolor import colored
 
-GPT_MODEL_NEW = "gpt-4-turbo-2024-04-09"
+GPT_MODEL_NEW = "gpt-3.5-turbo-0125"
 client = OpenAI()
 
 @retry(wait=wait_random_exponential(multiplier=1, max=40), stop=stop_after_attempt(3))
