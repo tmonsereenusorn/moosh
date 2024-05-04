@@ -34,7 +34,13 @@ const incrementCount = async (actionId) => {
 // PROMPTING KPIS
 // Number of keystrokes and length of the submitted prompt. Will need to find
 // prompt by searching through uid and promptId.
-const logPrompt = async (numKeystrokes, numTracks, promptLength, promptId) => {
+const logPrompt = async (
+  numKeystrokes,
+  numTracks,
+  promptLength,
+  promptId,
+  sessionId
+) => {
   if (process.env.REACT_APP_MODE === "DEV") {
     console.log("Prompt not logged, in dev.");
     return;
@@ -47,6 +53,7 @@ const logPrompt = async (numKeystrokes, numTracks, promptLength, promptId) => {
     const promptData = {
       uid: uid,
       timestamp: new Date().toISOString(),
+      sessionId,
       data: {
         numKeystrokes,
         numTracks: numTracks,
@@ -75,7 +82,8 @@ const logRegeneration = async (
   numPreviewPlays,
   numLinkClicks,
   numNewTracks,
-  promptId
+  promptId,
+  sessionId
 ) => {
   if (process.env.REACT_APP_MODE === "DEV") {
     console.log("Regeneration not logged, in dev.");
@@ -89,6 +97,7 @@ const logRegeneration = async (
     const regenerationData = {
       uid,
       timestamp: new Date().toISOString(),
+      sessionId,
       data: {
         numToggles,
         numToggleAlls,
@@ -110,7 +119,7 @@ const logRegeneration = async (
   }
 };
 
-const logExport = async (numRegenerations, playlistId, promptId) => {
+const logExport = async (numRegenerations, playlistId, promptId, sessionId) => {
   if (process.env.REACT_APP_MODE === "DEV") {
     console.log("Export not logged, in dev.");
     return;
@@ -122,6 +131,7 @@ const logExport = async (numRegenerations, playlistId, promptId) => {
     const exportData = {
       uid,
       timestamp: new Date().toISOString(),
+      sessionId,
       data: {
         numRegenerations,
         playlistId,
@@ -129,19 +139,41 @@ const logExport = async (numRegenerations, playlistId, promptId) => {
       },
     };
 
-    const docRef = await addDoc(
-      collection(db, "kpis", actionId, "instances"),
+    await setDoc(
+      doc(db, "kpis", actionId, "instances", playlistId),
       exportData
     );
 
     incrementCount(actionId);
-    return docRef.id;
+    return playlistId;
   } catch (error) {
     console.error("Error logging export data: " + error);
   }
 };
 
-const logHistoryClick = async () => {
+const logSession = async () => {
+  if (process.env.REACT_APP_MODE === "DEV") {
+    console.log("Session not logged, in dev.");
+    return;
+  }
+  const uid = firebaseAuth.currentUser?.uid;
+  const actionId = "session_logged";
+
+  try {
+    const sessionData = {
+      uid,
+      timestamp: new Date().toISOString(),
+    };
+
+    const docRef = await addDoc(
+      collection(db, "kpis", actionId, "instances"),
+      sessionData
+    );
+    incrementCount(actionId);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error logging session: " + error);
+  }
   return;
 };
 
@@ -149,7 +181,7 @@ const kpis = {
   logPrompt,
   logRegeneration,
   logExport,
-  logHistoryClick,
+  logSession,
 };
 
 export default kpis;

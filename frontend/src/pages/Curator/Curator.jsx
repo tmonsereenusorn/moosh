@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getRecommendationsFromPrompt,
   getRecommendationsFromExistingTracks,
@@ -34,6 +34,7 @@ const Curator = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [numSongs, setNumSongs] = useState(20);
   const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
+  const [sessionId, setSessionId] = useState("");
 
   // KPI specific state.
   // Prompting
@@ -48,6 +49,15 @@ const Curator = () => {
   // For firestore function calls.
   const [promptIdState, setPromptIdState] = useState("");
   const [drawerVisible, setDrawerVisible] = useState(false);
+
+  useEffect(() => {
+    // If there's no visited token, log the session.
+    if (!sessionStorage.getItem("visited")) {
+      sessionStorage.setItem("visited", true);
+      const sessionId = kpis.logSession();
+      setSessionId(sessionId);
+    }
+  });
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -132,7 +142,8 @@ const Curator = () => {
         kpiNumPreviewPlays,
         kpiNumLinkClicks,
         unselectedCount,
-        promptIdState
+        promptIdState,
+        sessionId
       );
 
       setKpiNumRegenerations((prev) => prev + 1);
@@ -166,7 +177,8 @@ const Curator = () => {
         kpiNumKeystrokes,
         numSongs,
         prompt.length,
-        promptId
+        promptId,
+        sessionId
       );
     }
 
@@ -225,7 +237,7 @@ const Curator = () => {
       data?.external_urls?.spotify
     );
 
-    kpis.logExport(kpiNumRegenerations, playlistId, promptIdState);
+    kpis.logExport(kpiNumRegenerations, playlistId, promptIdState, sessionId);
 
     setUrl(data.external_urls.spotify);
     setLoading(false);
