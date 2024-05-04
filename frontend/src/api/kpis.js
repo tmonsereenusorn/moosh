@@ -24,6 +24,7 @@ import { SPOTIFY_V1_URL } from "../constants";
  * data: Object
  */
 
+// Increment the count of instance displayed on parent document.
 const incrementCount = async (actionId) => {
   const docSnap = await getDoc(doc(db, "kpis", actionId));
   const curr = docSnap.data().num_instances;
@@ -42,8 +43,7 @@ const incrementCount = async (actionId) => {
 // Number of keystrokes and length of the submitted prompt. Will need to find
 // prompt by searching through uid and promptId.
 const logPrompt = async (numKeystrokes, numTracks, promptLength, promptId) => {
-  console.log("inlog");
-  if (process.env.REACT_MODE === "DEV") {
+  if (process.env.REACT_APP_MODE === "DEV") {
     console.log("Prompt not logged, in dev.");
     return;
   }
@@ -85,7 +85,7 @@ const logRegeneration = async (
   numNewTracks,
   promptId
 ) => {
-  if (process.env.REACT_MODE === "DEV") {
+  if (process.env.REACT_APP_MODE === "DEV") {
     console.log("Regeneration not logged, in dev.");
     return;
   }
@@ -95,7 +95,7 @@ const logRegeneration = async (
 
   try {
     const regenerationData = {
-      uid: uid,
+      uid,
       timestamp: new Date().toISOString(),
       data: {
         numToggles,
@@ -111,7 +111,6 @@ const logRegeneration = async (
       collection(db, "kpis", actionId, "instances"),
       regenerationData
     );
-
     incrementCount(actionId);
     return docRef;
   } catch (error) {
@@ -119,8 +118,35 @@ const logRegeneration = async (
   }
 };
 
-const logExport = async () => {
-  return;
+const logExport = async (numRegenerations, playlistId, promptId) => {
+  if (process.env.REACT_APP_MODE === "DEV") {
+    console.log("Export not logged, in dev.");
+    return;
+  }
+  const uid = firebaseAuth.currentUser?.uid;
+  const actionId = "export_clicked";
+
+  try {
+    const exportData = {
+      uid,
+      timestamp: new Date().toISOString(),
+      data: {
+        numRegenerations,
+        playlistId,
+        promptId,
+      },
+    };
+
+    const docRef = await addDoc(
+      collection(db, "kpis", actionId, "instances"),
+      exportData
+    );
+
+    incrementCount(actionId);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error logging export data: " + error);
+  }
 };
 
 const logHistoryClick = async () => {

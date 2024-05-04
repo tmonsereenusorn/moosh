@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { GrCycle } from "react-icons/gr";
 import { MdOutlineCancel } from "react-icons/md";

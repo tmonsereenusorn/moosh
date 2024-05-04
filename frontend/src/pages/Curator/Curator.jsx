@@ -11,6 +11,7 @@ import {
   addExportedPlaylist,
   addPrompt,
   deletePrompt,
+  updatePromptRegeneration,
   updatePromptSongs,
 } from "../../api/history";
 import kpis from "../../api/kpis";
@@ -48,6 +49,7 @@ const Curator = () => {
   const [kpiNumPreviewPlays, setKpiNumPreviewPlays] = useState(0);
   const [kpiNumLinkClicks, setKpiNumLinkClicks] = useState(0);
   const [kpiNumToggleAlls, setKpiNumToggleAlls] = useState(0);
+  const [kpiNumRegenerations, setKpiNumRegenerations] = useState(0);
 
   // For firestore function calls.
   const [promptIdState, setPromptIdState] = useState("");
@@ -121,10 +123,10 @@ const Curator = () => {
       });
 
       // Update prompt's songs in firestore.
-      await deletePrompt(promptIdState);
-      const promptId = await addPrompt(prompt);
-      setPromptIdState(promptId);
-      await updatePromptSongs(promptId, updatedSelections);
+      updatePromptRegeneration(prompt, promptIdState, [
+        ...updatedNewRecs,
+        ...filteredRecs,
+      ]);
 
       // Apply the updated selection status.
       setSelectedTracks(updatedSelections);
@@ -138,6 +140,9 @@ const Curator = () => {
         unselectedCount,
         promptIdState
       );
+
+      setKpiNumRegenerations((prev) => prev + 1);
+      //Reset the KPIs specific to interactions on that version of the playlist.
       resetRegenerationKpis();
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
@@ -217,6 +222,7 @@ const Curator = () => {
     });
 
     // Firestore update.
+    const playlistId = data.id;
     await addExportedPlaylist(
       data.id,
       promptIdState,
@@ -225,8 +231,9 @@ const Curator = () => {
       data?.external_urls?.spotify
     );
 
+    kpis.logExport(kpiNumRegenerations, playlistId, promptIdState);
+
     setUrl(data.external_urls.spotify);
-    setPrompt("");
     setLoading(false);
     setCuratorStage(CuratorStages.EXPORTED);
   };
@@ -242,6 +249,8 @@ const Curator = () => {
     setKpiNumKeystrokes(0);
     setKpiNumPreviewPlays(0);
     setKpiNumToggles(0);
+    setKpiNumRegenerations(0);
+    resetRegenerationKpis();
 
     setLoading(false);
     setCuratorStage(CuratorStages.PROMPT);
@@ -326,11 +335,9 @@ const Curator = () => {
             getUnselectedCount={getUnselectedCount}
             incrementPreviewClicks={() => {
               setKpiNumPreviewPlays((prev) => prev + 1);
-              console.log(kpiNumPreviewPlays);
             }}
             incrementLinkClicks={() => {
               setKpiNumLinkClicks((prev) => prev + 1);
-              console.log(kpiNumLinkClicks);
             }}
           />
         );
