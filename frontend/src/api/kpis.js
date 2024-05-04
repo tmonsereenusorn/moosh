@@ -1,20 +1,12 @@
-import axios from "axios";
 import { db, firebaseAuth } from "./firebase";
-import Cookies from "js-cookie";
 import {
   collection,
-  getDocs,
-  query,
   addDoc,
   doc,
-  writeBatch,
   setDoc,
   updateDoc,
-  onSnapshot,
   getDoc,
 } from "firebase/firestore";
-import { authenticate } from "./auth";
-import { SPOTIFY_V1_URL } from "../constants";
 
 /* Utility functions for adding KPI tracking documents to firestore. Each KPI
  * document has the structure:
