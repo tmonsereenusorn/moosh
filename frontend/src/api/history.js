@@ -19,7 +19,7 @@ import { SPOTIFY_V1_URL } from "../constants";
 
 // Takes in a prompt. Adds prompt to a user's prompts subcollection. Returns
 // prompt doc id.
-export const addPrompt = async (prompt = "", prompt_id = null) => {
+const addPrompt = async (prompt = "", prompt_id = null) => {
   const uid = firebaseAuth.currentUser?.uid;
   try {
     const promptObj = {
@@ -47,7 +47,7 @@ export const addPrompt = async (prompt = "", prompt_id = null) => {
 
 // Takes in a doc id. Updates the songs subcolleciton of the prompt. Returns
 // songs colleciton id.
-export const updatePromptSongs = async (prompt_id = "", songs = []) => {
+const updatePromptSongs = async (prompt_id = "", songs = []) => {
   const uid = firebaseAuth.currentUser?.uid;
 
   try {
@@ -85,7 +85,7 @@ export const updatePromptSongs = async (prompt_id = "", songs = []) => {
 };
 
 // Regenerates a prompt with new songs and the same prompt ID.
-export const updatePromptRegeneration = async (
+const updatePromptRegeneration = async (
   prompt = "",
   prompt_id = "",
   songs = []
@@ -102,7 +102,7 @@ export const updatePromptRegeneration = async (
 
 // Takes a prompt id. Deletes prompt and all of its songs from database. Call
 // then recreate on regeneration.
-export const deletePrompt = async (prompt_id = "") => {
+const deletePrompt = async (prompt_id = "") => {
   const uid = firebaseAuth.currentUser?.uid;
 
   try {
@@ -130,10 +130,10 @@ export const deletePrompt = async (prompt_id = "") => {
   }
 };
 
-// Takes playlist id, prompt id. Add an exported playlist a users playlist
+// Takes playlist id, prompt id. Add an ed playlist a users playlist
 // collection and add a reference to the playlist to the corresponding prompt.
 // Returns playlist id.
-export const addExportedPlaylist = async (
+const addExportedPlaylist = async (
   playlist_id = "",
   prompt_id = "",
   title = "",
@@ -169,9 +169,9 @@ export const addExportedPlaylist = async (
 
 /***** GETTERS *****/
 // Fetch all playlists in Moosh library from a user's Spotify.
-export const updateHistory = async () => {};
+const updateHistory = async () => {};
 
-export const getPromptsForUser = (setHistory, uid) => {
+const getPromptsForUser = (setHistory, uid) => {
   try {
     const promptsRef = collection(db, "users", uid, "prompts");
 
@@ -186,7 +186,7 @@ export const getPromptsForUser = (setHistory, uid) => {
   }
 };
 
-export const getSongsForPrompt = async (prompt_id = "") => {
+const getSongsForPrompt = async (prompt_id = "") => {
   const uid = firebaseAuth.currentUser?.uid;
 
   try {
@@ -211,7 +211,7 @@ export const getSongsForPrompt = async (prompt_id = "") => {
   }
 };
 
-export const getPlaylistsForUser = (setPlaylists, uid) => {
+const getPlaylistsForUser = (setPlaylists, uid) => {
   try {
     const playlistsRef = collection(db, "users", uid, "playlists");
 
@@ -227,7 +227,7 @@ export const getPlaylistsForUser = (setPlaylists, uid) => {
 };
 
 // Spotify
-export const updatePlaylistDescription = async (playlist_id, description) => {
+const updatePlaylistDescription = async (playlist_id, description) => {
   await authenticate();
   const token = Cookies.get("token");
   const config = {
@@ -250,7 +250,7 @@ export const updatePlaylistDescription = async (playlist_id, description) => {
   }
 };
 
-export const updatePlaylistTitle = async (playlist_id, name) => {
+const updatePlaylistTitle = async (playlist_id, name) => {
   await authenticate();
   const token = Cookies.get("token");
   const config = {
@@ -279,3 +279,19 @@ export const updatePlaylistTitle = async (playlist_id, name) => {
     return -1;
   }
 };
+
+const history = {
+  addPrompt,
+  updatePromptSongs,
+  updatePromptRegeneration,
+  deletePrompt,
+  addExportedPlaylist,
+  updateHistory,
+  getPromptsForUser,
+  getSongsForPrompt,
+  getPlaylistsForUser,
+  updatePlaylistDescription,
+  updatePlaylistTitle,
+};
+
+export default history;

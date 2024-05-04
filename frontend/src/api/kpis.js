@@ -146,9 +146,9 @@ const logHistoryClick = async () => {
 };
 
 const kpis = {
-  logPrompt: logPrompt,
-  logRegeneration: logRegeneration,
-  logExport: logExport,
+  logPrompt,
+  logRegeneration,
+  logExport,
   logHistoryClick,
 };
 

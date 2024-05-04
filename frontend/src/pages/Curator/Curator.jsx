@@ -7,13 +7,7 @@ import { exportPlaylist } from "../../api/playlist";
 import Loader from "../../components/Loader";
 import { useAuth } from "../../contexts/AuthProvider";
 import HistoryDrawer from "../../components/History/HistoryDrawer";
-import {
-  addExportedPlaylist,
-  addPrompt,
-  deletePrompt,
-  updatePromptRegeneration,
-  updatePromptSongs,
-} from "../../api/history";
+import history from "../../api/history";
 import kpis from "../../api/kpis";
 
 import PromptView from "./views/PromptView";
@@ -123,7 +117,7 @@ const Curator = () => {
       });
 
       // Update prompt's songs in firestore.
-      updatePromptRegeneration(prompt, promptIdState, [
+      history.updatePromptRegeneration(prompt, promptIdState, [
         ...updatedNewRecs,
         ...filteredRecs,
       ]);
@@ -154,9 +148,9 @@ const Curator = () => {
         displayOrder: index,
       }));
 
-      const promptId = await addPrompt(prompt);
+      const promptId = await history.addPrompt(prompt);
 
-      await updatePromptSongs(promptId, updatedNewRecs);
+      await history.updatePromptSongs(promptId, updatedNewRecs);
       setPromptIdState(promptId);
       setRecs(updatedNewRecs);
 
@@ -223,7 +217,7 @@ const Curator = () => {
 
     // Firestore update.
     const playlistId = data.id;
-    await addExportedPlaylist(
+    await history.addExportedPlaylist(
       data.id,
       promptIdState,
       title,

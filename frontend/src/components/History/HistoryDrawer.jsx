@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import HistoryItem from "./HistoryItem";
-import {
-  getPlaylistsForUser,
-  getPromptsForUser,
-  getSongsForPrompt,
-} from "../../api/history";
+import history from "../../api/history";
 import { useAuth } from "../../contexts/AuthProvider";
 
 const DAY_OFS = 24 * 60 * 60 * 1000;
@@ -22,7 +18,7 @@ const TimeIndexedList = ({
       window.open(item.url, "_blank");
       return;
     }
-    const songs = await getSongsForPrompt(item.id);
+    const songs = await history.getSongsForPrompt(item.id);
     onClickCallback(songs);
   };
 
@@ -109,8 +105,11 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
   // Refetches data every time visible state is changed.
   useEffect(() => {
     if (uid) {
-      const unsubscribeHistory = getPromptsForUser(setHistoryData, uid);
-      const unsubscribePlaylists = getPlaylistsForUser(setPlaylistData, uid);
+      const unsubscribeHistory = history.getPromptsForUser(setHistoryData, uid);
+      const unsubscribePlaylists = history.getPlaylistsForUser(
+        setPlaylistData,
+        uid
+      );
 
       return () => {
         unsubscribeHistory();
@@ -120,7 +119,9 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
   }, [uid]);
 
   useEffect(() => {
-    const sortedHistory = historyData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    const sortedHistory = historyData.sort(
+      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+    );
     setWeekHistory(
       sortedHistory.filter(
         (item) => new Date(item.timestamp) > new Date().getTime() - 7 * DAY_OFS
@@ -173,14 +174,18 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
       >
         <div className="flex space-x-4 sm:space-x-12 items-center justify-center mb-3">
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
-            <p className="text-lg sm:text-2xl font-semibold text-surface">History</p>
+            <p className="text-lg sm:text-2xl font-semibold text-surface">
+              History
+            </p>
             <div
               id="history-bar"
               className="w-full h-1 rounded-md bg-secondary"
             />
           </div>
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
-            <p className="text-lg sm:text-2xl font-semibold text-surface">Playlists</p>
+            <p className="text-lg sm:text-2xl font-semibold text-surface">
+              Playlists
+            </p>
             <div
               id="playlist-bar"
               className="w-full h-1 rounded-md bg-secondary/[0.3]"
