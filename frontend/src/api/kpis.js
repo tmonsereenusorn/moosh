@@ -41,7 +41,7 @@ const logPrompt = async (
   promptId,
   sessionId
 ) => {
-  if (process.env.REACT_APP_MODE === "DEV") {
+  if (process.env.REACT_APP_MODE !== "PROD") {
     console.log("Prompt not logged, in dev.");
     return;
   }
@@ -85,8 +85,8 @@ const logRegeneration = async (
   promptId,
   sessionId
 ) => {
-  if (process.env.REACT_APP_MODE === "DEV") {
-    console.log("Regeneration not logged, in dev.");
+  if (process.env.REACT_APP_MODE !== "PROD") {
+    console.log("Prompt not logged, in dev.");
     return;
   }
 
@@ -152,8 +152,8 @@ const logExport = async (numRegenerations, playlistId, promptId, sessionId) => {
 };
 
 const logSession = async () => {
-  if (process.env.REACT_APP_MODE === "DEV") {
-    console.log("Session not logged, in dev.");
+  if (process.env.REACT_APP_MODE !== "PROD") {
+    console.log("Prompt not logged, in dev.");
     return;
   }
   const uid = firebaseAuth.currentUser?.uid;
