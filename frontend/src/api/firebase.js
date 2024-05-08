@@ -94,9 +94,7 @@ export const updateRefreshToken = async (token) => {
   }
 };
 
-export const fetchUserData = async () => {
-  const uid = firebaseAuth.currentUser.uid;
-
+export const fetchUserData = async (uid) => {
   try {
     const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);

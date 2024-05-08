@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import Popover from "../Popover";
-import { deletePrompt } from "../../api/history";
+import history from "../../api/history";
 import { Tooltip } from "@chakra-ui/react";
 
 const HistoryItem = ({ item, onClick, isPlaylist }) => {
@@ -10,7 +10,7 @@ const HistoryItem = ({ item, onClick, isPlaylist }) => {
   const text = isPlaylist ? item.title : item.prompt;
 
   const onDelete = async () => {
-    await deletePrompt(item.id);
+    await history.deletePrompt(item.id);
   };
 
   const action = (e, func) => {
