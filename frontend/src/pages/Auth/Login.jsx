@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@chakra-ui/react";
 import { ButtonPrimary} from "../../components/ButtonPrimary";
-import { fetchUserData, firebaseLogin } from "../../api/firebase";
+import { fetchUserData, firebaseAuth, firebaseLogin } from "../../api/firebase";
 import { authorize } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthProvider";
 import Cookies from "js-cookie";
@@ -29,7 +29,14 @@ const Login = () => {
       if (!!!res) {
         setError(true);
       } else {
-        authorize(true);
+        firebaseAuth.onAuthStateChanged(user => {
+          if (!!user) {
+            fetchUserData(user.uid).then(data => {
+              Cookies.set('refresh_token', data.refreshToken, { expires: 7, secure: true });
+              authorize(false);
+            });
+          }
+        });
       }
     });
   };
