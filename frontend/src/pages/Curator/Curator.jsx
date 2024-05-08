@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthProvider";
+import kpis from "../../api/kpis";
 
 import CuratorComponent from "../../components/Curator";
 
@@ -21,6 +22,8 @@ const Curator = () => {
   const [url, setUrl] = useState("");
   const { user } = useAuth();
 
+  const [sessionId, setSessionId] = useState("");
+
   // For firestore function calls.
   const [promptIdState, setPromptIdState] = useState("");
   const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
@@ -30,16 +33,16 @@ const Curator = () => {
     numSongs: 20,
     danceability: {
       enabled: false,
-      threshold: 5
+      threshold: 5,
     },
     energy: {
       enabled: false,
-      threshold: 5
+      threshold: 5,
     },
     acousticness: {
       enabled: false,
-      threshold: 5
-    }
+      threshold: 5,
+    },
   });
 
   return (

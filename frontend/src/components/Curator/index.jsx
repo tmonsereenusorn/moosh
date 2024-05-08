@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   getRecommendationsFromPrompt,
   getRecommendationsFromExistingTracks,
@@ -6,12 +6,8 @@ import {
 import { exportPlaylist } from "../../api/playlist";
 import Loader from "../Loader";
 import HistoryDrawer from "../History/HistoryDrawer";
-import {
-  addExportedPlaylist,
-  addPrompt,
-  deletePrompt,
-  updatePromptSongs,
-} from "../../api/history";
+import history from "../../api/history";
+import kpis from "../../api/kpis";
 
 import PromptView from "./views/PromptView";
 import ExportedView from "./views/ExportedView";
@@ -51,8 +47,32 @@ const CuratorComponent = ({
   setHistoryDrawerVisible,
   settings,
   setSettings,
-  user = null
+  user = null,
 }) => {
+  const [sessionId, setSessionId] = useState("");
+
+  // KPI specific state.
+  // Prompting
+  const [kpiNumKeystrokes, setKpiNumKeystrokes] = useState(0);
+  // Regenerations
+  const [kpiNumToggles, setKpiNumToggles] = useState(0);
+  const [kpiNumPreviewPlays, setKpiNumPreviewPlays] = useState(0);
+  const [kpiNumLinkClicks, setKpiNumLinkClicks] = useState(0);
+  const [kpiNumToggleAlls, setKpiNumToggleAlls] = useState(0);
+  const [kpiNumRegenerations, setKpiNumRegenerations] = useState(0);
+
+  useEffect(() => {
+    const sessionWrapper = async (tryItMode) => {
+      const id = await kpis.logSession(tryItMode);
+      setSessionId(id);
+      return id;
+    };
+    // If there's no visited token, log the session.
+    if (!sessionStorage.getItem("visited")) {
+      sessionStorage.setItem("visited", true);
+      sessionWrapper(tryItMode);
+    }
+  }, [tryItMode]);
 
   const onChangePrompt = (event) => {
     setPrompt(event.target.value);
@@ -62,8 +82,15 @@ const CuratorComponent = ({
     setTitle(event.target.value);
   };
 
+  const resetRegenerationKpis = () => {
+    setKpiNumToggles(0);
+    setKpiNumPreviewPlays(0);
+    setKpiNumLinkClicks(0);
+    setKpiNumToggleAlls(0);
+  };
+
   // Get recommendations, reset prompt.
-  const onSubmit = async () => {
+  const onSubmit = async (regeneration = false) => {
     setLoading(true);
 
     const unselectedCount = Object.values(selectedTracks).filter(
@@ -71,12 +98,14 @@ const CuratorComponent = ({
     ).length;
 
     // If there are unselected tracks, fetch new recommendations directly from spotify using kept tracks
-    if (unselectedCount > 0 && unselectedCount !== recs.length) {
-      const keptSongs = recs.filter(rec => selectedTracks[rec.id]).map(rec => rec.id);
+    if (regeneration) {
+      const keptSongs = recs
+        .filter((rec) => selectedTracks[rec.id])
+        .map((rec) => rec.id);
       const blacklistedSongs = recs.map((track) => track.id);
       const regeneratedSettings = {
         ...settings,
-        numSongs: unselectedCount
+        numSongs: unselectedCount,
       };
       const newRecs = await getRecommendationsFromExistingTracks(
         keptSongs,
@@ -115,25 +144,46 @@ const CuratorComponent = ({
       });
 
       if (!tryItMode) {
-        await deletePrompt(promptIdState);
-        const promptId = await addPrompt(prompt);
-        await updatePromptSongs(promptId, updatedSelections);
+        history.updatePromptRegeneration(prompt, promptIdState, [
+          ...updatedNewRecs,
+          ...filteredRecs,
+        ]);
       }
 
       // Apply the updated selection status.
       setSelectedTracks(updatedSelections);
+
+      // Log regeneration, returns document ID.
+      kpis.logRegeneration(
+        kpiNumToggles,
+        kpiNumToggleAlls,
+        kpiNumPreviewPlays,
+        kpiNumLinkClicks,
+        unselectedCount,
+        promptIdState,
+        sessionId
+      );
+
+      setKpiNumRegenerations((prev) => prev + 1);
+      //Reset the KPIs specific to interactions on that version of the playlist.
+      resetRegenerationKpis();
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const newRecs = await getRecommendationsFromPrompt(prompt, settings, !tryItMode);
+      const newRecs = await getRecommendationsFromPrompt(
+        prompt,
+        settings,
+        !tryItMode
+      );
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
         isNew: false,
         displayOrder: index,
       }));
 
+      var promptId;
       if (!tryItMode) {
-        const promptId = await addPrompt(prompt);
-        await updatePromptSongs(promptId, updatedNewRecs);
+        promptId = await history.addPrompt(prompt);
+        await history.updatePromptSongs(promptId, updatedNewRecs);
         setPromptIdState(promptId);
       }
       setRecs(updatedNewRecs);
@@ -144,6 +194,15 @@ const CuratorComponent = ({
       }, {});
 
       setSelectedTracks(initialSelections);
+
+      // Log prompting. Returns document ID.
+      kpis.logPrompt(
+        kpiNumKeystrokes,
+        settings.numSongs,
+        prompt.length,
+        promptId,
+        sessionId
+      );
     }
 
     if (!tryItMode) {
@@ -154,16 +213,20 @@ const CuratorComponent = ({
   };
 
   const toggleTrackSelection = (id) => {
+    // Update regeneration metadata.
+    setKpiNumToggles((prev) => prev + 1);
+
     setSelectedTracks((prevSelectedTracks) => {
       // Update the track selection state
       const newSelectedTracks = {
         ...prevSelectedTracks,
-        [id]: !prevSelectedTracks[id]
+        [id]: !prevSelectedTracks[id],
       };
 
       // Check if all tracks are deselected after the update
-      const allDeselected = Object.keys(newSelectedTracks).length > 0 &&
-        Object.values(newSelectedTracks).every(isSelected => !isSelected);
+      const allDeselected =
+        Object.keys(newSelectedTracks).length > 0 &&
+        Object.values(newSelectedTracks).every((isSelected) => !isSelected);
 
       // If all tracks are deselected, update the select all button state
       if (allDeselected) {
@@ -185,11 +248,17 @@ const CuratorComponent = ({
     setPrompt("");
     setLoading(false);
     setCuratorStage(CuratorStages.PROMPT);
+
+    setKpiNumKeystrokes(0);
+    setKpiNumPreviewPlays(0);
+    setKpiNumToggles(0);
+    setKpiNumRegenerations(0);
+    resetRegenerationKpis();
   };
 
   const toggleSettingsDrawer = () => {
     if (historyDrawerVisible) toggleHistoryDrawer();
-    setSettingsDrawerVisible(visibility => !visibility);
+    setSettingsDrawerVisible((visibility) => !visibility);
     const drawer = document.getElementById("settingsDrawer");
     drawer?.classList.toggle("translate-y-full");
   };
@@ -281,7 +350,16 @@ const CuratorComponent = ({
     });
 
     // Firestore update.
-    await addExportedPlaylist(data.id, promptIdState, title, data?.images[0]?.url, data?.external_urls?.spotify);
+    const playlistId = data.id;
+    await history.addExportedPlaylist(
+      data.id,
+      promptIdState,
+      title,
+      data?.images[0]?.url,
+      data?.external_urls?.spotify
+    );
+
+    kpis.logExport(kpiNumRegenerations, playlistId, promptIdState, sessionId);
 
     setUrl(data.external_urls.spotify);
     setPrompt("");
@@ -291,7 +369,7 @@ const CuratorComponent = ({
 
   const toggleHistoryDrawer = () => {
     if (settingsDrawerVisible) toggleSettingsDrawer();
-    setHistoryDrawerVisible(visibility => !visibility);
+    setHistoryDrawerVisible((visibility) => !visibility);
     const drawer = document.getElementById("historyDrawer");
     const drawerToggle = document.getElementById("historyDrawerToggle");
     drawer?.classList.toggle("-translate-x-full");
@@ -300,14 +378,14 @@ const CuratorComponent = ({
   };
 
   const onHistoryItemClick = (songs, item) => {
-    console.log(item)
+    console.log(item);
     setRecs(songs);
     setPrompt(item.prompt);
-    setSettings(prevSettings => {
+    setSettings((prevSettings) => {
       return {
         ...prevSettings,
-        numSongs: songs.length
-      }
+        numSongs: songs.length,
+      };
     });
     // Select all tracks
     const newSelectedTracks = songs.reduce((acc, track) => {
@@ -324,16 +402,14 @@ const CuratorComponent = ({
     <div className="h-screen flex items-center justify-center overflow-y-hidden">
       <div className="flex w-2/3 items-center justify-center">
         <>
-          {!tryItMode && <HistoryDrawer
-            toggleDrawer={toggleHistoryDrawer}
-            visible={historyDrawerVisible}
-            onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
-          />}
-          {loading ? (
-            <Loader />
-          ) : (
-            renderSwitch()
+          {!tryItMode && (
+            <HistoryDrawer
+              toggleDrawer={toggleHistoryDrawer}
+              visible={historyDrawerVisible}
+              onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
+            />
           )}
+          {loading ? <Loader /> : renderSwitch()}
         </>
       </div>
     </div>
