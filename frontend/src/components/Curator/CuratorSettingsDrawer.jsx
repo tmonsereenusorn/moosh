@@ -9,6 +9,15 @@ const SETTINGS = {
 };
 
 const CuratorSettingsDrawer = ({ toggleDrawer, settings, setSettings }) => {
+  const setGpt4 = e => {
+    setSettings(prevSettings => {
+      return {
+        ...prevSettings,
+        gpt4: e.target.checked
+      }
+    })
+  }
+
   const setNumSongs = n => {
     setSettings(prevSettings => {
       return {
@@ -112,6 +121,12 @@ const CuratorSettingsDrawer = ({ toggleDrawer, settings, setSettings }) => {
               </SliderThumb>
             </Slider>
           )}
+        </div>
+        <div>
+          <div className="flex space-x-2 items-center">
+            <Checkbox colorScheme="teal" isChecked={settings.gpt4} onChange={setGpt4} />
+            <p className="text-sm font-semibold text-surface">GPT 4</p>
+          </div>
         </div>
       </div>
     </div>

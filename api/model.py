@@ -9,11 +9,10 @@ from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 from termcolor import colored
 
-GPT_MODEL_NEW = "gpt-4-turbo-2024-04-09"
 client = OpenAI()
 
 @retry(wait=wait_random_exponential(multiplier=1, max=40), stop=stop_after_attempt(3))
-def chat_completion_request(messages, tools=None, tool_choice=None, model=GPT_MODEL_NEW):
+def chat_completion_request(messages, model, tools=None, tool_choice=None):
     try:
         response = client.chat.completions.create(
             model=model,
@@ -149,8 +148,9 @@ tools = [
     }
 ]
 
-def query_openai(prompt, top_artists=None, top_tracks=None, top_genres=None):
+def query_openai(prompt, model_chosen=None, top_artists=None, top_tracks=None, top_genres=None):
     """External access to querying the OpenAI API with a given prompt, primed with user's top tracks, artists, and genres."""
+    model = model_chosen if model_chosen is not None else "gpt-3.5-turbo"
     
     # Initialize the messages list with a system message containing user preferences
     messages = [{
@@ -168,7 +168,7 @@ def query_openai(prompt, top_artists=None, top_tracks=None, top_genres=None):
     }]
     # Make the chat completion request with the updated messages list
     chat_response = chat_completion_request(
-        messages, tools=tools, tool_choice={"type": "function", "function": {"name": "get_recommendation_seeds"}}
+        messages, model, tools=tools, tool_choice={"type": "function", "function": {"name": "get_recommendation_seeds"}}
     )
     
     # Extract the assistant message from the response

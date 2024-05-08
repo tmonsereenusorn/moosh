@@ -28,6 +28,7 @@ const Curator = () => {
 
   const [settings, setSettings] = useState({
     numSongs: 20,
+    gpt4: false,
     danceability: {
       enabled: false,
       threshold: 5
