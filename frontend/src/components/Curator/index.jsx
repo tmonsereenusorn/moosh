@@ -264,6 +264,7 @@ const CuratorComponent = ({
   };
 
   const toggleSelectAllButton = () => {
+    setKpiNumToggleAlls((prev) => prev + 1);
     const allSelected =
       Object.keys(selectedTracks).length > 0 &&
       Object.values(selectedTracks).every((isSelected) => isSelected);
@@ -327,6 +328,8 @@ const CuratorComponent = ({
             tryItMode={tryItMode}
             settings={settings}
             setSettings={setSettings}
+            previewCallback={() => setKpiNumPreviewPlays((prev) => prev + 1)}
+            linkCallback={() => setKpiNumLinkClicks((prev) => prev + 1)}
           />
         );
       case CuratorStages.EXPORTED:
