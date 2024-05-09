@@ -34,7 +34,7 @@ def get_recommendations_with_seeds():
   
   # Parse curator settings
   settings = body.get('settings', { 'numSongs': 20 })
-  num_recs, _, _, _ = Helpers.parse_curator_settings(settings)
+  num_recs, _, _, _, _ = Helpers.parse_curator_settings(settings)
 
   blacklisted_songs = body.get('blacklistedSongs', [])
 
@@ -65,7 +65,9 @@ def prompt_openai():
 
   # Parse curator settings
   settings = body.get('settings', { 'numSongs': 20 })
-  num_recs, target_danceability, target_energy, target_acousticness = Helpers.parse_curator_settings(settings)
+  num_recs, gpt4, target_danceability, target_energy, target_acousticness = Helpers.parse_curator_settings(settings)
+
+  model_choice = "gpt-4-turbo" if gpt4 else None
   
   spotify_api = SpotifyAPI(access_token=access_token)
 
@@ -90,10 +92,10 @@ def prompt_openai():
       for item in top_tracks_response['items']:
          track_names.append(item['name'])
 
-    seeds = json.loads(query_openai(prompt, artist_names, track_names, list(genres)))
+    seeds = json.loads(query_openai(prompt, model_chosen=model_choice, top_artists=artist_names, top_tracks=track_names, top_genres=list(genres)))
   # If access token not provided, get generic seeds to use
   else:
-    seeds = json.loads(query_openai(prompt))
+    seeds = json.loads(query_openai(prompt, model_chosen=model_choice))
   
   # Replace artist and track names with their respective spotify IDs
   if "seed_artists" in seeds and len(seeds["seed_artists"]) > 0:
