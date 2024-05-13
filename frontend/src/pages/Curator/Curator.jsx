@@ -4,12 +4,6 @@ import kpis from "../../api/kpis";
 
 import CuratorComponent from "../../components/Curator";
 
-const CuratorStages = Object.freeze({
-  PROMPT: 0,
-  CURATED: 1,
-  EXPORTED: 2,
-});
-
 const Curator = () => {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
@@ -17,7 +11,6 @@ const Curator = () => {
   const [selectedTracks, setSelectedTracks] = useState({});
   const [title, setTitle] = useState("");
   const [selectAllButton, setSelectAllButton] = useState(true);
-  const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const { user } = useAuth();
@@ -57,8 +50,6 @@ const Curator = () => {
       setRecs={setRecs}
       selectedTracks={selectedTracks}
       setSelectedTracks={setSelectedTracks}
-      curatorStage={curatorStage}
-      setCuratorStage={setCuratorStage}
       title={title}
       setTitle={setTitle}
       selectAllButton={selectAllButton}
