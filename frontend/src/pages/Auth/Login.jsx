@@ -30,11 +30,10 @@ const Login = () => {
       } else {
         firebaseAuth.onAuthStateChanged(user => {
           if (!!user) {
-            // fetchUserData(user.uid).then(data => {
-            //   Cookies.set('refresh_token', data.refreshToken, { expires: 7, secure: true });
-            //   authorize(false);
-            // });
-            authorize(true);
+            fetchUserData(user.uid).then(data => {
+              Cookies.set('refresh_token', data.refreshToken, { expires: 7, secure: true });
+              authorize(false);
+            });
           }
         });
       }
