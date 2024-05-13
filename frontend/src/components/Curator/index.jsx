@@ -12,11 +12,13 @@ import kpis from "../../api/kpis";
 import PromptView from "./views/PromptView";
 import ExportedView from "./views/ExportedView";
 import CuratedView from "./views/CuratedView";
+import FailedView from "./views/FailedView";
 
 const CuratorStages = Object.freeze({
   PROMPT: 0,
   CURATED: 1,
   EXPORTED: 2,
+  FAILED: 3,
 });
 
 const CuratorComponent = ({
@@ -29,8 +31,6 @@ const CuratorComponent = ({
   setRecs,
   selectedTracks,
   setSelectedTracks,
-  curatorStage,
-  setCuratorStage,
   url,
   setUrl,
   title,
@@ -50,11 +50,10 @@ const CuratorComponent = ({
   user = null,
 }) => {
   const [sessionId, setSessionId] = useState("");
+  const [curatorStage, setCuratorStage] = useState(CuratorStages.PROMPT);
 
   // KPI specific state.
-  // Prompting
   const [kpiNumKeystrokes, setKpiNumKeystrokes] = useState(0);
-  // Regenerations
   const [kpiNumToggles, setKpiNumToggles] = useState(0);
   const [kpiNumPreviewPlays, setKpiNumPreviewPlays] = useState(0);
   const [kpiNumLinkClicks, setKpiNumLinkClicks] = useState(0);
@@ -113,6 +112,13 @@ const CuratorComponent = ({
         blacklistedSongs,
         !tryItMode
       );
+
+      if (newRecs.length === 0) {
+        setLoading(false);
+        setCuratorStage(CuratorStages.FAILED);
+        return;
+      }
+
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
         isNew: true,
@@ -174,6 +180,13 @@ const CuratorComponent = ({
         settings,
         !tryItMode
       );
+
+      if (newRecs.length === 0) {
+        setLoading(false);
+        setCuratorStage(CuratorStages.FAILED);
+        return;
+      }
+
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
         isNew: false,
@@ -334,6 +347,8 @@ const CuratorComponent = ({
         );
       case CuratorStages.EXPORTED:
         return <ExportedView url={url} title={title} onReset={onReset} />;
+      case CuratorStages.FAILED:
+        return <FailedView onSubmit={onSubmit} onReset={onReset} regenerating={Object.values(selectedTracks).includes(false)} />
       default:
         return null;
     }

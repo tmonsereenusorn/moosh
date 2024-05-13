@@ -42,7 +42,7 @@ export const getRecommendationsFromExistingTracks = async (seedTracks, settings,
     return recs;
   } catch (err) {
     console.error('Error fetching recommendations:', err);
-    throw err; // Rethrow or handle error appropriately
+    return [];
   }
 }
 
@@ -86,5 +86,6 @@ export const getRecommendationsFromPrompt = async (prompt, settings, auth = true
     return recs;
   } catch (err) {
     console.error(err);
+    return [];
   }
 };
