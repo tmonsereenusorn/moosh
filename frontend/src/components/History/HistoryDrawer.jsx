@@ -213,7 +213,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
       </div>
       <div
         id="historyDrawerToggle"
-        className="transition-transform absolute left-4 flex h-screen justify-center items-center z-30"
+        className="transition-transform absolute left-4 flex w-2/3 md:w-1/5 h-screen justify-left items-center z-30"
       >
         {visible ? (
           <FaChevronLeft

@@ -77,7 +77,7 @@ const TrackCard = ({
       </div>
       <div className="w-full md:w-1/3 px-2">
         <p
-          className="font-bold md:text-md text-black hover:cursor-pointer hover:underline"
+          className="font-bold text-md text-black hover:cursor-pointer hover:underline"
           onClick={onClickLink}
         >
           {title}

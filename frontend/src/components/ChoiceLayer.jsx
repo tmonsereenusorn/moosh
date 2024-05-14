@@ -31,7 +31,7 @@ const ChoiceLayer = ({
   const firstFieldRef = useRef(null);
 
   return (
-    <div className="w-3/4 flex space-x-8">
+    <div className="w:full md:w-3/4 flex space-x-4 md:space-x-8">
       {openModal && (
         <SignUpModal closeModal={setOpenModal} modalOpen={openModal} />
       )}
@@ -53,7 +53,7 @@ const ChoiceLayer = ({
             <PopoverTrigger>
               <div className="flex items-center">
                 <SpotifyLogo className="my-4" />
-                <p className="w-full text-center mdL0 md:ml-2">Export to Spotify</p>
+                <p className="w-full text-center ml-0 md:ml-2">Export to Spotify</p>
               </div>
             </PopoverTrigger>
             <PopoverContent className="text-black" p={5}>

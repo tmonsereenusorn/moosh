@@ -391,8 +391,7 @@ const CuratorComponent = ({
     const drawer = document.getElementById("historyDrawer");
     const drawerToggle = document.getElementById("historyDrawerToggle");
     drawer?.classList.toggle("-translate-x-full");
-    drawerToggle?.classList.toggle("sm:translate-x-2/3");
-    drawerToggle?.classList.toggle("translate-x-56");
+    drawerToggle?.classList.toggle("translate-x-full");
   };
 
   const onHistoryItemClick = (songs, item) => {
