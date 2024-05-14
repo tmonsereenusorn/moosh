@@ -53,7 +53,7 @@ const ChoiceLayer = ({
             <PopoverTrigger>
               <div className="flex items-center">
                 <SpotifyLogo className="my-4" />
-                <p className="w-full text-center ml-2">Export to Spotify</p>
+                <p className="w-full text-center mdL0 md:ml-2">Export to Spotify</p>
               </div>
             </PopoverTrigger>
             <PopoverContent className="text-black" p={5}>
@@ -121,7 +121,7 @@ const ChoiceLayer = ({
           }
         >
           <GrCycle />
-          <p className="w-full text-center">Regenerate</p>
+          <p className="ml-2 md:ml-0 w-full text-center">Regenerate</p>
         </div>
       </Tooltip>
       <div

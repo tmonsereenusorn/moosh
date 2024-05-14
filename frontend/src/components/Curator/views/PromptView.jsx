@@ -12,9 +12,9 @@ const PromptView = ({
   setSettings
 }) => {
   return (
-    <div className="fixed inset-0 flex justify-center items-center">
-      <div className="w-1/2 flex flex-col items-center space-y-2">
-        <div className="w-full flex justify-center items-center space-x-4">
+    <div className="fixed inset-0 flex justify-center items-end md:items-center mb-16 md:mb-0">
+      <div className="w-11/12 md:w-1/2 flex flex-col items-center space-y-2">
+        <div className="w-full flex justify-center items-center">
           <CuratorInput
             onSubmit={() => {
               toggleSettingsDrawer();
@@ -25,7 +25,7 @@ const PromptView = ({
             disabled={prompt.length === 0}
           />
           <FaCog
-            className="text-surface/[0.6] z-30 w-5 h-5 hover:cursor-pointer hover:text-surface"
+            className="text-surface/[0.6] z-30 hover:cursor-pointer hover:text-surface ml-2 md:ml-1em w-6 md:w-5 h-6 md:h-5"
             onClick={toggleSettingsDrawer}
           />
           <CuratorSettingsDrawer

@@ -29,18 +29,18 @@ const HistoryItem = ({ item, onClick, isPlaylist }) => {
         <img
           src={item.image}
           alt={`Cover for playlist ${text}.`}
-          className="w-10 h-10 my-2 mr-2"
+          className="w-16 md:w-10 h-16 md:h-10 my-2 mr-2"
         />
       )}
       <Tooltip label={text}>
-        <p className="flex-grow text-sm whitespace-nowrap overflow-x-hidden font-semibold">
+        <p className="flex-grow text-lg md:text-sm whitespace-nowrap overflow-x-hidden font-bold md:font-semibold">
           {text}
         </p>
       </Tooltip>
       <Popover position="right">
         <Popover.Trigger>
           {active && !isPlaylist && (
-            <BsThreeDots className="relative z-30 scale-200 hover:text-primary hover:cursor-pointer text-surface" />
+            <BsThreeDots className="relative z-30 scale-150 md:scale-200 hover:text-primary hover:cursor-pointer text-surface" />
           )}
         </Popover.Trigger>
         <Popover.Content>

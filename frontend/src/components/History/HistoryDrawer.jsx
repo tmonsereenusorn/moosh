@@ -26,7 +26,7 @@ const TimeIndexedList = ({
     <div className="space-y-2">
       {week?.length > 0 && (
         <div>
-          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+          <p className="text-surface/[0.8] font-semibold text-md md:text-xs ml-2 mb-1">
             Previous 7 Days
           </p>
           {week?.map((item) => {
@@ -43,7 +43,7 @@ const TimeIndexedList = ({
       )}
       {month?.length > 0 && (
         <div>
-          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+          <p className="text-surface/[0.8] font-semibold text-md md:text-xs ml-2 mb-1">
             Previous 30 Days
           </p>
           {month?.map((item) => {
@@ -60,7 +60,7 @@ const TimeIndexedList = ({
       )}
       {beyond?.length > 0 && (
         <div>
-          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+          <p className="text-surface/[0.8] font-semibold text-md md:text-xs ml-2 mb-1">
             Long Ago...
           </p>
           {beyond?.map((item) => {
@@ -170,7 +170,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
     <>
       <div
         id="historyDrawer"
-        className="h-screen w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-8 px-2 space-y-2"
+        className="h-screen w-2/3 md:w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-8 px-2 space-y-2"
       >
         <div className="flex space-x-4 sm:space-x-12 items-center justify-center mb-3">
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>

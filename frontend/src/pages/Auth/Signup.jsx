@@ -54,7 +54,7 @@ const Signup = () => {
           <div className="flex w-full items-center justify-end">
             <ButtonPrimary text="continue" onClick={() => signup()} disabled={disabled} />
           </div>
-          {error && <p className="text-red-500">there was an issue signing you up.</p>}
+          {error && <p className="text-center md:text-start text-red-500">there was an issue signing you up.</p>}
           <div className="text-center">
             <p className="text-white text-md md:text-xs">already a member? <span className="hover:underline hover:cursor-pointer" onClick={() => navigate("/login")}>login.</span></p>
           </div>

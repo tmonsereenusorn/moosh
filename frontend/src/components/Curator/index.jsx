@@ -391,7 +391,7 @@ const CuratorComponent = ({
     const drawer = document.getElementById("historyDrawer");
     const drawerToggle = document.getElementById("historyDrawerToggle");
     drawer?.classList.toggle("-translate-x-full");
-    drawerToggle?.classList.toggle("sm:translate-x-72");
+    drawerToggle?.classList.toggle("sm:translate-x-2/3");
     drawerToggle?.classList.toggle("translate-x-56");
   };
 
@@ -418,7 +418,7 @@ const CuratorComponent = ({
 
   return (
     <div className="h-screen flex items-center justify-center overflow-y-hidden">
-      <div className="flex w-2/3 items-center justify-center">
+      <div className="flex w-full md:w-2/3 items-center justify-center">
         <>
           {!tryItMode && (
             <HistoryDrawer

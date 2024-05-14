@@ -47,17 +47,18 @@ const TrackCard = ({
         isSelected ? "" : "bg-opacity-30 bg-disabled brightness-75 grayscale"
       }`}
     >
-      <div className="flex justify-center items-center w-12 z-0">
+      <div className="flex justify-center items-center w-12 z-0 md:mr-0 mr-2">
         <Checkbox
           colorScheme="dark_accent"
           isChecked={isSelected}
           onChange={onToggleSelection}
+          size="lg"
         ></Checkbox>
       </div>
       <div className="flex justify-center items-center w-12">
         {!!preview ? (
           <div
-            className="rounded-full h-8 w-8 bg-primary flex justify-center items-center hover:cursor-pointer"
+            className="rounded-full h-12 md:h-8 w-12 md:w-8 bg-primary flex justify-center items-center hover:cursor-pointer"
             onClick={onClickPreview}
           >
             {previewId !== uri ? (
@@ -68,20 +69,20 @@ const TrackCard = ({
           </div>
         ) : (
           <Tooltip text="Spotify preview not available">
-            <div className="rounded-full h-8 w-8 bg-disabled flex justify-center items-center">
+            <div className="rounded-full h-12 md:h-8 w-12 md:w-8 bg-disabled flex justify-center items-center">
               <FaPlay className="text-white" />
             </div>
           </Tooltip>
         )}
       </div>
-      <div className="w-1/3 px-2">
+      <div className="w-full md:w-1/3 px-2">
         <p
-          className="font-bold text-md text-black hover:cursor-pointer hover:underline"
+          className="font-bold md:text-md text-black hover:cursor-pointer hover:underline"
           onClick={onClickLink}
         >
           {title}
         </p>
-        <p className="text-xs text-dark_accent">{artist}</p>
+        <p className="text-sm md:text-xs text-dark_accent">{artist}</p>
       </div>
       <div className="w-2/3">
         <div className="w-full h-1/2 flex justify-end items-start">

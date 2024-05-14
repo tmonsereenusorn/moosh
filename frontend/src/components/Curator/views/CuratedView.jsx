@@ -30,8 +30,9 @@ const CuratedView = ({
             <div className="text-2xl font-bold text-surface text-center">
               {prompt}
             </div>
-            <div className="flex justify-left items-center pl-4">
+            <div className="flex justify-left items-center pl-2 md:pl-4">
               <Checkbox
+                size="lg"
                 colorScheme="dark_accent"
                 onChange={toggleSelectAllButton}
                 isChecked={selectAllButton}
@@ -68,7 +69,7 @@ const CuratedView = ({
         </div>
       </div>
       <div
-        className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
+        className={`fixed bottom-0 flex h-0.99 md:h-24 w-full md:w-2/3 bg-white items-center justify-center p-2 md:p-8 space-x-4`}
       >
         <ChoiceLayer
           onGenerate={onExport}
