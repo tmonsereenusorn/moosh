@@ -25,7 +25,7 @@ const Landing = () => {
         <div className="w-full md:w-2/3 h-screen flex items-center justify-center">
           <div className="h-1/3 md:h-1/2 w-full flex flex-col md:flex-row items-center justify-between">
             <div className="h-full flex flex-col flex-start justify-center text-center md:text-start">
-              <div className="text-primary font-bold text-8xl md:text-8xl mb-0 md:mb-8">moosh</div>
+              <div className="text-primary font-bold text-8xl md:text-8xl mb-4 md:mb-8">moosh</div>
               <div className="text-surface font-bold text-2xl md:text-4xl py-1">playlist curator</div>
             </div>
             <div className="h-full flex flex-col flex-start justify-between mt-8 md:mt-0">
@@ -39,7 +39,7 @@ const Landing = () => {
                 />
                 {!authorized && (
                   <p
-                    className="text-sm underline cursor-pointer mt-2 mr-1"
+                    className="text-md md:text-sm underline cursor-pointer mt-2 mr-1"
                     onClick={handleTryItClick}
                   >
                     ...or try it without an account!
