@@ -25,6 +25,8 @@ const CuratorComponent = ({
   tryItMode,
   prompt,
   setPrompt,
+  synopsis,
+  setSynopsis,
   loading,
   setLoading,
   recs,
@@ -175,7 +177,7 @@ const CuratorComponent = ({
       resetRegenerationKpis();
     } else {
       // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const newRecs = await getRecommendationsFromPrompt(
+      const {synopsis, recs: newRecs } = await getRecommendationsFromPrompt(
         prompt,
         settings,
         !tryItMode
@@ -186,6 +188,8 @@ const CuratorComponent = ({
         setCuratorStage(CuratorStages.FAILED);
         return;
       }
+
+      setSynopsis(synopsis);
 
       const updatedNewRecs = newRecs.map((track, index) => ({
         ...track,
@@ -327,6 +331,7 @@ const CuratorComponent = ({
           <CuratedView
             recs={recs}
             prompt={prompt}
+            synopsis={synopsis}
             onExport={onExport}
             onSubmit={onSubmit}
             onReset={onReset}

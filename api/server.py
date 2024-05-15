@@ -115,7 +115,8 @@ def prompt_openai():
   else:
     seeds["seed_genres"] = None
 
-  recommendations = spotify_api.make_recommendations(num_recs=num_recs, 
+  recommendations = spotify_api.make_recommendations(num_recs=num_recs,
+                                                     synopsis=seeds["synopsis"],
                                                      seed_tracks=seeds["seed_tracks"],
                                                      seed_artists=seeds["seed_artists"],
                                                      seed_genres=seeds["seed_genres"],

@@ -6,6 +6,7 @@ import CuratorComponent from "../../components/Curator";
 
 const Curator = () => {
   const [prompt, setPrompt] = useState("");
+  const [synopsis, setSynopsis] = useState("");
   const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
   const [recs, setRecs] = useState([]);
   const [selectedTracks, setSelectedTracks] = useState({});
@@ -44,6 +45,8 @@ const Curator = () => {
       tryItMode={false}
       prompt={prompt}
       setPrompt={setPrompt}
+      synopsis={synopsis}
+      setSynopsis={setSynopsis}
       loading={loading}
       setLoading={setLoading}
       recs={recs}

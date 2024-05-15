@@ -71,6 +71,10 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
+                    "synopsis": {
+                        "type": "string",
+                        "description": "In 2 sentences, outline the rationale behind the recommended seed values and how it fulfills the user's prompt/music taste."
+                    },
                     "seed_artists": {
                         "type": "string",
                         "description": "A comma-separated list of EXACTLY three seed artist names. If an artist name has a comma in it, remove the comma. While selecting these artists, prioritize their relevance to the specific user's prompt over their general music listening history. Ensure that the artists chosen as seeds are likely to produce recommendations that align with the theme or mood described in the prompt, even if they are not among the user's most frequently listened to artists.",
@@ -142,7 +146,7 @@ tools = [
                         "description": "A number between 0 and 1 describing a target value for the valence of tracks in the playlist. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).",
                     }
                 },
-                "required": ["seed_artists", "seed_genres", "seed_tracks", "target_acousticness", "target_danceability", "target_energy", "target_instrumentalness", "target_valence"]
+                "required": ["synopsis", "seed_artists", "seed_genres", "seed_tracks", "target_acousticness", "target_danceability", "target_energy", "target_instrumentalness", "target_valence"]
             },
         }
     }
@@ -151,7 +155,6 @@ tools = [
 def query_openai(prompt, model_chosen=None, top_artists=None, top_tracks=None, top_genres=None):
     """External access to querying the OpenAI API with a given prompt, primed with user's top tracks, artists, and genres."""
     model = model_chosen if model_chosen is not None else "gpt-3.5-turbo"
-    
     # Initialize the messages list with a system message containing user preferences
     messages = [{
         "role": "system",
