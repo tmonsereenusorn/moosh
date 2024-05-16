@@ -392,6 +392,7 @@ const CuratorComponent = ({
     const drawerToggle = document.getElementById("historyDrawerToggle");
     drawer?.classList.toggle("-translate-x-full");
     drawerToggle?.classList.toggle("translate-x-full");
+    drawerToggle?.classList.toggle("w-2/3");
   };
 
   const onHistoryItemClick = (songs, item) => {
@@ -417,9 +418,9 @@ const CuratorComponent = ({
 
   return (
     <div className="h-screen flex items-center justify-center overflow-y-hidden">
-      <div className="flex w-full md:w-2/3 items-center justify-center">
+      <div className="flex w-full items-center justify-center">
         <>
-          {!tryItMode && (
+          {!tryItMode && window.innerWidth >= 640 && (
             <HistoryDrawer
               toggleDrawer={toggleHistoryDrawer}
               visible={historyDrawerVisible}

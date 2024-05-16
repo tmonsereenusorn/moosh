@@ -29,11 +29,11 @@ const HistoryItem = ({ item, onClick, isPlaylist }) => {
         <img
           src={item.image}
           alt={`Cover for playlist ${text}.`}
-          className="w-16 md:w-10 h-16 md:h-10 my-2 mr-2"
+          className="sm:w-16 w-10 sm:h-16 h-10 my-2 mr-2"
         />
       )}
       <Tooltip label={text}>
-        <p className="flex-grow text-lg md:text-sm whitespace-nowrap overflow-x-hidden font-bold md:font-semibold">
+        <p className="flex-grow text-sm sm:text-base whitespace-nowrap overflow-x-hidden font-bold md:font-semibold">
           {text}
         </p>
       </Tooltip>

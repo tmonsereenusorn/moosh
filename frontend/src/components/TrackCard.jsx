@@ -42,12 +42,12 @@ const TrackCard = ({
 
   return (
     <div
-      className={`border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md 
+      className={`border border-2 border-surface/[.1] flex py-2 px-2 mb-2 rounded-md w-full
       ${isNew ? "bg-primary bg-opacity-10" : ""} ${
         isSelected ? "" : "bg-opacity-30 bg-disabled brightness-75 grayscale"
       }`}
     >
-      <div className="flex justify-center items-center w-12 z-0 md:mr-0 mr-2">
+      <div className="flex justify-center items-center w-12 z-0 mr-2">
         <Checkbox
           colorScheme="dark_accent"
           isChecked={isSelected}
@@ -58,7 +58,7 @@ const TrackCard = ({
       <div className="flex justify-center items-center w-12">
         {!!preview ? (
           <div
-            className="rounded-full h-12 md:h-8 w-12 md:w-8 bg-primary flex justify-center items-center hover:cursor-pointer"
+            className="rounded-full h-8 w-8 bg-primary flex justify-center items-center hover:cursor-pointer"
             onClick={onClickPreview}
           >
             {previewId !== uri ? (
@@ -69,20 +69,20 @@ const TrackCard = ({
           </div>
         ) : (
           <Tooltip text="Spotify preview not available">
-            <div className="rounded-full h-12 md:h-8 w-12 md:w-8 bg-disabled flex justify-center items-center">
+            <div className="rounded-full h-8 w-8 bg-disabled flex justify-center items-center">
               <FaPlay className="text-white" />
             </div>
           </Tooltip>
         )}
       </div>
-      <div className="w-full md:w-1/3 px-2">
+      <div className="w-full sm:w-1/3 px-2">
         <p
-          className="font-bold text-md text-black hover:cursor-pointer hover:underline"
+          className="font-bold text-black hover:cursor-pointer hover:underline"
           onClick={onClickLink}
         >
           {title}
         </p>
-        <p className="text-sm md:text-xs text-dark_accent">{artist}</p>
+        <p className="sm:text-sm text-xs text-dark-accent">{artist}</p>
       </div>
       <div className="w-2/3">
         <div className="w-full h-1/2 flex justify-end items-start">

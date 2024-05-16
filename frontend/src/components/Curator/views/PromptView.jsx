@@ -25,7 +25,7 @@ const PromptView = ({
             disabled={prompt.length === 0}
           />
           <FaCog
-            className="text-surface/[0.6] z-30 hover:cursor-pointer hover:text-surface ml-2 md:ml-1em w-6 md:w-5 h-6 md:h-5"
+            className="text-surface/[0.6] z-30 hover:cursor-pointer hover:text-surface ml-2 md:ml-1em w-4 md:w-5 h-4 md:h-5"
             onClick={toggleSettingsDrawer}
           />
           <CuratorSettingsDrawer

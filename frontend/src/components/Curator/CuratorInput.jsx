@@ -1,5 +1,4 @@
 import React from "react";
-import { Input, InputGroup, InputRightElement, Button } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 
 const CuratorInput = ({ value, onSubmit, onChangeText, disabled }) => {
@@ -13,30 +12,23 @@ const CuratorInput = ({ value, onSubmit, onChangeText, disabled }) => {
   ];
 
   return (
-    <InputGroup flex={"1"} width={"auto"}>
-      <Input
-        width={"full"}
-        borderRadius={"full"}
-        size={"lg"}
-        borderColor={"surface"}
+    <form className="flex flex-row w-full relative">
+      <input
+        type="text"
+        className="form-input rounded-full border border-1 border-surface w-full sm:h-12 text-xs sm:text-base"
         placeholder={`e.g. ${CURATOR_OPTIONS[Math.floor(Math.random() * CURATOR_OPTIONS.length)]}`}
-        onChange={onChangeText}
         value={value}
-        onKeyDown={(e) => {
+        onChange={onChangeText}
+        onKeyDown={e => {
           if (e.key === "Enter" && !disabled) onSubmit();
         }}
-      ></Input>
-      <InputRightElement m={1}>
-        <Button
-          variant="ghost"
-          size={"lg"}
-          onClick={onSubmit}
-          isDisabled={disabled}
-        >
-          <ArrowUpIcon />
-        </Button>
-      </InputRightElement>
-    </InputGroup>
+      />
+      <div className="absolute right-2 sm:right-4 flex items-center h-full">
+        <button className="w-6 h-6 bg-white rounded-md" onClick={onSubmit} disabled={disabled}>
+          <ArrowUpIcon className="text-surface hover:text-primary sm:scale-125" />
+        </button>
+      </div>
+    </form>
   );
 };
 

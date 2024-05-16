@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@chakra-ui/react";
 import { ButtonPrimary} from "../../components/ButtonPrimary";
-import { fetchUserData, firebaseAuth, firebaseLogin } from "../../api/firebase";
+import { firebaseAuth, firebaseLogin } from "../../api/firebase";
 import { authorize } from "../../api/auth";
 import { useAuth } from "../../contexts/AuthProvider";
-import Cookies from "js-cookie";
 
 const Login = () => {
   const [email, setEmail] = useState("");
