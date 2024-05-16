@@ -40,6 +40,7 @@ const logPrompt = async (
   numTracks,
   promptLength,
   promptId,
+  settings,
   sessionId
 ) => {
   if (process.env.REACT_APP_MODE !== "PROD") {
@@ -60,6 +61,7 @@ const logPrompt = async (
         numTracks: numTracks,
         promptLength: promptLength,
         promptId: promptId,
+        settings: settings,
       },
     };
 
