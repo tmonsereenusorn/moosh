@@ -71,10 +71,6 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "synopsis": {
-                        "type": "string",
-                        "description": "In 2 sentences, outline the rationale behind the recommended seed values and how it fulfills the user's prompt/music taste."
-                    },
                     "seed_artists": {
                         "type": "string",
                         "description": "A comma-separated list of EXACTLY three seed artist names. If an artist name has a comma in it, remove the comma. While selecting these artists, prioritize their relevance to the specific user's prompt over their general music listening history. Ensure that the artists chosen as seeds are likely to produce recommendations that align with the theme or mood described in the prompt, even if they are not among the user's most frequently listened to artists.",
@@ -144,9 +140,13 @@ tools = [
                     "target_valence": {
                         "type": "number",
                         "description": "A number between 0 and 1 describing a target value for the valence of tracks in the playlist. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).",
+                    },
+                    "synopsis": {
+                        "type": "string",
+                        "description": "In 2 sentences, outline the rationale behind how the recommendations fulfill the user's prompt/music taste. Don't mention any of the seed values specifically and refer to the user as 'you'."
                     }
                 },
-                "required": ["synopsis", "seed_artists", "seed_genres", "seed_tracks", "target_acousticness", "target_danceability", "target_energy", "target_instrumentalness", "target_valence"]
+                "required": ["seed_artists", "seed_genres", "seed_tracks", "target_acousticness", "target_danceability", "target_energy", "target_instrumentalness", "target_valence", "synopsis"]
             },
         }
     }
@@ -167,7 +167,7 @@ def query_openai(prompt, model_chosen=None, top_artists=None, top_tracks=None, t
                    f"User's top genres: {', '.join(top_genres) if top_genres else 'No top genres provided'}.\n"
                    "The user's prompt is given below:\n"
                    f"Prompt: {prompt}\n"
-                   "Give much more precedence to the prompt than their general music taste"
+                   "Give a LOT more precedence to the prompt than their general music taste"
     }]
     # Make the chat completion request with the updated messages list
     chat_response = chat_completion_request(

@@ -31,8 +31,10 @@ const CuratedView = ({
             <div className="text-2xl font-bold text-surface text-center">
               {prompt}
             </div>
-            <div className="text-l text-surface text-center">
-              {synopsis}
+            <div className="text-m text-surface text-center border border-gray-300 p-3 rounded mb-3 mt-2 bg-gray-100">
+              <div>
+                {synopsis}
+              </div>
             </div>
             <div className="flex justify-left items-center pl-4">
               <Checkbox
