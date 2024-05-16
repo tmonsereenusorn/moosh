@@ -42,16 +42,17 @@ const TrackCard = ({
 
   return (
     <div
-      className={`border border-2 border-surface/[.1] flex py-2 pl-2 pr-4 mb-2 rounded-md 
+      className={`border border-2 border-surface/[.1] flex py-2 px-2 mb-2 rounded-md w-full
       ${isNew ? "bg-primary bg-opacity-10" : ""} ${
         isSelected ? "" : "bg-opacity-30 bg-disabled brightness-75 grayscale"
       }`}
     >
-      <div className="flex justify-center items-center w-12 z-0">
+      <div className="flex justify-center items-center w-12 z-0 mr-2">
         <Checkbox
           colorScheme="dark_accent"
           isChecked={isSelected}
           onChange={onToggleSelection}
+          size="lg"
         ></Checkbox>
       </div>
       <div className="flex justify-center items-center w-12">
@@ -74,14 +75,14 @@ const TrackCard = ({
           </Tooltip>
         )}
       </div>
-      <div className="w-1/3 px-2">
+      <div className="w-full sm:w-1/3 px-2">
         <p
-          className="font-bold text-md text-black hover:cursor-pointer hover:underline"
+          className="font-bold text-black hover:cursor-pointer hover:underline"
           onClick={onClickLink}
         >
           {title}
         </p>
-        <p className="text-xs text-dark_accent">{artist}</p>
+        <p className="sm:text-sm text-xs text-dark-accent">{artist}</p>
       </div>
       <div className="w-2/3">
         <div className="w-full h-1/2 flex justify-end items-start">

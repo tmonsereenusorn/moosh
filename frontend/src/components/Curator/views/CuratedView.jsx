@@ -24,14 +24,15 @@ const CuratedView = ({
 }) => {
   return (
     <>
-      <div className="flex flex-col w-3/4 h-[100vh] pt-14 pb-24">
+      <div className="flex flex-col w-3/4 h-screen pt-14 pb-36 sm:pb-24">
         {recs.length > 0 && (
           <div className="w-full items-center justify-center p-2">
             <div className="text-2xl font-bold text-surface text-center">
               {prompt}
             </div>
-            <div className="flex justify-left items-center pl-4">
+            <div className="flex justify-left items-center pl-2 md:pl-4">
               <Checkbox
+                size="lg"
                 colorScheme="dark_accent"
                 onChange={toggleSelectAllButton}
                 isChecked={selectAllButton}
@@ -42,7 +43,7 @@ const CuratedView = ({
             </div>
           </div>
         )}
-        <div className="flex-grow overflow-y-auto">
+        <div className="overflow-y-auto sm:mx-56">
           <AudioProvider>
             {recs.map((recommendation) => {
               return (
@@ -68,7 +69,7 @@ const CuratedView = ({
         </div>
       </div>
       <div
-        className={`fixed bottom-0 flex h-24 w-2/3 bg-white items-center justify-center p-[32px] space-x-4`}
+        className="fixed bottom-0 flex w-full md:w-2/3 bg-white items-center justify-center p-2 md:p-8 space-x-4"
       >
         <ChoiceLayer
           onGenerate={onExport}

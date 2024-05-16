@@ -26,7 +26,7 @@ const TimeIndexedList = ({
     <div className="space-y-2">
       {week?.length > 0 && (
         <div>
-          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+          <p className="text-surface/[0.8] font-semibold text-xs sm:text-sm ml-2 mb-1">
             Previous 7 Days
           </p>
           {week?.map((item) => {
@@ -43,7 +43,7 @@ const TimeIndexedList = ({
       )}
       {month?.length > 0 && (
         <div>
-          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+          <p className="text-surface/[0.8] font-semibold text-xs sm:text-sm ml-2 mb-1">
             Previous 30 Days
           </p>
           {month?.map((item) => {
@@ -60,7 +60,7 @@ const TimeIndexedList = ({
       )}
       {beyond?.length > 0 && (
         <div>
-          <p className="text-surface/[0.8] font-semibold text-xs ml-2 mb-1">
+          <p className="text-surface/[0.8] font-semibold text-xs sm:text-sm ml-2 mb-1">
             Long Ago...
           </p>
           {beyond?.map((item) => {
@@ -170,11 +170,11 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
     <>
       <div
         id="historyDrawer"
-        className="h-screen w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-8 px-2 space-y-2"
+        className="h-screen overflow-x-hidden w-2/3 sm:w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-4 sm:py-8 px-2 space-y-2"
       >
-        <div className="flex space-x-4 sm:space-x-12 items-center justify-center mb-3">
+        <div className="flex space-x-8 sm:space-x-12 items-center justify-center mb-3">
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
-            <p className="text-lg sm:text-2xl font-semibold text-surface">
+            <p className="text-2xl font-semibold text-surface">
               History
             </p>
             <div
@@ -183,7 +183,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
             />
           </div>
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
-            <p className="text-lg sm:text-2xl font-semibold text-surface">
+            <p className="text-2xl font-semibold text-surface">
               Playlists
             </p>
             <div
@@ -192,7 +192,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
             />
           </div>
         </div>
-        <div className="overflow-y-auto h-full pb-8 pr-1 relative">
+        <div className="overflow-y-auto overflow-x-hidden h-full pb-8 pr-1 relative">
           {tab === 0 ? (
             <TimeIndexedList
               week={weekHistory}
@@ -213,7 +213,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
       </div>
       <div
         id="historyDrawerToggle"
-        className="transition-transform absolute left-4 flex h-screen justify-center items-center z-30"
+        className="transition-transform absolute left-4 sm:w-1/5 flex h-screen justify-left items-center z-30"
       >
         {visible ? (
           <FaChevronLeft
