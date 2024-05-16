@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthProvider";
-import kpis from "../../api/kpis";
 
 import CuratorComponent from "../../components/Curator";
 
@@ -15,8 +14,6 @@ const Curator = () => {
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const { user } = useAuth();
-
-  const [sessionId, setSessionId] = useState("");
 
   // For firestore function calls.
   const [promptIdState, setPromptIdState] = useState("");

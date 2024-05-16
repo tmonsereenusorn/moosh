@@ -11,11 +11,13 @@ module.exports = {
         secondary: "#06bCC1", // For secondary actions, color design accents
         disabled: "#e5e7eb",
         white: "#FFFFFF", // Oh? You know this hold
-        dark_accent: "#474056", // I haven't used this yet but
+        "dark-accent": "#474056", // I haven't used this yet but
         surface: "#5B5B5B", // Most normal text, adjust with opacities
         spotify: "#1DB954",
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 };

@@ -57,7 +57,7 @@ const CuratorSettingsDrawer = ({ toggleDrawer, settings, setSettings }) => {
       className="w-screen h-1/3 transition-transform translate-y-full bg-gray-100 border-t border-surface/[0.3] fixed bottom-0 z-30 py-4 px-8"
     >
       <FaXmark
-        className="absolute right-4 top-2 text-surface/[0.6] hover:text-surface h-6 w-6 hover:cursor-pointer"
+        className="absolute right-4 top-2 text-surface/[0.6] hover:text-surface h-8 md:h-6 w-8 md:w-6 hover:cursor-pointer"
         onClick={toggleDrawer}
       />
       <p className="text-xl font-semibold text-surface">Curator Settings</p>
@@ -76,7 +76,7 @@ const CuratorSettingsDrawer = ({ toggleDrawer, settings, setSettings }) => {
         </div>
         <div>
           <div className="flex space-x-2 items-center">
-            <Checkbox colorScheme="teal" isChecked={settings.danceability?.enabled} onChange={e => toggleSetting(SETTINGS.DANCEABILITY, e.target.checked)} />
+            <Checkbox size="lg" colorScheme="teal" isChecked={settings.danceability?.enabled} onChange={e => toggleSetting(SETTINGS.DANCEABILITY, e.target.checked)} />
             <p className="text-sm font-semibold text-surface">Danceability{settings.danceability?.enabled && <span>: {settings.danceability?.threshold}</span>}</p>
           </div>
           {settings.danceability?.enabled && (
@@ -92,7 +92,7 @@ const CuratorSettingsDrawer = ({ toggleDrawer, settings, setSettings }) => {
         </div>
         <div>
           <div className="flex space-x-2 items-center">
-            <Checkbox colorScheme="teal" isChecked={settings.energy?.enabled} onChange={e => toggleSetting(SETTINGS.ENERGY, e.target.checked)} />
+            <Checkbox size="lg" colorScheme="teal" isChecked={settings.energy?.enabled} onChange={e => toggleSetting(SETTINGS.ENERGY, e.target.checked)} />
             <p className="text-sm font-semibold text-surface">Energy{settings.energy?.enabled && <span>: {settings.energy?.threshold}</span>}</p>
           </div>
           {settings.energy?.enabled && (
@@ -108,7 +108,7 @@ const CuratorSettingsDrawer = ({ toggleDrawer, settings, setSettings }) => {
         </div>
         <div>
           <div className="flex space-x-2 items-center">
-            <Checkbox colorScheme="teal" isChecked={settings.acousticness?.enabled} onChange={e => toggleSetting(SETTINGS.ACOUSTICNESS, e.target.checked)} />
+            <Checkbox size="lg" colorScheme="teal" isChecked={settings.acousticness?.enabled} onChange={e => toggleSetting(SETTINGS.ACOUSTICNESS, e.target.checked)} />
             <p className="text-sm font-semibold text-surface">Acousticness{settings.acousticness?.enabled && <span>: {settings.acousticness?.threshold}</span>}</p>
           </div>
           {settings.acousticness?.enabled && (
@@ -124,7 +124,7 @@ const CuratorSettingsDrawer = ({ toggleDrawer, settings, setSettings }) => {
         </div>
         <div>
           <div className="flex space-x-2 items-center">
-            <Checkbox colorScheme="teal" isChecked={settings.gpt4} onChange={setGpt4} />
+            <Checkbox size="lg" colorScheme="teal" isChecked={settings.gpt4} onChange={setGpt4} />
             <p className="text-sm font-semibold text-surface">GPT 4</p>
           </div>
         </div>
