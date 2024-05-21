@@ -12,3 +12,4 @@ api/containers.json
 api/public-endpoint.json
 
 .DS_Store
+node_modules

@@ -7,6 +7,7 @@ import ChoiceLayer from "../../../components/ChoiceLayer";
 const CuratedView = ({
   recs,
   prompt,
+  synopsis,
   onExport,
   onSubmit,
   onReset,
@@ -29,6 +30,11 @@ const CuratedView = ({
           <div className="w-full items-center justify-center p-2">
             <div className="text-2xl font-bold text-surface text-center">
               {prompt}
+            </div>
+            <div className="text-m text-surface text-center border border-gray-300 p-3 rounded mb-3 mt-2 bg-gray-100">
+              <div>
+                {synopsis}
+              </div>
             </div>
             <div className="flex justify-left items-center pl-2 md:pl-4">
               <Checkbox

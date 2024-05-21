@@ -73,7 +73,7 @@ class SpotifyAPI:
             return ""
 
     # Make recommendations using Spotify's Recommendation API based on GPT's seeds.
-    def make_recommendations(self, num_recs, seed_tracks, seed_artists=[], seed_genres=[], target_acousticness=None, 
+    def make_recommendations(self, num_recs, synopsis, seed_tracks, seed_artists=[], seed_genres=[], target_acousticness=None, 
                          target_danceability=None, target_energy=None, target_instrumentalness=None, target_valence=None):
         kwargs = {
             "target_acousticness": target_acousticness,
@@ -90,7 +90,7 @@ class SpotifyAPI:
                 seed_tracks=seed_tracks, # only gives one track
                 **kwargs
             )
-            resp = [
+            tracks = [
                 {
                     "id": track.get("id"),
                     "uri": track.get("uri"),
@@ -101,6 +101,10 @@ class SpotifyAPI:
                     "duration": track.get("duration_ms"),
                 } for track in data.get("tracks")
             ]
+            resp = {
+                "synopsis": synopsis,
+                "tracks": tracks
+            }
             return resp
         except spotipy.SpotifyException as e:
             print(f"Exception: {e}")
