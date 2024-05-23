@@ -55,8 +55,7 @@ def extract_function_call(assistant_message):
             if tool_call.function and tool_call.function.arguments:
                 try:
                     # The arguments are expected to be a JSON string, parse them
-                    arguments_json = json.loads(tool_call.function.arguments)
-                    return json.dumps(arguments_json, indent=4)
+                    return tool_call.function.arguments
                 except json.JSONDecodeError as e:
                     print(f"Error decoding JSON: {e}")
     else:
@@ -143,7 +142,7 @@ tools = [
                     },
                     "synopsis": {
                         "type": "string",
-                        "description": "In 2 sentences, outline the rationale behind how the recommendations fulfill the user's prompt/music taste. Don't mention any of the seed values specifically and refer to the user as 'you'."
+                        "description": "In 2 sentences, come up with an explanation for the mood/vibe extracted from the prompt and how the recommendations supplement it. Don't mention any of the seed values specifically and refer to the user as 'you'."
                     }
                 },
                 "required": ["seed_artists", "seed_genres", "seed_tracks", "target_acousticness", "target_danceability", "target_energy", "target_instrumentalness", "target_valence", "synopsis"]
@@ -152,23 +151,34 @@ tools = [
     }
 ]
 
-def query_openai(prompt, model_chosen=None, top_artists=None, top_tracks=None, top_genres=None):
+def query_openai(prompt, conversation, model_chosen=None, top_artists=None, top_tracks=None, top_genres=None):
     """External access to querying the OpenAI API with a given prompt, primed with user's top tracks, artists, and genres."""
     model = model_chosen if model_chosen is not None else "gpt-3.5-turbo"
-    # Initialize the messages list with a system message containing user preferences
-    messages = [{
-        "role": "system",
-        "content": "You are a smart music recommendation system that generates a JSON for use with Spotify's recommendation API."
-                    "Your task is to first extract the mood and vibe of the prompt, then output seed values for song recommendations that will supplement the mood.\n"
-                   "You must include all required properties in the JSON.\n"
-                   "Some general information about the user's music taste is given below:\n"
-                   f"User's top tracks: {', '.join(top_tracks) if top_tracks else 'No top tracks provided'}.\n"
-                   f"User's top artists: {', '.join(top_artists) if top_artists else 'No top artists provided'}.\n"
-                   f"User's top genres: {', '.join(top_genres) if top_genres else 'No top genres provided'}.\n"
-                   "The user's prompt is given below:\n"
-                   f"Prompt: {prompt}\n"
-                   "Give a LOT more precedence to the prompt than their general music taste"
-    }]
+
+    # If conversation exists, continue it
+    messages = []
+    if conversation:
+        messages = conversation
+        messages.append({
+            "role": "user",
+            "content": f"I would like to make some changes to the seeds given earlier. Here is my new request: {prompt}. Please output different seed values this time."
+        })
+    else: # Otherwise, initialize the messages list with a system message describing its role.
+        messages.append({
+            "role": "system",
+            "content": "You are a smart music recommendation system that generates a JSON for use with Spotify's recommendation API."
+                        "Your task is to first extract the mood and vibe of the user's prompt, then output seed values for song recommendations that will supplement it.\n"
+                    "You must include all required properties in the JSON.\n"
+                    "Some general information about the user's music taste is given below:\n"
+                    f"User's top tracks: {', '.join(top_tracks) if top_tracks else 'No top tracks provided'}.\n"
+                    f"User's top artists: {', '.join(top_artists) if top_artists else 'No top artists provided'}.\n"
+                    f"User's top genres: {', '.join(top_genres) if top_genres else 'No top genres provided'}.\n"
+        })
+        messages.append({
+            "role": "user",
+            "content": f"Make me a playlist for this prompt: {prompt}. Give a LOT more precedence to the prompt than my general music taste"
+        })
+    
     # Make the chat completion request with the updated messages list
     chat_response = chat_completion_request(
         messages, model, tools=tools, tool_choice={"type": "function", "function": {"name": "get_recommendation_seeds"}}
@@ -176,6 +186,10 @@ def query_openai(prompt, model_chosen=None, top_artists=None, top_tracks=None, t
     
     # Extract the assistant message from the response
     assistant_message = chat_response.choices[0].message
-    messages.append(assistant_message)
-    
-    return extract_function_call(assistant_message)
+    response = extract_function_call(assistant_message)
+    messages.append({
+        "role": "assistant",
+        'content': response,
+    })
+
+    return response, messages

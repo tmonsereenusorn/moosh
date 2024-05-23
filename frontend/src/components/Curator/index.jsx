@@ -27,6 +27,8 @@ const CuratorComponent = ({
   setPrompt,
   synopsis,
   setSynopsis,
+  reprompt,
+  setReprompt,
   loading,
   setLoading,
   recs,
@@ -79,6 +81,10 @@ const CuratorComponent = ({
     setPrompt(event.target.value);
   };
 
+  const onChangeReprompt = (event) => {
+    setReprompt(event.target.value);
+  }
+
   const onChangeTitle = (event) => {
     setTitle(event.target.value);
   };
@@ -91,7 +97,7 @@ const CuratorComponent = ({
   };
 
   // Get recommendations, reset prompt.
-  const onSubmit = async (regeneration = false) => {
+  const onSubmit = async (regeneration = false, reprompting = false) => {
     setLoading(true);
 
     const unselectedCount = Object.values(selectedTracks).filter(
@@ -176,12 +182,25 @@ const CuratorComponent = ({
       //Reset the KPIs specific to interactions on that version of the playlist.
       resetRegenerationKpis();
     } else {
-      // If all tracks are selected or no tracks have been generated yet, fetch a new set of recommendations
-      const {synopsis, recs: newRecs } = await getRecommendationsFromPrompt(
-        prompt,
-        settings,
-        !tryItMode
-      );
+      let synopsis, newRecs, conversation
+      if (reprompting) {
+        // If reprompting, fetch current conversation
+        const currConversation = await history.getConversationForPrompt(promptIdState);
+        ({ synopsis, recs: newRecs, conversation } = await getRecommendationsFromPrompt(
+          reprompt,
+          settings,
+          currConversation,
+          !tryItMode
+        ));
+        setReprompt("");
+      } else {
+        ({ synopsis, recs: newRecs, conversation } = await getRecommendationsFromPrompt(
+          prompt,
+          settings,
+          null,
+          !tryItMode
+        ));
+      }
 
       if (newRecs.length === 0) {
         setLoading(false);
@@ -199,7 +218,7 @@ const CuratorComponent = ({
 
       var promptId;
       if (!tryItMode) {
-        promptId = await history.addPrompt(prompt);
+        promptId = await history.addPrompt(prompt, conversation);
         await history.updatePromptSongs(promptId, updatedNewRecs);
         setPromptIdState(promptId);
       }
@@ -332,10 +351,12 @@ const CuratorComponent = ({
             recs={recs}
             prompt={prompt}
             synopsis={synopsis}
+            reprompt={reprompt}
             onExport={onExport}
             onSubmit={onSubmit}
             onReset={onReset}
             onChangeTitle={onChangeTitle}
+            onChangeReprompt={onChangeReprompt}
             title={title}
             selectedTracks={selectedTracks}
             toggleTrackSelection={toggleTrackSelection}

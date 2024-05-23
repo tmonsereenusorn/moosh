@@ -11,6 +11,7 @@ const CuratorStages = Object.freeze({
 const TryItCurator = () => {
   const [prompt, setPrompt] = useState("");
   const [synopsis, setSynopsis] = useState("");
+  const [reprompt, setReprompt] = useState("");
   const [loading, setLoading] = useState(false); // For rendering a loading view while waiting for recommendations.
   const [recs, setRecs] = useState([]);
   const [selectedTracks, setSelectedTracks] = useState({});
@@ -45,6 +46,8 @@ const TryItCurator = () => {
       setPrompt={setPrompt}
       synopsis={synopsis}
       setSynopsis={setSynopsis}
+      reprompt={reprompt}
+      setReprompt={setReprompt}
       loading={loading}
       setLoading={setLoading}
       recs={recs}
