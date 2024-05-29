@@ -218,6 +218,7 @@ const CuratorComponent = ({
         settings.numSongs,
         prompt.length,
         promptId,
+        settings,
         sessionId
       );
     }
@@ -353,7 +354,13 @@ const CuratorComponent = ({
       case CuratorStages.EXPORTED:
         return <ExportedView url={url} title={title} onReset={onReset} />;
       case CuratorStages.FAILED:
-        return <FailedView onSubmit={onSubmit} onReset={onReset} regenerating={Object.values(selectedTracks).includes(false)} />
+        return (
+          <FailedView
+            onSubmit={onSubmit}
+            onReset={onReset}
+            regenerating={Object.values(selectedTracks).includes(false)}
+          />
+        );
       default:
         return null;
     }
