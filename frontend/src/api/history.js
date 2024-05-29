@@ -3,6 +3,7 @@ import { db, firebaseAuth } from "./firebase";
 import Cookies from "js-cookie";
 import {
   collection,
+  getDoc,
   getDocs,
   query,
   addDoc,
@@ -19,7 +20,7 @@ import { SPOTIFY_V1_URL } from "../constants";
 
 // Takes in a prompt. Adds prompt to a user's prompts subcollection. Returns
 // prompt doc id.
-const addPrompt = async (prompt = "", prompt_id = null) => {
+const addPrompt = async (prompt = "", conversation = "", prompt_id = null) => {
   const uid = firebaseAuth.currentUser?.uid;
 
   try {
@@ -27,6 +28,7 @@ const addPrompt = async (prompt = "", prompt_id = null) => {
       prompt: prompt,
       timestamp: new Date().toISOString(),
       playlist: null,
+      conversation: conversation
     };
     // If a prompt id is provdied, create the document with that ID.
     var promptRef;
@@ -210,6 +212,31 @@ const getSongsForPrompt = async (prompt_id = "") => {
   }
 };
 
+const getConversationForPrompt = async (prompt_id = "") => {
+  const uid = firebaseAuth.currentUser?.uid;
+
+  try {
+    const promptRef = doc(
+      db,
+      "users",
+      uid,
+      "prompts",
+      prompt_id
+    );
+
+    const promptSnapshot = await getDoc(promptRef);
+
+    if (promptSnapshot.exists()) {
+      return promptSnapshot.data().conversation;
+    } else {
+      console.log("No prompt document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Failed to fetch songs for prompt: " + error);
+  }
+}
+
 const getPlaylistsForUser = (setPlaylists, uid) => {
   try {
     const playlistsRef = collection(db, "users", uid, "playlists");
@@ -288,6 +315,7 @@ const history = {
   updateHistory,
   getPromptsForUser,
   getSongsForPrompt,
+  getConversationForPrompt,
   getPlaylistsForUser,
   updatePlaylistDescription,
   updatePlaylistTitle,

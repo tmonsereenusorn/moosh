@@ -3,15 +3,18 @@ import { Checkbox } from "@chakra-ui/react";
 import { AudioProvider } from "../../../contexts/AudioProvider";
 import TrackCard from "../../../components/TrackCard";
 import ChoiceLayer from "../../../components/ChoiceLayer";
+import RepromptInput from "../RepromptInput"
 
 const CuratedView = ({
   recs,
   prompt,
   synopsis,
+  reprompt,
   onExport,
   onSubmit,
   onReset,
   onChangeTitle,
+  onChangeReprompt,
   title,
   selectedTracks,
   toggleTrackSelection,
@@ -32,9 +35,17 @@ const CuratedView = ({
               {prompt}
             </div>
             <div className="text-m text-surface text-center border border-gray-300 p-3 rounded mb-3 mt-2 bg-gray-100">
-              <div>
+              <div className="mb-3">
                 {synopsis}
               </div>
+              <RepromptInput
+                onSubmit={() => {
+                  onSubmit(false, true);
+                }}
+                value={reprompt}
+                onChangeText={(event) => onChangeReprompt(event)}
+                disabled={reprompt.length === 0}
+              />
             </div>
             <div className="flex justify-left items-center pl-2 md:pl-4">
               <Checkbox

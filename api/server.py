@@ -62,6 +62,7 @@ def prompt_openai():
   
   body = request.json
   prompt = body.get('prompt', '')
+  curr_conversation = body.get('currConversation', None)
 
   # Parse curator settings
   settings = body.get('settings', { 'numSongs': 20 })
@@ -72,7 +73,6 @@ def prompt_openai():
   spotify_api = SpotifyAPI(access_token=access_token)
 
   seeds = None
-
   # If access token is provided, obtain user data to prime seed generation algorithm
   if access_token:
 
@@ -92,10 +92,12 @@ def prompt_openai():
       for item in top_tracks_response['items']:
          track_names.append(item['name'])
 
-    seeds = json.loads(query_openai(prompt, model_chosen=model_choice, top_artists=artist_names, top_tracks=track_names, top_genres=list(genres)))
+    seeds_string, conversation = query_openai(prompt, curr_conversation, model_chosen=model_choice, top_artists=artist_names, top_tracks=track_names, top_genres=list(genres))
+    seeds = json.loads(seeds_string)
   # If access token not provided, get generic seeds to use
   else:
-    seeds = json.loads(query_openai(prompt, model_chosen=model_choice))
+    seeds_string, conversation = query_openai(prompt, curr_conversation, model_chosen=model_choice)
+    seeds = json.loads(seeds_string)
   
   # Replace artist and track names with their respective spotify IDs
   if "seed_artists" in seeds and len(seeds["seed_artists"]) > 0:
@@ -126,7 +128,12 @@ def prompt_openai():
                                                      target_instrumentalness=seeds["target_instrumentalness"],
                                                      target_valence=seeds["target_valence"])
   
-  return recommendations
+  response = {
+    "recommendations": recommendations,
+    "conversation": conversation
+  }
+  
+  return jsonify(response)
   
 @app.route('/profile')
 def get_user_profile():

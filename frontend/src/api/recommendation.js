@@ -49,7 +49,7 @@ export const getRecommendationsFromExistingTracks = async (seedTracks, settings,
 /* Get recommendations from the Moosh API which uses GPT and Spotify's recommendation
    API to generate the response.
 */
-export const getRecommendationsFromPrompt = async (prompt, settings, auth = true) => {
+export const getRecommendationsFromPrompt = async (prompt, settings, currConversation, auth = true) => {
   const config = {
     headers: { 
       "Content-Type": "application/json"
@@ -69,22 +69,24 @@ export const getRecommendationsFromPrompt = async (prompt, settings, auth = true
 
   const requestBody = {
     prompt: prompt,
+    currConversation: currConversation,
     settings: settings
   };
 
   try {
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/prompt`, requestBody, config);
-    const data = res.data;
-
-    const synopsis = data.synopsis;
-    const recs = data.tracks.map(track => {
+    const conversation = res.data.conversation;
+    const recommendations = res.data.recommendations;
+    
+    const synopsis = recommendations.synopsis;
+    const recs = recommendations.tracks.map(track => {
       return {
         ...track,
         duration: `${parseInt(track.duration / (1000 * 60))}m ${parseInt((track.duration % (1000 * 60)) / 1000)}s`
       }
     });
 
-    return { synopsis, recs };
+    return { synopsis, recs, conversation };
   } catch (err) {
     console.error(err);
     return [];
