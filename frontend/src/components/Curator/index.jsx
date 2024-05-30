@@ -10,15 +10,14 @@ import history from "../../api/history";
 import kpis from "../../api/kpis";
 
 import PromptView from "./views/PromptView";
-import ExportedView from "./views/ExportedView";
 import CuratedView from "./views/CuratedView";
 import FailedView from "./views/FailedView";
+import { ExportedAlert } from "../ExportedAlert";
 
 const CuratorStages = Object.freeze({
   PROMPT: 0,
   CURATED: 1,
-  EXPORTED: 2,
-  FAILED: 3,
+  FAILED: 2,
 });
 
 const CuratorComponent = ({
@@ -64,6 +63,8 @@ const CuratorComponent = ({
   const [kpiNumToggleAlls, setKpiNumToggleAlls] = useState(0);
   const [kpiNumRegenerations, setKpiNumRegenerations] = useState(0);
 
+  const [exportedAlertVisible, setExportedAlertVisible] = useState(false);
+
   useEffect(() => {
     const sessionWrapper = async (tryItMode) => {
       const id = await kpis.logSession(tryItMode);
@@ -83,7 +84,7 @@ const CuratorComponent = ({
 
   const onChangeReprompt = (event) => {
     setReprompt(event.target.value);
-  }
+  };
 
   const onChangeTitle = (event) => {
     setTitle(event.target.value);
@@ -182,11 +183,17 @@ const CuratorComponent = ({
       //Reset the KPIs specific to interactions on that version of the playlist.
       resetRegenerationKpis();
     } else {
-      let synopsis, newRecs, conversation
+      let synopsis, newRecs, conversation;
       if (reprompting) {
         // If reprompting, fetch current conversation
-        const currConversation = await history.getConversationForPrompt(promptIdState);
-        ({ synopsis, recs: newRecs, conversation } = await getRecommendationsFromPrompt(
+        const currConversation = await history.getConversationForPrompt(
+          promptIdState
+        );
+        ({
+          synopsis,
+          recs: newRecs,
+          conversation,
+        } = await getRecommendationsFromPrompt(
           reprompt,
           settings,
           currConversation,
@@ -194,7 +201,11 @@ const CuratorComponent = ({
         ));
         setReprompt("");
       } else {
-        ({ synopsis, recs: newRecs, conversation } = await getRecommendationsFromPrompt(
+        ({
+          synopsis,
+          recs: newRecs,
+          conversation,
+        } = await getRecommendationsFromPrompt(
           prompt,
           settings,
           null,
@@ -372,8 +383,6 @@ const CuratorComponent = ({
             linkCallback={() => setKpiNumLinkClicks((prev) => prev + 1)}
           />
         );
-      case CuratorStages.EXPORTED:
-        return <ExportedView url={url} title={title} onReset={onReset} />;
       case CuratorStages.FAILED:
         return (
           <FailedView
@@ -388,6 +397,17 @@ const CuratorComponent = ({
   };
 
   // Functions specific to *not* tryItMode
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const displayExportedAlert = async () => {
+    setExportedAlertVisible(true);
+    await sleep(5000);
+    setExportedAlertVisible(false);
+  };
+
+  // Force close exported alert.
+  const closeExportedAlert = () => {
+    setExportedAlertVisible(false);
+  };
 
   // Generate the playlist to Spotify, change view to signal playlist creation.
   const onExport = async () => {
@@ -411,11 +431,11 @@ const CuratorComponent = ({
     );
 
     kpis.logExport(kpiNumRegenerations, playlistId, promptIdState, sessionId);
-
     setUrl(data.external_urls.spotify);
     setPrompt("");
     setLoading(false);
-    setCuratorStage(CuratorStages.EXPORTED);
+    setCuratorStage(CuratorStages.PROMPT);
+    displayExportedAlert();
   };
 
   const toggleHistoryDrawer = () => {
@@ -454,11 +474,21 @@ const CuratorComponent = ({
       <div className="flex w-full items-center justify-center">
         <>
           {!tryItMode && window.innerWidth >= 640 && (
-            <HistoryDrawer
-              toggleDrawer={toggleHistoryDrawer}
-              visible={historyDrawerVisible}
-              onClickCallback={(songs, item) => onHistoryItemClick(songs, item)}
-            />
+            <>
+              <ExportedAlert
+                visible={exportedAlertVisible}
+                url={url}
+                closeCallback={closeExportedAlert}
+                title={title}
+              />
+              <HistoryDrawer
+                toggleDrawer={toggleHistoryDrawer}
+                visible={historyDrawerVisible}
+                onClickCallback={(songs, item) =>
+                  onHistoryItemClick(songs, item)
+                }
+              />
+            </>
           )}
           {loading ? <Loader /> : renderSwitch()}
         </>
