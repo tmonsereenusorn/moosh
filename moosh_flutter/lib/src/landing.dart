@@ -21,25 +21,25 @@ class _LandingPageState extends State<LandingPage> {
           children: <Widget>[
             SvgPicture.asset(
               'assets/moosh_logo.svg',
-              height: 100,
+              height: 100, // Adjust the height as needed
             ),
-            const SizedBox(height: 20), // Spacing between logo + button
+            const SizedBox(height: 20), // Add spacing between logo and button
             ElevatedButton(
               onPressed: () {
-                // TODO: Login functionality
+                Navigator.pushNamed(context, '/curator');
               },
               child: const Text('Login'),
             ),
-            const SizedBox(height: 20), // Spacing between button + text
+            const SizedBox(height: 20), // Add spacing between button and text
             GestureDetector(
               onTap: () {
-                // TODO: Try it mode functionality
+                // Implement "try it without logging in" functionality here
               },
               child: const Text(
                 'Try it without logging in',
                 style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
+                  color: Colors.blue, // Make the text blue
+                  decoration: TextDecoration.underline, // Underline the text
                 ),
               ),
             ),
