@@ -213,16 +213,16 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
       </div>
       <div
         id="historyDrawerToggle"
-        className="transition-transform absolute left-4 sm:w-1/5 flex h-screen justify-left items-center z-30"
+        className="transition-transform absolute left-4 sm:w-1/5 flex h-screen justify-left items-center z-30 pointer-events-none"
       >
         {visible ? (
           <FaChevronLeft
-            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary"
+            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary pointer-events-auto"
             onClick={toggleDrawer}
           />
         ) : (
           <FaChevronRight
-            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary"
+            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary pointer-events-auto"
             onClick={toggleDrawer}
           />
         )}
