@@ -13,6 +13,7 @@ import Curator from "./pages/Curator/Curator";
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
 import TryItCurator from "./pages/Curator/TryItCurator";
+import AdminDashboard from "./pages/Admin/Admin";
 
 function App() {
   const [domLoading, setDomLoading] = useState(true);
@@ -34,7 +35,7 @@ function App() {
     }
 
     authorize(false).then(() => setAuthorized(!!Cookies.get("token")));
-    firebaseAuth.onAuthStateChanged(auth => setUid(auth?.uid));
+    firebaseAuth.onAuthStateChanged((auth) => setUid(auth?.uid));
     if (!authorized && location.pathname === "/curator") navigate("/login");
     // eslint-disable-next-line
   }, []);
@@ -44,7 +45,7 @@ function App() {
       fetch_personal_info().then((res) => {
         setUser(res?.data);
         firebaseAuth.onAuthStateChanged(() => {
-          updateSpotifyURI(res?.data.uri).then(valid => {
+          updateSpotifyURI(res?.data.uri).then((valid) => {
             if (valid === -1) {
               clearAllCookies();
               authorize(true);
@@ -73,6 +74,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="try-it" element={<TryItCurator />} />
+        <Route path="admin" element={<AdminDashboard />}></Route>
       </Routes>
     </>
   );

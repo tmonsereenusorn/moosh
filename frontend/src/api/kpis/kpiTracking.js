@@ -1,5 +1,5 @@
-import { authenticate } from "./auth";
-import { db, firebaseAuth } from "./firebase";
+import { authenticate } from "../auth";
+import { db, firebaseAuth } from "../firebase";
 import {
   collection,
   addDoc,
@@ -187,11 +187,11 @@ const logSession = async (tryItMode) => {
   return;
 };
 
-const kpis = {
+const kpiTracking = {
   logPrompt,
   logRegeneration,
   logExport,
   logSession,
 };
 
-export default kpis;
+export default kpiTracking;

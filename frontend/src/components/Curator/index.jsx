@@ -7,7 +7,7 @@ import { exportPlaylist } from "../../api/playlist";
 import Loader from "../Loader";
 import HistoryDrawer from "../History/HistoryDrawer";
 import history from "../../api/history";
-import kpis from "../../api/kpis";
+import kpiTracking from "../../api/kpis/kpiTracking";
 
 import PromptView from "./views/PromptView";
 import CuratedView from "./views/CuratedView";
@@ -67,7 +67,7 @@ const CuratorComponent = ({
 
   useEffect(() => {
     const sessionWrapper = async (tryItMode) => {
-      const id = await kpis.logSession(tryItMode);
+      const id = await kpiTracking.logSession(tryItMode);
       setSessionId(id);
       return id;
     };
@@ -169,7 +169,7 @@ const CuratorComponent = ({
       setSelectedTracks(updatedSelections);
 
       // Log regeneration, returns document ID.
-      kpis.logRegeneration(
+      kpiTracking.logRegeneration(
         kpiNumToggles,
         kpiNumToggleAlls,
         kpiNumPreviewPlays,
@@ -243,7 +243,7 @@ const CuratorComponent = ({
       setSelectedTracks(initialSelections);
 
       // Log prompting. Returns document ID.
-      kpis.logPrompt(
+      kpiTracking.logPrompt(
         kpiNumKeystrokes,
         settings.numSongs,
         prompt.length,
@@ -430,7 +430,12 @@ const CuratorComponent = ({
       data?.external_urls?.spotify
     );
 
-    kpis.logExport(kpiNumRegenerations, playlistId, promptIdState, sessionId);
+    kpiTracking.logExport(
+      kpiNumRegenerations,
+      playlistId,
+      promptIdState,
+      sessionId
+    );
     setUrl(data.external_urls.spotify);
     setPrompt("");
     setLoading(false);
