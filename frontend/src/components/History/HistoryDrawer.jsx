@@ -170,7 +170,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
     <>
       <div
         id="historyDrawer"
-        className="h-screen overflow-x-hidden w-2/3 sm:w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-4 sm:py-8 px-2 space-y-2"
+        className="h-screen overflow-x-hidden overflow-y-hidden w-2/3 sm:w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-4 sm:py-8 px-2 space-y-2"
       >
         <div className="flex space-x-8 sm:space-x-12 items-center justify-center mb-3">
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
@@ -213,16 +213,16 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
       </div>
       <div
         id="historyDrawerToggle"
-        className="transition-transform absolute left-4 sm:w-1/5 flex h-screen justify-left items-center z-30"
+        className="transition-transform absolute left-4 sm:w-1/5 flex h-screen justify-left items-center z-30 pointer-events-none"
       >
         {visible ? (
           <FaChevronLeft
-            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary"
+            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary pointer-events-auto"
             onClick={toggleDrawer}
           />
         ) : (
           <FaChevronRight
-            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary"
+            className="hover:cursor-pointer scale-200 text-black/[0.8] hover:text-primary pointer-events-auto"
             onClick={toggleDrawer}
           />
         )}
