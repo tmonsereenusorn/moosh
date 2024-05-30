@@ -1,6 +1,11 @@
-// lib/src/login_page.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:uni_links/uni_links.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,6 +18,13 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+  final String _spotifyClientId = '942512cbcf3e4d6683ee071021d6182d';
+  final String _spotifyRedirectUri = 'moosh://callback';
+  final String _spotifyScopes = 'user-read-private user-read-email playlist-modify-private playlist-modify-public user-top-read';
+
+  late final WebViewController _webViewController;
 
   void _login() async {
     final email = _emailController.text;
@@ -28,9 +40,77 @@ class _LoginPageState extends State<LoginPage> {
         email: email,
         password: password,
       );
-      Navigator.pushNamed(context, '/curator'); // Navigate to curator page on success
+      _authenticateWithSpotify(); // Start Spotify authentication
     } on FirebaseAuthException catch (e) {
       _showErrorDialog(e.message ?? 'Unknown error occurred.');
+    }
+  }
+
+  Future<void> _authenticateWithSpotify() async {
+    final Uri authUrl = Uri.parse(
+      'https://accounts.spotify.com/authorize?client_id=$_spotifyClientId&response_type=code&redirect_uri=$_spotifyRedirectUri&scope=$_spotifyScopes',
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WebView(
+          initialUrl: authUrl.toString(),
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (controller) {
+            _webViewController = controller;
+          },
+          navigationDelegate: (NavigationRequest request) {
+            if (request.url.startsWith(_spotifyRedirectUri)) {
+              final Uri uri = Uri.parse(request.url);
+              _handleSpotifyRedirect(uri);
+              Navigator.pop(context); // Close the web view
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      ),
+    );
+  }
+
+  void _handleSpotifyRedirect(Uri uri) async {
+    final String? code = uri.queryParameters['code'];
+    if (code != null) {
+      await _fetchSpotifyAccessToken(code);
+      Navigator.pushNamed(context, '/curator'); // Navigate to curator page on success
+    } else {
+      _showErrorDialog('Spotify authentication failed.');
+    }
+  }
+
+  Future<void> _fetchSpotifyAccessToken(String code) async {
+    final response = await http.post(
+      Uri.parse('https://accounts.spotify.com/api/token'),
+      headers: {
+        HttpHeaders.authorizationHeader:
+            'Basic ${base64Encode(utf8.encode('$_spotifyClientId:71957175bb2446ca94b40d267f28f29b'))}',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': _spotifyRedirectUri,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> body = json.decode(response.body);
+      final String accessToken = body['access_token'];
+      final String refreshToken = body['refresh_token'];
+      print("AccessToken");
+      print(accessToken);
+
+      // Save the access token and refresh token securely
+      await _secureStorage.write(key: 'spotify_access_token', value: accessToken);
+      await _secureStorage.write(key: 'spotify_refresh_token', value: refreshToken);
+    } else {
+      _showErrorDialog('Failed to fetch Spotify access token.');
     }
   }
 
@@ -52,6 +132,24 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen for the redirect
+    _handleIncomingLinks();
+  }
+
+  void _handleIncomingLinks() {
+    linkStream.listen((String? link) {
+      if (link != null) {
+        final uri = Uri.parse(link);
+        _handleSpotifyRedirect(uri);
+      }
+    }, onError: (err) {
+      // Handle the error
+    });
   }
 
   @override
