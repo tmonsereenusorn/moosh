@@ -30,8 +30,17 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-/ios/Runner.xcodeproj/project.pbxproj
-/ios/Runner/Info.plist
+.packages
+flutter_export_environment.sh
+
+# iOS related
+ios/Flutter/.last_build_id
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/.symlinks/
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/Runner.xcodeproj/project.xcworkspace/
 
 # Symbolication related
 app.*.symbols

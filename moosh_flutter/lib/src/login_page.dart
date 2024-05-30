@@ -1,8 +1,58 @@
 // lib/src/login_page.dart
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  void _login() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      _showErrorDialog('Please enter both email and password.');
+      return;
+    }
+
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      Navigator.pushNamed(context, '/curator'); // Navigate to curator page on success
+    } on FirebaseAuthException catch (e) {
+      _showErrorDialog(e.message ?? 'Unknown error occurred.');
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +72,15 @@ class LoginPage extends StatelessWidget {
             ),
             const SizedBox(height: 20), // Spacing between text and fields
             TextField(
+              controller: _emailController,
               decoration: const InputDecoration(
-                labelText: 'Username',
+                labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 20), // Spacing between fields
             TextField(
+              controller: _passwordController,
               decoration: const InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
@@ -37,9 +89,7 @@ class LoginPage extends StatelessWidget {
             ),
             const SizedBox(height: 20), // Spacing between fields and button
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/curator'); // Navigate to curator page
-              },
+              onPressed: _login,
               child: const Text('Continue'),
             ),
             const SizedBox(height: 20), // Spacing between button and text
