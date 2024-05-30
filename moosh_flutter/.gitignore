@@ -30,6 +30,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+ios/Runner.xcodeproj/project.pbxproj
+ios/Runner/Info.plist
 
 # Symbolication related
 app.*.symbols
