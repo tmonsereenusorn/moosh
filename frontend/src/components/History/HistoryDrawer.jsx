@@ -170,7 +170,7 @@ const HistoryDrawer = ({ toggleDrawer, visible, onClickCallback }) => {
     <>
       <div
         id="historyDrawer"
-        className="h-screen overflow-x-hidden w-2/3 sm:w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-4 sm:py-8 px-2 space-y-2"
+        className="h-screen overflow-x-hidden overflow-y-hidden w-2/3 sm:w-1/5 transition-transform -translate-x-full bg-gray-100 border-r border-surface/[0.3] fixed left-0 z-30 py-4 sm:py-8 px-2 space-y-2"
       >
         <div className="flex space-x-8 sm:space-x-12 items-center justify-center mb-3">
           <div className="space-y-1 hover:cursor-pointer" onClick={toggleTab}>
