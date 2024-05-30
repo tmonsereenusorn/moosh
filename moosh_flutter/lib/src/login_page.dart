@@ -1,4 +1,4 @@
-// lib/login_page.dart
+// lib/src/login_page.dart
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -38,7 +38,7 @@ class LoginPage extends StatelessWidget {
             const SizedBox(height: 20), // Spacing between fields and button
             ElevatedButton(
               onPressed: () {
-                // TODO: Implement continue button functionality
+                Navigator.pushNamed(context, '/curator'); // Navigate to curator page
               },
               child: const Text('Continue'),
             ),

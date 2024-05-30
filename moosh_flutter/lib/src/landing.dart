@@ -1,4 +1,4 @@
-// lib/my_home_page.dart
+// lib/src/landing.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -26,7 +26,7 @@ class _LandingPageState extends State<LandingPage> {
             const SizedBox(height: 20), // Add spacing between logo and button
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/curator');
+                Navigator.pushNamed(context, '/login'); // Navigate to login page
               },
               child: const Text('Login'),
             ),
