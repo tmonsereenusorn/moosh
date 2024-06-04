@@ -115,12 +115,17 @@ const CuratorComponent = ({
         ...settings,
         numSongs: unselectedCount,
       };
-      const newRecs = await getRecommendationsFromExistingTracks(
+      
+      let synopsis, newRecs;
+      ({
+        synopsis,
+        recs: newRecs,
+      } = await getRecommendationsFromExistingTracks(
         keptSongs,
         regeneratedSettings,
         blacklistedSongs,
         !tryItMode
-      );
+      ));
 
       if (newRecs.length === 0) {
         setLoading(false);
