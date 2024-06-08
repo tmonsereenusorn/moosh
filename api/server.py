@@ -39,12 +39,17 @@ def get_recommendations_with_seeds():
   blacklisted_songs = body.get('blacklistedSongs', [])
 
   spotify_api = SpotifyAPI(access_token=access_token)
-
-  recommendations = spotify_api.make_recommendations(len(blacklisted_songs) + num_recs, seed_tracks)
+  stock_synopsis = "This is a new playlist replacing the deselected tracks with tracks similar to the ones remaining in the playlist."
+  response = spotify_api.make_recommendations(len(blacklisted_songs) + num_recs, stock_synopsis, seed_tracks)
+  recommendations = response['tracks']
   
-  filtered_recommendations = [rec for rec in recommendations if rec['id'] not in blacklisted_songs]
+  filtered_recommendations = [rec for rec in recommendations if rec['id'] not in blacklisted_songs][:num_recs]
+  response = {
+    "recommendations": filtered_recommendations,
+    "synopsis": stock_synopsis
+  }
 
-  return filtered_recommendations[:num_recs]
+  return response
 
 @app.route("/prompt", methods=["POST"])
 @retry()

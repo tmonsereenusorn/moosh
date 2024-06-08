@@ -30,16 +30,18 @@ export const getRecommendationsFromExistingTracks = async (seedTracks, settings,
     }
 
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/recommendations`, requestBody, config);
-    const data = res.data;
+    const recommendations = res.data.recommendations;
+    
+    const synopsis = res.data.synopsis;
 
-    const recs = data.map(track => {
+    const recs = recommendations.map(track => {
       return {
         ...track,
         duration: `${parseInt(track.duration / (1000 * 60))}m ${parseInt((track.duration % (1000 * 60)) / 1000)}s`
       }
     });
 
-    return recs;
+    return {synopsis, recs};
   } catch (err) {
     console.error('Error fetching recommendations:', err);
     return [];
