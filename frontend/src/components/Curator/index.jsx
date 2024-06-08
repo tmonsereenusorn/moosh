@@ -106,7 +106,7 @@ const CuratorComponent = ({
     ).length;
 
     // If there are unselected tracks, fetch new recommendations directly from spotify using kept tracks
-    if (regeneration) {
+    if (regeneration && unselectedCount != recs.length) {
       const keptSongs = recs
         .filter((rec) => selectedTracks[rec.id])
         .map((rec) => rec.id);
@@ -246,6 +246,7 @@ const CuratorComponent = ({
       }, {});
 
       setSelectedTracks(initialSelections);
+      setSelectAllButton(true);
 
       // Log prompting. Returns document ID.
       kpis.logPrompt(
