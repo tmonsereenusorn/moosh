@@ -246,6 +246,7 @@ const CuratorComponent = ({
       }, {});
 
       setSelectedTracks(initialSelections);
+      setSelectAllButton(true);
 
       // Log prompting. Returns document ID.
       kpis.logPrompt(
