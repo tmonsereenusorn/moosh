@@ -19,7 +19,7 @@ from helpers import Helpers
 @app.route("/ping", methods=["GET"])
 @retry()
 def ping():
-  """Ping for liveness tests."""
+  """Ping for liveness tests"""
   return "all good"
 
 @app.route("/recommendations", methods=["POST"])
