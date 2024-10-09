@@ -39,12 +39,14 @@ The API is hosted in production using `gunicorn`, Docker, and AWS Lightsail. Mak
 4. `aws lightsail create-container-service-deployment --service-name moosh-api --containers file://containers.json --public-endpoint file://public-endpoint.json` to deploy the latest image in the `moosh-api` container to production.
 
 The API is now hosted in production using `Zappa`, AWS Lambda and API gateway. You need configured AWS credentials to deploy, this can be done by setting `AWS_ACCESS_KEY` and `AWS_SECRET_ACCESS_KEY` in you `.env`.
-From what I can tell, Zappa creates:
+
+From what I can tell, Zappa creates the following resources to automatically package the Flask app:
 
 - An S3 bucket to host the whole Flask app
 - A Lambda function to host the API code, the code uploaded is so large you can't even view and edit it in the Lambda console, not sure how Zappa pulls this off
 - An EventBridge that connects the Lambda to an API gateway.
-  These instances can all be managed from the AWS console via our root user login.
+
+These instances (N. California) can all be managed from the AWS console via our root user login.
 
 To update the API:
 
