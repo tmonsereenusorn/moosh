@@ -59,7 +59,7 @@ def prompt_openai():
   Method: POST
   Returns: Spotify recommendations.
   Requires: Prompt string in body
-  Optional: If authorization token provided in header, user's top songs will be factored in
+  Optional: If authorization token provided in header, user's top songs will be factored in.
   """
   access_token = request.headers.get('Authorization')
   if access_token:
