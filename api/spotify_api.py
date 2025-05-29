@@ -82,6 +82,16 @@ class SpotifyAPI:
             "target_instrumentalness": target_instrumentalness,
             "target_valence": target_valence
         }
+        
+        # Debug logging
+        print(f"Making recommendations with:")
+        print(f"  limit: {num_recs}")
+        print(f"  seed_artists: {seed_artists}")
+        print(f"  seed_genres: {seed_genres}")
+        print(f"  seed_tracks: {seed_tracks}")
+        print(f"  kwargs: {kwargs}")
+        print(f"  auth token present: {bool(self.access_token)}")
+        
         try:
             data = self.sp.recommendations(
                 limit=num_recs,
