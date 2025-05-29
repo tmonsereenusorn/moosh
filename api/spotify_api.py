@@ -1,8 +1,5 @@
 import spotipy
-import logging
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
-
-logging.basicConfig(level=logging.INFO)
 
 class SpotifyAPI:
     def __init__(self, access_token=None):
@@ -85,16 +82,6 @@ class SpotifyAPI:
             "target_instrumentalness": target_instrumentalness,
             "target_valence": target_valence
         }
-        
-        # Debug logging
-        logging.info(f"Making recommendations with:")
-        logging.info(f"  limit: {num_recs}")
-        logging.info(f"  seed_artists: {seed_artists}")
-        logging.info(f"  seed_genres: {seed_genres}")
-        logging.info(f"  seed_tracks: {seed_tracks}")
-        logging.info(f"  kwargs: {kwargs}")
-        logging.info(f"  auth token present: {bool(self.access_token)}")
-        
         try:
             data = self.sp.recommendations(
                 limit=num_recs,
